@@ -43,6 +43,11 @@ class Misc:
         self.bot.remove_command('help')
 
     @commands.command()
+    async def emoji(self, ctx, *, emoji):
+        """Converts a Discord unicode emoji to a standard uncode emoji, for copying"""
+        await ctx.send(f"`{emoji}`")
+
+    @commands.command()
     async def person(self, ctx):
         """Generates a random person"""
         with async_timeout.timeout(10):
