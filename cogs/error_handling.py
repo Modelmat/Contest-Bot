@@ -18,15 +18,13 @@ class Errors:
            hasattr(ctx.cog, f'_{ctx.cog.__class__.__name__}__error'):
             return
 
-        ignored = (commands.NotOwner, commands.CheckFailure,
-                   commands.CommandNotFound, discord.Forbidden)
+        ignored = (commands.NotOwner, commands.CheckFailure, commands.CommandNotFound, discord.Forbidden)
 
         if isinstance(error, ignored):
             return
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.error(f"Argument `{error.param}` is missing!",
-                            "Missing Required Argument(s)")
+            await ctx.error(f"Argument `{error.param}` is missing!", "Missing Required Argument(s)")
 
         elif isinstance(error, commands.BadArgument):
             await ctx.error(str(error), "Bad Argument")
@@ -38,15 +36,12 @@ class Errors:
             await ctx.error(error, "Response Code > 400:")
 
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.error(
-                f"🛑 This command can't be used for another {round(error.retry_after)}",
-                "Command on Cooldown")
+            await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)}",
+                            "Command on Cooldown")
 
         else:
             # add more detailed debug
-            await ctx.error(
-                f"**This error is now known about 👍**\n```{error}```",
-                type(error).__qualname__)
+            await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
 
             await self.bot.logs.send("""
 **Command:** {}
@@ -55,10 +50,8 @@ class Errors:
 **Guild: ** {}
 ```py\n{}```
             """.format(ctx.command,
-                       type(error).__qualname__, ctx.author, ctx.guild,
-                       "".join(
-                           traceback.format_exception(
-                               type(error), error, error.__traceback__))))
+                       type(error).__qualname__, ctx.author, ctx.guild, "".join(
+                           traceback.format_exception(type(error), error, error.__traceback__))))
 
 
 def setup(bot: commands.Bot):

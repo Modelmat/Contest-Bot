@@ -11,8 +11,7 @@ async def message_purge_perm_check(ctx):
         return True
     elif ctx.author.permissions_in(ctx.channel).manage_messages:
         return True
-    await ctx.error("Manage messages is required to run `{}`".format(
-        ctx.command), "Invalid Permissions")
+    await ctx.error("Manage messages is required to run `{}`".format(ctx.command), "Invalid Permissions")
     return False
 
 
@@ -50,23 +49,16 @@ class Admin:
         if not other:
             total_deleted = 0
             if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-                deleted = await ctx.channel.purge(
-                    limit=num_messages, check=is_me)
+                deleted = await ctx.channel.purge(limit=num_messages, check=is_me)
                 total_deleted += len(deleted)
-            deleted = await ctx.channel.purge(
-                limit=num_messages, check=is_me, bulk=False)
+            deleted = await ctx.channel.purge(limit=num_messages, check=is_me, bulk=False)
             total_deleted += len(deleted)
-            await ctx.success("`{}/{}`".format(total_deleted, num_messages),
-                              "Messages Cleaned")
+            await ctx.success("`{}/{}`".format(total_deleted, num_messages), "Messages Cleaned")
 
         else:
             if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-                deleted = await ctx.channel.purge(
-                    limit=num_messages, check=is_me)
-                await ctx.success(
-                    "`{}/{}`".format(len(deleted), num_messages),
-                    "Messages Cleaned",
-                    delete_after=10)
+                deleted = await ctx.channel.purge(limit=num_messages, check=is_me)
+                await ctx.success("`{}/{}`".format(len(deleted), num_messages), "Messages Cleaned", delete_after=10)
             else:
                 await ctx.error(
                     """🛑 This bot does not have the required permissions to delete messages.
@@ -98,14 +90,11 @@ Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
         """Shows the roles of the bot or member
         ```{0}roles [member: bot]```"""
         if member is None:
-            roles = ", ".join(
-                [role.name.strip('@') for role in ctx.guild.roles])
-            await ctx.success(f"```ini\n[{roles}]```",
-                              f"Roles for `{ctx.guild.name}`:")
+            roles = ", ".join([role.name.strip('@') for role in ctx.guild.roles])
+            await ctx.success(f"```ini\n[{roles}]```", f"Roles for `{ctx.guild.name}`:")
         else:
             roles = ", ".join([role.name.strip('@') for role in member.roles])
-            await ctx.success("```ini\n[{roles}]```",
-                              f"Roles for `{member.display_name}`:")
+            await ctx.success("```ini\n[{roles}]```", f"Roles for `{member.display_name}`:")
 
     @commands.guild_only()
     @commands.group(aliases=["permissions"])
@@ -120,24 +109,16 @@ Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
         perms = ctx.channel.permissions_for(member)
         pos = ", ".join([name for name, has in perms if has])
         neg = ", ".join([name for name, has in perms if not has])
-        await ctx.send(
-            f"Permissions for member `{member}`: ```ini\n[{pos}]``````css\n[{neg}]```"
-        )
+        await ctx.send(f"Permissions for member `{member}`: ```ini\n[{pos}]``````css\n[{neg}]```")
 
     @perms.command(name="role")
     async def perms_role(self, ctx, *, role: discord.Role):
         """Shows the permissions for a role
         ```{0}perms role <role>```"""
-        d_pos = [
-            name for name, has in ctx.guild.default_role.permissions if has
-        ]
-        pos = ", ".join(
-            [name for name, has in role.permissions if name in d_pos or has])
-        neg = ", ".join(
-            [name for name, has in role.permissions if name not in pos])
-        await ctx.send(
-            f"Permissions for role `{role}`: ```ini\n[{pos}]``````css\n[{neg}]```"
-        )
+        d_pos = [name for name, has in ctx.guild.default_role.permissions if has]
+        pos = ", ".join([name for name, has in role.permissions if name in d_pos or has])
+        neg = ", ".join([name for name, has in role.permissions if name not in pos])
+        await ctx.send(f"Permissions for role `{role}`: ```ini\n[{pos}]``````css\n[{neg}]```")
 
 
 def setup(bot):

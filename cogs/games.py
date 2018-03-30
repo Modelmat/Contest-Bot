@@ -15,11 +15,7 @@ def rgb(r, g, b):
 
 
 TRIVIA_URL = "https://opentdb.com/api.php?amount=5"
-COLOURS = {
-    'easy': rgb(255, 211, 0),
-    'medium': rgb(232, 97, 0),
-    'hard': rgb(255, 36, 0)
-}
+COLOURS = {'easy': rgb(255, 211, 0), 'medium': rgb(232, 97, 0), 'hard': rgb(255, 36, 0)}
 EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 
@@ -29,8 +25,7 @@ class Games:
 
     async def trivia_categories(self, category=None):
         with async_timeout.timeout(10):
-            async with self.bot.session.get(
-                    "https://opentdb.com/api_category.php") as resp:
+            async with self.bot.session.get("https://opentdb.com/api_category.php") as resp:
                 cats = (await resp.json())['trivia_categories']
 
         categories = {}
@@ -49,8 +44,7 @@ class Games:
         if category is None:
             url = TRIVIA_URL
         else:
-            url = TRIVIA_URL + "&category=" + str(
-                await self.trivia_categories(category))
+            url = TRIVIA_URL + "&category=" + str(await self.trivia_categories(category))
 
         with async_timeout.timeout(10):
             async with self.bot.session.get(url) as resp:
@@ -63,17 +57,13 @@ class Games:
             colour = COLOURS[result['difficulty']]
             category = html.unescape(result['category'])
             question = "*{}*\n".format(html.unescape(result['question']))
-            e = discord.Embed(
-                title=category, description=question, colour=colour)
-            e.set_footer(
-                text="Data from Open Trivia Database",
-                icon_url=ctx.author.avatar_url)
+            e = discord.Embed(title=category, description=question, colour=colour)
+            e.set_footer(text="Data from Open Trivia Database", icon_url=ctx.author.avatar_url)
             e.timestamp = datetime.utcnow()
             answers = result['incorrect_answers'] + [result['correct_answer']]
             shuffle(answers)
             for index, question in enumerate(answers):
-                e.description += "\n{} {}".format(EMOJIS[index + 1],
-                                                  html.unescape(question))
+                e.description += "\n{} {}".format(EMOJIS[index + 1], html.unescape(question))
             msg = await ctx.send(embed=e)
             for index in range(len(answers)):
                 await msg.add_reaction(EMOJIS[index + 1])
@@ -84,11 +74,9 @@ class Games:
                     EMOJIS.values()) + ["⏹"] and reaction.message.id == msg.id
 
             try:
-                reaction, _ = await self.bot.wait_for(
-                    "reaction_add", check=same, timeout=15)
+                reaction, _ = await self.bot.wait_for("reaction_add", check=same, timeout=15)
             except asyncio.TimeoutError:
-                await ctx.error("You took too long to add an emoji.",
-                                "Timeout Error")
+                await ctx.error("You took too long to add an emoji.", "Timeout Error")
                 await msg.delete()
                 break
 
@@ -97,8 +85,7 @@ class Games:
                 await msg.delete()
                 return
 
-            corrects[answers[int(str(reaction)[0]) - 1]] = html.unescape(
-                result['correct_answer'])
+            corrects[answers[int(str(reaction)[0]) - 1]] = html.unescape(result['correct_answer'])
 
             await msg.delete()
 
@@ -110,8 +97,7 @@ class Games:
                 des += f"\n✅ {correct}"
             else:
                 des += f"\n❌{yours} ➡ {correct}"
-        des += "\n\nFor a total score of {}/{}".format(correct_qs,
-                                                       len(corrects))
+        des += "\n\nFor a total score of {}/{}".format(correct_qs, len(corrects))
 
         await ctx.success(des, "Results")
         ctx.command.reset_cooldown(ctx)
@@ -140,9 +126,8 @@ class Games:
             await ctx.error(error, "Category Not Found")
             ctx.command.reset_cooldown(ctx)
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.error(
-                f"🛑 This command can't be used for another {round(error.retry_after)}",
-                "Command on Cooldown")
+            await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)}",
+                            "Command on Cooldown")
         else:
             await ctx.error(error)
             ctx.command.reset_cooldown(ctx)

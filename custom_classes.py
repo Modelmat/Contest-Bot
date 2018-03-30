@@ -77,12 +77,8 @@ class KernBot(commands.Bot):
 
         self.logs = self.get_channel(382780308610744331)
 
-        self.exts = sorted([
-            extension for extension in [
-                f.replace('.py', '') for f in listdir("cogs")
-                if isfile(join("cogs", f))
-            ]
-        ])
+        self.exts = sorted(
+            [extension for extension in [f.replace('.py', '') for f in listdir("cogs") if isfile(join("cogs", f))]])
 
         self.loop.create_task(self.init())
 
@@ -100,17 +96,10 @@ class KernBot(commands.Bot):
     async def init(self):
         self.session = aiohttp.ClientSession()
         with async_timeout.timeout(30):
-            async with self.session.get(
-                    "https://min-api.cryptocompare.com/data/all/coinlist"
-            ) as resp:
-                self.crypto['coins'] = {
-                    k.upper(): v
-                    for k, v in (await resp.json())['Data'].items()
-                }
+            async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
+                self.crypto['coins'] = {k.upper(): v for k, v in (await resp.json())['Data'].items()}
 
-        await asyncio.wait([
-            self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML
-        ])
+        await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
         # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
 
     async def download_xml(self, link):
@@ -123,15 +112,13 @@ class KernBot(commands.Bot):
         return xml
 
     async def get_forecast(self, link):
-        data = XML_PARSER.data(
-            fromstring((await self.download_xml(link)).getvalue()))
+        data = XML_PARSER.data(fromstring((await self.download_xml(link)).getvalue()))
         forecast = data["product"]["forecast"]["area"]
         for loc in forecast:
             if loc["type"] == "location":
                 self.weather[loc["description"].lower()] = loc  # week
 
-        self.weather['EXPIRY'] = datetime.strptime(
-            data['product']['amoc']['expiry-time']['$t'], '%Y-%m-%dT%H:%M:%SZ')
+        self.weather['EXPIRY'] = datetime.strptime(data['product']['amoc']['expiry-time']['$t'], '%Y-%m-%dT%H:%M:%SZ')
 
         return data
 
@@ -148,9 +135,7 @@ class KernBot(commands.Bot):
 
     async def suicide(self, message="Shutting Down"):
         print(f"\n{message}\n")
-        em = discord.Embed(
-            title=f"{message} @ {datetime.utcnow().strftime('%H:%M:%S')}",
-            colour=discord.Colour.red())
+        em = discord.Embed(title=f"{message} @ {datetime.utcnow().strftime('%H:%M:%S')}", colour=discord.Colour.red())
         em.timestamp = datetime.utcnow()
         await self.logs.send(embed=em)
         await self.database.pool.close()
@@ -165,11 +150,8 @@ class KernBot(commands.Bot):
         if len(checks) == 1:
             checks *= len(events)
         mapped = zip(events, checks)
-        to_wait = [
-            self.wait_for(event, check=check) for event, check in mapped
-        ]
-        done, _ = await asyncio.wait(
-            to_wait, timeout=timeout, return_when=FIRST_COMPLETED)
+        to_wait = [self.wait_for(event, check=check) for event, check in mapped]
+        done, _ = await asyncio.wait(to_wait, timeout=timeout, return_when=FIRST_COMPLETED)
         return done.pop().result()
 
     async def status_changer(self):
@@ -182,8 +164,7 @@ class KernBot(commands.Bot):
         }
         while not self.is_closed():
             message, activity_type = choice(list(activities.items()))
-            activity = discord.Activity(
-                name=message.format(self), type=activity_type)
+            activity = discord.Activity(name=message.format(self), type=activity_type)
             await self.change_presence(activity=activity)
             await asyncio.sleep(60)
 
@@ -202,9 +183,7 @@ class KernBot(commands.Bot):
 
     async def pull_remotes(self):
         with async_timeout.timeout(20):
-            async with self.session.get(
-                    "https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63"
-            ):
+            async with self.session.get("https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63"):
                 pass
 
     class ResponseError(Exception):
@@ -229,35 +208,26 @@ class CustomContext(commands.Context):
         except discord.Forbidden:
             pass
 
-    async def __embed(self, title, description, colour, rqst_by, timestamp,
-                      channel, *args, **kwargs):
+    async def __embed(self, title, description, colour, rqst_by, timestamp, channel, *args, **kwargs):
         e = discord.Embed(colour=colour)
         if title is not None:
             e.title = str(title)
         if description is not None:
             e.description = str(description)
         if rqst_by:
-            e.set_footer(
-                text="Requested by: {}".format(self.message.author),
-                icon_url=self.message.author.avatar_url)
+            e.set_footer(text="Requested by: {}".format(self.message.author), icon_url=self.message.author.avatar_url)
         if timestamp:
             e.timestamp = datetime.utcnow()
         if channel is None:
             return await self.send(embed=e, *args, **kwargs)
         return await channel.send(embed=e, *args, **kwargs)
 
-    async def error(self,
-                    error,
-                    title="Error:",
-                    *args,
-                    channel: discord.TextChannel = None,
-                    **kwargs):
+    async def error(self, error, title="Error:", *args, channel: discord.TextChannel = None, **kwargs):
         if isinstance(error, Exception):
             if title == "Error:":
                 title = error.__class__.__name__
             error = str(error)
-        return await self.__embed(title, error, discord.Colour.red(), False,
-                                  False, channel, *args, **kwargs)
+        return await self.__embed(title, error, discord.Colour.red(), False, False, channel, *args, **kwargs)
 
     async def success(self,
                       success,
@@ -267,8 +237,7 @@ class CustomContext(commands.Context):
                       rqst_by=True,
                       timestamp=True,
                       **kwargs):
-        return await self.__embed(title, success, discord.Colour.green(),
-                                  rqst_by, timestamp, channel, *args, **kwargs)
+        return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp, channel, *args, **kwargs)
 
     async def neutral(self,
                       text,
@@ -278,8 +247,7 @@ class CustomContext(commands.Context):
                       rqst_by=True,
                       timestamp=True,
                       **kwargs):
-        return await self.__embed(title, text, discord.Colour.blurple(),
-                                  rqst_by, timestamp, channel, *args, **kwargs)
+        return await self.__embed(title, text, discord.Colour.blurple(), rqst_by, timestamp, channel, *args, **kwargs)
 
     async def warning(self,
                       warning,
@@ -289,8 +257,8 @@ class CustomContext(commands.Context):
                       rqst_by=True,
                       timestamp=True,
                       **kwargs):
-        return await self.__embed(title, warning, discord.Colour.blurple(),
-                                  rqst_by, timestamp, channel, *args, **kwargs)
+        return await self.__embed(title, warning, discord.Colour.blurple(), rqst_by, timestamp, channel, *args,
+                                  **kwargs)
 
     async def send(self,
                    content: str = None,
@@ -306,25 +274,12 @@ class CustomContext(commands.Context):
             do_it = bool("```" in contents[-1])
             for cnt in contents[:-1]:
                 cnt = replace_backticks(cnt, do_it)
-                await super().send(
-                    cnt, delete_after=delete_after, tts=tts, nonce=nonce)
+                await super().send(cnt, delete_after=delete_after, tts=tts, nonce=nonce)
             contents[-1] = replace_backticks(contents[-1], do_it)
             return await super().send(
-                contents[-1],
-                tts=tts,
-                embed=embed,
-                file=file,
-                files=files,
-                delete_after=delete_after,
-                nonce=nonce)
+                contents[-1], tts=tts, embed=embed, file=file, files=files, delete_after=delete_after, nonce=nonce)
         return await super().send(
-            content=content,
-            tts=tts,
-            embed=embed,
-            file=file,
-            files=files,
-            delete_after=delete_after,
-            nonce=nonce)
+            content=content, tts=tts, embed=embed, file=file, files=files, delete_after=delete_after, nonce=nonce)
 
 
 class Url(commands.Converter):
@@ -350,8 +305,7 @@ class CoinError(Exception):
         return self.message
 
     def __repr__(self):
-        return "CoinError({0.message}, {0.coin}, {0.currency}, {0.limit})".format(
-            self)
+        return "CoinError({0.message}, {0.coin}, {0.currency}, {0.limit})".format(self)
 
 
 class UpperConv(commands.Converter):
