@@ -91,7 +91,7 @@ class KernBot(commands.Bot):
 
         self.database = db.Database(self)
 
-        self.loop.set_debug(False)
+        self.loop.set_debug(debug)
 
     async def init(self):
         self.session = aiohttp.ClientSession()
