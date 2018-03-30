@@ -215,7 +215,7 @@ class CustomContext(commands.Context):
         if description is not None:
             e.description = str(description)
         if rqst_by:
-            e.set_footer(text="Requested by: {}".format(self.message.author), icon_url=self.message.author.avatar_url)
+            e.set_footer(icon_url=self.message.author.avatar_url)
         if timestamp:
             e.timestamp = datetime.utcnow()
         if channel is None:
