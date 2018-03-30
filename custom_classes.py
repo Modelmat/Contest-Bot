@@ -5,7 +5,6 @@ import sys
 from os import listdir
 from os.path import isfile, join
 from datetime import datetime
-from collections import OrderedDict
 import asyncio
 from concurrent.futures import FIRST_COMPLETED
 from random import choice
