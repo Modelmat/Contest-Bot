@@ -2,10 +2,12 @@ import random
 from asyncio import sleep, TimeoutError as a_TimeoutError
 from collections import OrderedDict
 from datetime import datetime
+from random import sample
 
 import async_timeout
 from bs4 import BeautifulSoup
 from tabulate import tabulate
+import aiogoogletrans
 
 from fuzzyfinder.main import fuzzyfinder
 
@@ -33,6 +35,7 @@ class Internet:
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
+        self.translator = aiogoogletrans.Translator()
 
     async def get_youtube_videos(self, page_url, cutoff_length=80, result_length=5):
         results = OrderedDict()
@@ -164,7 +167,7 @@ class Internet:
             f"Port scan complete. Scan report: ```ml\n{table}```\n{loading}Attempting to bruteforce insecure ports: ({open_ports})"
         )
 
-        #Now do fake atatck on unsecure port (note, add a RFC 1149 reference)
+        # Now do fake atatck on unsecure port (note, add a RFC 1149 reference)
 
     async def create_video(self, text):
         with async_timeout.timeout(20):
@@ -203,6 +206,19 @@ class Internet:
             await ctx.error("Obama server is not responding.", "Request Timed Out")
         else:  # includes bot response error
             await ctx.error(error)
+
+    @commands.command(aliases=["translate_mixup", "googletrans"])
+    async def translate(self, ctx, *, text):
+        """Translates text to 5 random languages then back to English."""
+        async with ctx.typing():
+            prevlang = "en"
+            for language in sample(list(aiogoogletrans.LANGUAGES), 5):
+                if len(language) > 2:
+                    continue
+                text = (await self.translator.translate(text, dest=language, src=prevlang)).text
+                prevlang = language
+            result = await self.translator.translate(text, dest="en")
+            await ctx.send("**End result:**\n```{}```".format(result.text))
 
 
 def setup(bot):
