@@ -61,7 +61,7 @@ def replace_backticks(content, do_it):
 
 
 class KernBot(commands.Bot):
-    def __init__(self, prefix, *args, **kwargs):
+    def __init__(self, prefix, debug=False, *args, **kwargs):
         self.prefix = prefix
 
         self.session = None
@@ -96,7 +96,7 @@ class KernBot(commands.Bot):
 
         self.database = db.Database(self)
 
-        self.loop.set_debug(True)
+        self.loop.set_debug(False)
 
     async def init(self):
         self.session = aiohttp.ClientSession()
@@ -112,7 +112,7 @@ class KernBot(commands.Bot):
         await asyncio.wait([
             self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML
         ])
-        #await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
+        # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
 
     async def download_xml(self, link):
         xml = BytesIO()
@@ -129,7 +129,7 @@ class KernBot(commands.Bot):
         forecast = data["product"]["forecast"]["area"]
         for loc in forecast:
             if loc["type"] == "location":
-                self.weather[loc["description"].lower()] = loc  #week
+                self.weather[loc["description"].lower()] = loc  # week
 
         self.weather['EXPIRY'] = datetime.strptime(
             data['product']['amoc']['expiry-time']['$t'], '%Y-%m-%dT%H:%M:%SZ')
