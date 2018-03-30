@@ -407,8 +407,8 @@ class Misc:
                             inline=False)
 
         else:
-            return await ctx.error(
-                f"The passed command `{command}` does not exist.", "")
+            return await ctx.error(f"The command `{command}` does not exist.",
+                                   "")
 
         embed.timestamp = datetime.utcnow()
         embed.set_author(
