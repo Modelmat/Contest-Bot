@@ -93,7 +93,7 @@ class Games:
                 break
 
             if str(reaction) == "⏹":
-                await ctx.command.reset_cooldown(ctx)
+                ctx.command.reset_cooldown(ctx)
                 await msg.delete()
                 return
 
