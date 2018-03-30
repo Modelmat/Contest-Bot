@@ -366,7 +366,7 @@ class Misc:
                     inline=False)
 
         elif command.lower() in [cog.lower() for cog in cogs_dict.keys()]:
-            #actually a cog
+            # actually a cog
             command = command.capitalize()
             embed.description = inspect.cleandoc(
                 self.bot.get_cog(command).__doc__)
@@ -386,7 +386,9 @@ class Misc:
             else:
                 command_help = command.help.format(ctx.clean_prefix())
             embed.description = command_help
-            embed.add_field(name="Aliases", value=", ".join(command.aliases))
+            if command.aliases:
+                embed.add_field(
+                    name="Aliases", value=", ".join(command.aliases))
             if isinstance(command, commands.Group):
                 for cmd in command.commands:
                     if not cmd.hidden:
@@ -405,7 +407,7 @@ class Misc:
 
         embed.timestamp = datetime.utcnow()
         embed.set_author(
-            name=command.capitalize(), url="https://discord.gg/nHmAkgg")
+            name=str(command).capitalize(), url="https://discord.gg/nHmAkgg")
         embed.set_footer(
             text="Requested by: {}".format(ctx.message.author),
             icon_url=ctx.message.author.avatar_url)
