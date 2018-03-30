@@ -117,19 +117,21 @@ class Games:
         ctx.command.reset_cooldown(ctx)
 
     @commands.cooldown(1, 30, commands.BucketType.channel)
-    @commands.command()
-    async def trivia(self, ctx, *, category: str = None):
+    @commands.group(invoke_without_command=True)
+    async def trivia(self, ctx: commands.Context, *, category: str = None):
         """Provides a trivia functionality. 5 questions. Can pass a category
         ```{0}trivia [category]```"""
-        if ctx.invoked_subcommand is None:
-            await self.trivia_command(ctx, category)
+        await self.trivia_command(ctx, category)
 
-    # @trivia.command()
-    # async def trivia_list(self, ctx):
-    #     """Gives a list of possible categories usable with the trivia command
-    #     ```{0}trivia list```
-    #     """
-    #     await self.trivia_categories()
+    @trivia.command(name="list")
+    async def trivia_list(self, ctx):
+        """Gives a list of possible categories usable with the trivia command
+        ```{0}trivia list```
+        """
+        cat_string = ""
+        for category in await self.trivia_categories():
+            cat_string += f"{category.title()}\n"
+        await ctx.neutral(cat_string, "Categories:")
 
     @trivia.error
     async def trivia_error_handler(self, ctx, error):
