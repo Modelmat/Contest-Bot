@@ -60,8 +60,8 @@ bot = cc.KernBot(
     bot_prefix,
     command_prefix=server_prefix,
     case_insensitive=True,
-    description='Multiple functions, including contests, definitions, and more.'
-)
+    description="Multiple functions, including contests, definitions, and more.",
+    activity=discord.Game(name="Start-up 101"))
 
 
 async def load_extensions(bots):
@@ -79,9 +79,7 @@ async def load_extensions(bots):
 async def on_connect():
     await bot.update_dbots_server_count(dbl_token)
     with async_timeout.timeout(20):
-        async with bot.session.get(
-                "https://api.github.com/repos/Modelmat/discord.py/commits/rewrite"
-        ) as r:
+        async with bot.session.get("https://api.github.com/repos/Modelmat/discord.py/commits/rewrite") as r:
             bot.latest_commit = "g" + (await r.json())['sha'][:7]
     await bot.pull_remotes()
 
@@ -89,9 +87,8 @@ async def on_connect():
 @bot.event
 async def on_guild_join(guild: discord.Guild):
     e = discord.Embed(
-        title="Joined {} @ {}".format(
-            guild.name,
-            datetime.utcnow().strftime('%H:%M:%S UTC')),
+        title="Joined {} @ {}".format(guild.name,
+                                      datetime.utcnow().strftime('%H:%M:%S UTC')),
         colour=discord.Colour.green(),
         timestamp=datetime.utcnow())
     await bot.get_channel(bot.logs).send(embed=e)
@@ -101,9 +98,8 @@ async def on_guild_join(guild: discord.Guild):
 @bot.event
 async def on_guild_remove(guild: discord.Guild):
     e = discord.Embed(
-        title="Left {} @ {}".format(
-            guild.name,
-            datetime.utcnow().strftime('%H:%M:%S UTC')),
+        title="Left {} @ {}".format(guild.name,
+                                    datetime.utcnow().strftime('%H:%M:%S UTC')),
         colour=discord.Colour.red(),
         timestamp=datetime.utcnow())
     await bot.get_channel(bot.logs).send(embed=e)
@@ -182,16 +178,12 @@ async def on_message(message: discord.Message):
                         await bot.invoke(ctx)
                         cmds_run_before.append(msg.strip(ctx.prefix))
                     else:
-                        failed_to_run[msg.strip(
-                            ctx.prefix
-                        )] = "This command has been at least once before."
+                        failed_to_run[msg.strip(ctx.prefix)] = "This command has been at least once before."
                 else:
                     if ctx.prefix is not None:
-                        failed_to_run[msg.strip(
-                            ctx.prefix)] = "Command not found."
+                        failed_to_run[msg.strip(ctx.prefix)] = "Command not found."
 
-            if failed_to_run and len(failed_to_run) != len(
-                    message.content.split(" && ")):
+            if failed_to_run and len(failed_to_run) != len(message.content.split(" && ")):
                 errors = ""
                 for fail, reason in failed_to_run.items():
                     errors += f"{fail}: {reason}\n"
