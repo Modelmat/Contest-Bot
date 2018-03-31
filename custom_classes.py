@@ -229,46 +229,17 @@ class CustomContext(commands.Context):
             error = str(error)
         return await self.__embed(title, error, discord.Colour.red(), False, False, channel, *args, **kwargs)
 
-    async def success(self,
-                      success,
-                      title="Success:",
-                      *args,
-                      channel: discord.TextChannel = None,
-                      rqst_by=True,
-                      timestamp=True,
-                      **kwargs):
+    async def success(self, success, title="Success:", *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
         return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp, channel, *args, **kwargs)
 
-    async def neutral(self,
-                      text,
-                      title=None,
-                      *args,
-                      channel: discord.TextChannel = None,
-                      rqst_by=True,
-                      timestamp=True,
-                      **kwargs):
-        return await self.__embed(title, text, discord.Colour.blurple(), rqst_by, timestamp, channel, *args, **kwargs)
+    async def neutral(self, text, title=None, *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
+        return await self.__embed(title, text, 0x36393E, rqst_by, timestamp, channel, *args, **kwargs)
 
-    async def warning(self,
-                      warning,
-                      title=None,
-                      *args,
-                      channel: discord.TextChannel = None,
-                      rqst_by=True,
-                      timestamp=True,
-                      **kwargs):
-        return await self.__embed(title, warning, discord.Colour.blurple(), rqst_by, timestamp, channel, *args,
+    async def warning(self, warning, title=None, *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
+        return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, *args,
                                   **kwargs)
 
-    async def send(self,
-                   content: str = None,
-                   *,
-                   tts=False,
-                   embed=None,
-                   file=None,
-                   files=None,
-                   delete_after=None,
-                   nonce=None):
+    async def send(self, content: str = None, *, tts=False, embed=None, file=None, files=None, delete_after=None, nonce=None):
         if content:
             contents = list(chunks(str(content), 1900))
             do_it = bool("```" in contents[-1])
