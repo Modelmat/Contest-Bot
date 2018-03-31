@@ -108,3 +108,5 @@ website/
 website/*
 images_gifs/
 images_gifs/*
+.idea/
+.idea/*
