@@ -223,7 +223,7 @@ class Dictionary:
 
             ipa_string = str()
             for entry in results:
-                if 'pronunications' in entry:
+                if 'pronunciations' in entry:
                     for pronunciation in entry['pronunciations']:
                         ipa_string += "**{}:** {}\n".format(
                             entry['lexicalCategory'],

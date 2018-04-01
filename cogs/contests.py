@@ -33,7 +33,7 @@ class Contests:
         else:
             print('Ignoring {} in command {}'.format(type(error).__qualname__, ctx.command))
             traceback.print_exception(type(error), error, error.__traceback__)
-            await ctx.error("An undhandled exception occurred. Don't worry, we know about it now. 👍")
+            await ctx.error("An unhandled exception occurred. Don't worry, we know about it now. 👍")
             await ctx.error(
                 "```{}: {}```".format(type(error).__qualname__, error),
                 title=f"Ignoring exception in command *{ctx.command}*:",
@@ -111,7 +111,7 @@ class Contests:
             rating = submission['rating'] or "NIL"
             compiled += f"{index + 1}). **{embed.title}** by {author.mention} [id: {s_id}]. **Rating:** `{rating}` points.\n"
         max_points = await self.bot.database.get_max_rating(ctx)
-        await ctx.neutral(compiled, f"Submissions Leaderboard for {ctx.guild} [/{max_points}]")
+        await ctx.neutral(compiled, f"Submissions leaderboard for {ctx.guild} [/{max_points}]")
         return [submission['submission_id'] for submission in submissions]
 
     @commands.command()

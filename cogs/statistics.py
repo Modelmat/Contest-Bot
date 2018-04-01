@@ -46,7 +46,7 @@ def get_delta(time_period, limit):
         return timedelta(hours=limit // 4)
     elif time_period == "minute":
         return timedelta(minutes=limit // 4)
-    return timedelta(minute=10)
+    return timedelta(minutes=10)
 
 
 class Statistics:

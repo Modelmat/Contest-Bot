@@ -207,7 +207,7 @@ async def reload_cog(ctx, cog_name: str):
     except ModuleNotFoundError:
         await ctx.error(f"Cog {cog_name} not found.", "")
     else:
-        await ctx.send("Cog `{}` sucessfully reloaded.".format(cog_name))
+        await ctx.send("Cog `{}` successfully reloaded.".format(cog_name))
 
 
 loop = asyncio.get_event_loop()

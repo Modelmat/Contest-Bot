@@ -77,7 +77,7 @@ class Settings:
                                    "")
 
         await self.bot.database.remove_prefix(ctx, prefix)
-        await ctx.success(f"Prefix {prefix} sucessfully removed.")
+        await ctx.success(f"Prefix {prefix} successfully removed.")
 
     @get.command(name="prefixes")
     async def get_prefixes(self, ctx):
