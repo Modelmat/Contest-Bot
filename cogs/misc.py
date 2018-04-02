@@ -384,7 +384,7 @@ class Misc:
                     embed.add_field(
                         name=cmd.qualified_name, value=c_help, inline=False)
 
-        elif self.bot.get_command(command) in self.bot.commands:
+        elif self.bot.get_command(command) is not None:
             command = self.bot.get_command(command)
             if command.help is None:
                 command_help = "No description"
