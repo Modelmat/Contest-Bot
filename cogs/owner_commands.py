@@ -20,14 +20,15 @@ class Owner:
         self.hidden = True
         self._last_result = None
 
-    @commands.is_owner()
+    async def __local_check(self, ctx):
+        return await self.bot.is_owner(ctx.author)
+
     @commands.command(hidden=True)
     async def update_lib(self, ctx):
         await self.bot.pull_remotes()
         await ctx.send("""Instigate Pull Request. To update;
 ```pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]```""")
 
-    @commands.is_owner()
     @commands.group(hidden=True)
     async def vps(self, ctx):
         """Commands for controlling the VPS"""
@@ -45,7 +46,6 @@ class Owner:
         system('heroku ps:scale worker=1 --app discord-kern-bot')
         await ctx.success("Starting VPS instance")
 
-    @commands.is_owner()
     @commands.command(hidden=True, aliases=['restart'])
     async def rebirth(self, ctx):
         """Owner of this bot only command; Restart the bot"""
@@ -53,27 +53,23 @@ class Owner:
         await self.bot.suicide("Restarting")
         execl(executable, 'python "' + "".join(argv) + '"')
 
-    @commands.is_owner()
     @commands.command(hidden=True, aliases=['shutdown', 'die'])
     async def suicide(self, ctx):
         """Owner of this bot only command; Shutdown the bot"""
         await ctx.success("", f"Shutting Down @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.suicide()
 
-    @commands.is_owner()
     @commands.command(hidden=True)
     async def leave(self, ctx):
         """Leaves this server"""
         await ctx.success("Leaving `{}`".format(ctx.guild))
         await ctx.guild.leave()
 
-    @commands.is_owner()
     @commands.command(hidden=True)
     async def servers(self, ctx):
         """Sends the servers this bot is in"""
         await ctx.send("My servers:```ini\n[{}]```".format(", ".join([guild.name for guild in self.bot.guilds])))
 
-    @commands.is_owner()
     @commands.command(hidden=True)
     async def announce(self, ctx, *, message):
         """Announces a message to everyone"""
@@ -84,7 +80,6 @@ class Owner:
                     break
         await ctx.send("Success.")
 
-    @commands.is_owner()
     @commands.command(hidden=True, name="eval", aliases=['exec'])
     async def k_eval(self, ctx, *, body: str):
         """Evaluates code
