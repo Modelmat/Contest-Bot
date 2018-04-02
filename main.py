@@ -14,17 +14,6 @@ import custom_classes as cc
 
 # update: pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]
 async def server_prefix(bots: cc.KernBot, message):
-    """A callable Prefix for our bot.
-
-    This allow for per server prefixes.
-
-    Arguments:
-        bots {discord.ext.commands.Bot} -- A variable that is passed automatically by commands.Bot.
-        message {discord.Message} -- Also passed automatically, used to get Guild ID.
-
-    Returns:
-        string -- The prefix to be used by the bot for receiving commands.
-    """
     if not message.guild:
         return bots.prefix
 
