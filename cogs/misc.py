@@ -172,10 +172,10 @@ class Misc:
             value="**Guilds**: {}\n**Channels**: {}\n**Users**: {}".format(
                 total_servers, total_channels, total_members))
         embed.add_field(
-            name="💻 Resource Usage:",
+            name="🔌 Resource Usage:",
             value="CPU: {:.2f} %\nRAM: {:.2f} MiB".format(
                 cpu_usage, ram_usage))
-        embed.add_field(name="⏲ Uptime:", value=self.get_uptime())
+        embed.add_field(name="⏰ Uptime:", value=self.get_uptime())
         embed.add_field(
             name="Running On:",
             value=f"""<:python:416194389853863939>: {python_version()}
