@@ -10,6 +10,7 @@ from concurrent.futures import FIRST_COMPLETED
 from random import choice
 from xml.etree.ElementTree import fromstring
 import async_timeout
+from bs4 import BeautifulSoup
 
 import aiohttp
 import aioftp
@@ -287,3 +288,103 @@ class UpperConv(commands.Converter):
 class IntConv(commands.Converter):
     async def convert(self, ctx, argument):
         return int(argument)
+
+class CreateDocumentation:
+    def __init__(self):
+        self.documentation = {}
+        self.api = "http://rapptz.github.io/discord.py/docs/api.html"
+        self.commands = "http://rapptz.github.io/discord.py/docs/ext/commands/api.html"
+
+    def parse_ps(self, el):
+        return "\n".join([ele.text for ele in el.dd.findAll("p", recursive=False)])
+
+    def fake(self, *args):
+        return []
+
+    def parse_class(self, el, url):
+        if len(el.dt.text.split("(")) == 1:
+            sp = "()"
+        else:
+            sp = "(" + el.dt.text.split("(")[1].strip("¶")
+        name = el.dt["id"].replace("discord.", "").replace("ext.commands.", "")
+        self.documentation[name.lower()] = {
+            "name": name,
+            "arguments": sp,
+            "type": "class",
+            "url": str(url) + el.dt.a["href"],
+            "description": self.parse_ps(el),
+            "attributes": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "attribute"})},
+            "methods": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "method"})},
+            "classmethods" : {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "classmethod"})},
+            "operations": {op.dt.code.text:op.dd.p.text for op in getattr(el.dd.find("div", {"class":"operations"}), "findAll", self.fake)("dl", {"class": "describe"})},
+        }
+
+    def parse_data(self, el, url):
+        if len(el.dt.text.split("(")) == 1:
+            sp = "()"
+        else:
+            sp = "(" + el.dt.text.split("(")[1].strip("¶")
+        name = el.dt["id"].replace("discord.", "").replace("ext.commands.", "")
+        self.documentation[name.lower()] = {
+            "name": name,
+            "arguments": sp,
+            "type": "data",
+            "url": str(url) + el.dt.a["href"],
+            "description": self.parse_ps(el),
+        }
+
+    def parse_exception(self, el, url):
+        if len(el.dt.text.split("(")) == 1:
+            sp = "()"
+        else:
+            sp = "(" + el.dt.text.split("(")[1].strip("¶")
+        name = el.dt["id"].replace("discord.", "").replace("ext.commands.", "")
+        self.documentation[name.lower()] = {
+            "name": name,
+            "arguments": sp,
+            "type": "exception",
+            "url": str(url) + el.dt.a["href"],
+            "description": self.parse_ps(el),
+            "attributes": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "attribute"})},
+        }
+
+    def parse_function(self, el, url):
+        if len(el.dt.text.split("(")) == 1:
+            sp = "()"
+        else:
+            sp = "(" + el.dt.text.split("(")[1].strip("¶")
+        name = el.dt["id"].replace("discord.", "").replace("ext.commands.", "")
+        self.documentation[name.lower()] = {
+            "name": name,
+            "arguments": sp,
+            "type": "function",
+            "url": str(url) + el.dt.a["href"],
+            "description": self.parse_ps(el),
+        }
+
+    def parse_element(self, element, url):
+        if "class" in element.get("class", []):
+            self.parse_class(element, url)
+        elif "data" in element.get("class", []):
+            self.parse_data(element, url)
+        elif "exception" in element.get("class", []):
+            self.parse_exception(element, url)
+        elif "function" in element.get("class", []):
+            self.parse_function(element, url)
+
+    def parse_soup(self, soup, url):
+        for el in soup.findAll("div", {"class": "section"}):
+            if el['id'] == "api-reference":
+                continue
+            for ele in el.findAll("dl"):
+                self.parse_element(ele, url)
+            for ele in el.findAll("div"):
+                self.parse_element(ele, url)
+
+    async def generate_documentation(self):
+        async with aiohttp.ClientSession() as s:
+            async with s.get(self.api) as r:
+                self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
+            async with s.get(self.commands) as r:
+                self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
+        return self.documentation
