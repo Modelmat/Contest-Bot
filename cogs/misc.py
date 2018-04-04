@@ -43,6 +43,16 @@ class Misc:
         self.bot.remove_command('help')
 
     @commands.command()
+    async def linelength(self, ctx):
+        total_count = 0
+        files = [f for f in os.listdir(".") if ".py" in f] + ["cogs/" + f for f in os.listdir("cogs") if ".py" in f]
+        for f_name in files:
+            with open(f_name, encoding="utf-8") as f:
+                total_count += len(f.readlines())
+        await ctx.neutral(f"I have {total_count} lines!", timestamp=False)
+
+
+    @commands.command()
     async def emoji(self, ctx, *, emoji):
         """Converts a Discord unicode emoji to a standard uncode emoji, for copying"""
         await ctx.send(f"`{emoji}`")
