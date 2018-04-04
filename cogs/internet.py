@@ -212,7 +212,7 @@ class Internet:
         """Translates text to 5 random languages then back to English."""
         async with ctx.typing():
             prevlang = "en"
-            for language in sample(list(aiogoogletrans.LANGUAGES), 5):
+            for language in sample(list(aiogoogletrans.LANGUAGES), 10):
                 if len(language) > 2:
                     continue
                 text = (await self.translator.translate(text, dest=language, src=prevlang)).text
