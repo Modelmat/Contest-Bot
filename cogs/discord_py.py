@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 
-import aiohttp
-from bs4 import BeautifulSoup
+import os
+import inspect
+
 from custom_classes import CreateDocumentation
 
 class DiscordPy:
@@ -69,8 +70,8 @@ class DiscordPy:
             obj = self.documentation[obj.lower()]
         except KeyError:
             return await ctx.error(f"Object `{obj}` does not exist", "No Documentation Found")
-        em = discord.Embed(title=f"{obj['name']}{obj['arguments']}", description=obj["description"], url=obj["url"])
-        em.set_author(name=obj["type"])
+        em = discord.Embed(title=f"*{obj['type']}* {obj['name']}{obj['arguments']}", description=obj["description"],
+                           url=obj["url"])
         msg = await ctx.send(embed=em)
         # implement pagination
 
