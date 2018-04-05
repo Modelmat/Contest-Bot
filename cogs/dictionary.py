@@ -24,7 +24,7 @@ class Dictionary:
             app_key = environ["APP_KEY"]
         except KeyError:
             file_path = path.join(
-                path.dirname(__file__), '../client_secret.txt')
+                path.dirname(__file__), '../client.secret')
             with open(file_path, encoding="utf-8") as file:
                 lines = [l.strip() for l in file]
                 app_id = lines[1]
