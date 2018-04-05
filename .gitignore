@@ -102,6 +102,4 @@ ENV/
 
 .vscode/
 *secret*
-website/
-images_gifs/
 .idea/
