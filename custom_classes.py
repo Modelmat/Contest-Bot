@@ -388,3 +388,6 @@ class CreateDocumentation:
             async with s.get(self.commands) as r:
                 self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
         return self.documentation
+
+class Paginator(commands.Paginator):
+    pass
