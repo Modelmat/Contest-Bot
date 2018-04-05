@@ -100,13 +100,8 @@ ENV/
 # mypy
 .mypy_cache/
 
-.vscode/*
 .vscode/
 *secret*
-todo*
 website/
-website/*
 images_gifs/
-images_gifs/*
 .idea/
-.idea/*
