@@ -45,9 +45,9 @@ class Database:
         try:
             self.dsn = os.environ["DATABASE_URL"]
         except KeyError:
-            with open("database_secret.txt", "r") as database_file:
+            with open("client.secret", "r") as database_file:
                 lines = [l.strip() for l in database_file]
-                self.dsn = lines[0]
+                self.dsn = lines[6]
 
         self.pool = None
         if __name__ in '__main__':

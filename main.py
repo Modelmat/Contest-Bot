@@ -38,7 +38,7 @@ try:
     bot_prefix = environ["BOT_PREFIX"]
     dbl_token = environ["DBL_TOKEN"]
 except KeyError:
-    with open("client_secret.txt", encoding="utf-8") as file:
+    with open("client.secret", encoding="utf-8") as file:
         lines = [l.strip() for l in file]
         token = lines[0]
         name = lines[3]
