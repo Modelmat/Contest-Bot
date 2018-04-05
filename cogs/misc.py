@@ -43,13 +43,18 @@ class Misc:
         self.bot.remove_command('help')
 
     @commands.command()
-    async def linelength(self, ctx):
-        total_count = 0
+    async def codestats(self, ctx):
+        line_count = 0
+        cog_count = 0
         files = [f for f in os.listdir(".") if ".py" in f] + ["cogs/" + f for f in os.listdir("cogs") if ".py" in f]
         for f_name in files:
+            cog_count += 1
             with open(f_name, encoding="utf-8") as f:
-                total_count += len(f.readlines())
-        await ctx.neutral(f"I have {total_count} lines!", timestamp=False)
+                line_count += len(f.readlines())
+        await ctx.neutral(f"""**Lines**: {line_count}
+**Cogs**: {cog_count}
+**Commands**: {len(ctx.bot.commands)}""",
+                          "Code Statistics", timestamp=False)
 
 
     @commands.command()
