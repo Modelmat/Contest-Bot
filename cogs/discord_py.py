@@ -1,12 +1,16 @@
+import inspect
+import os
+from typing import Dict
+
 import discord
 from discord.ext import commands
 
-import os
-import inspect
-
 from custom_classes import CreateDocumentation
 
+
 class DiscordPy:
+    documentation: Dict[str, dict]
+
     def __init__(self, bot):
         self.bot = bot
         self.documentation = {}
@@ -58,7 +62,6 @@ class DiscordPy:
                 embed.add_field(name=attr, value=val)
         else:
             return embed
-
 
     @commands.command(aliases=["documentation", "rtfd"])
     async def docs(self, ctx, obj):
