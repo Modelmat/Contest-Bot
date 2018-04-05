@@ -11,6 +11,7 @@ from random import choice
 from xml.etree.ElementTree import fromstring
 import async_timeout
 from bs4 import BeautifulSoup
+from math import ceil
 
 import aiohttp
 import aioftp
@@ -289,17 +290,23 @@ class IntConv(commands.Converter):
     async def convert(self, ctx, argument):
         return int(argument)
 
+
 class CreateDocumentation:
     def __init__(self):
         self.documentation = {}
         self.api = "http://rapptz.github.io/discord.py/docs/api.html"
         self.commands = "http://rapptz.github.io/discord.py/docs/ext/commands/api.html"
 
-    def parse_ps(self, el):
+    @staticmethod
+    def parse_ps(el):
         return "\n".join([ele.text for ele in el.dd.findAll("p", recursive=False)])
 
-    def fake(self, *args):
+    @staticmethod
+    def fake(*args):
         return []
+
+    def get_code_text(self, type, element):
+        return {el.dt.code.text: self.parse_ps(el) for el in element.dd.findAll("dl", {"class": type})}
 
     def parse_class(self, el, url):
         if len(el.dt.text.split("(")) == 1:
@@ -313,9 +320,9 @@ class CreateDocumentation:
             "type": "class",
             "url": str(url) + el.dt.a["href"],
             "description": self.parse_ps(el),
-            "attributes": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "attribute"})},
-            "methods": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "method"})},
-            "classmethods" : {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "classmethod"})},
+            "attributes": self.get_code_text("attribute", el),
+            "methods": self.get_code_text("method", el),
+            "classmethods" : self.get_code_text("classmethod", el),
             "operations": {op.dt.code.text:op.dd.p.text for op in getattr(el.dd.find("div", {"class":"operations"}), "findAll", self.fake)("dl", {"class": "describe"})},
         }
 
@@ -345,7 +352,7 @@ class CreateDocumentation:
             "type": "exception",
             "url": str(url) + el.dt.a["href"],
             "description": self.parse_ps(el),
-            "attributes": {ele.dt.code.text: self.parse_ps(ele) for ele in el.dd.findAll("dl", {"class": "attribute"})},
+            "attributes": self.get_code_text("attribute", el),
         }
 
     def parse_function(self, el, url):
@@ -389,5 +396,9 @@ class CreateDocumentation:
                 self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
         return self.documentation
 
-class Paginator(commands.Paginator):
-    pass
+class Paginator:
+    def __init__(self, num_entries, max_fields=5, base_embed=discord.Embed()):
+        self.base_embed = base_embed
+        self.max_fields = 5
+        self.num_entries = num_entries
+        self.num_pages = ceil(num_entries / max_fields)
