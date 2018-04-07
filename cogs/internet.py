@@ -200,18 +200,32 @@ class Internet:
         else:  # includes bot response error
             await ctx.error(error)
 
+    @commands.cooldown(1, 5, commands.BucketType.channel)
     @commands.command(aliases=["translate_mixup", "googletrans"])
     async def translate(self, ctx, *, text):
         """Translates text to 10 random languages then back to English."""
         async with ctx.typing():
-            prevlang = "en"
+            text = text[:500]
+            langs = []
+            prevlang = (await self.translator.translate(text)).src
+            if "zh" in prevlang:
+                prevlang = "en"
             for language in sample(list(aiogoogletrans.LANGUAGES), 10):
                 if len(language) > 2:
                     continue
                 text = (await self.translator.translate(text, dest=language, src=prevlang)).text
+                langs.append(language)
                 prevlang = language
             result = await self.translator.translate(text, dest="en")
-            await ctx.send("**End result:**\n```{}```".format(result.text))
+            if len(result.text + text) > 1980:
+                result.text = await ctx.upload(result.text)
+            else:
+                result.text = "```" + result.text + "```"
+            await ctx.send("""**User**: {}
+**Languages**: 
+```{}```
+**End result**: 
+{}""".format(ctx.author, "\n".join([aiogoogletrans.LANGUAGES[l] for l in langs]), result.text))
 
 
 def setup(bot):
