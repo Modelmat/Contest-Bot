@@ -192,66 +192,17 @@ class Misc:
         embed.set_footer(text="Hover over emojis")
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def hug(self, ctx, *, item: str):
-        """Hugs the given item
-        ```{0}hug <item>```"""
-        await ctx.send("«{}»".format(item))
-
-    @commands.command()
-    async def kiss(self, ctx, *, item: str):
-        """Kisses the given item
-        ```{0}kiss <item>```"""
-        await ctx.send("💋{}💋".format(item))
-
     @commands.group(name="hash")
-    async def _hash(self, ctx):
+    async def _hash(self, ctx, hash_type, *, text):
         """Hashes a string of text
+        Hasers are: sha256, sha512, sha1, md5
         ```{0}hash <hasher> <text>```"""
-        if ctx.invoked_subcommand is None:
-            await ctx.error(f"Hash type {ctx.subcommand_passed} not found")
-
-    @_hash.command(name="sha256")
-    async def hash_sha256(self, ctx, *, text):
-        """Hashes in SHA256"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.sha256(text.encode()).hexdigest()}```"
-        )
-
-    @_hash.command(name="sha224")
-    async def hash_sha224(self, ctx, *, text):
-        """Hashes in SHA224"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.sha224(text.encode()).hexdigest()}```"
-        )
-
-    @_hash.command(name="sha512")
-    async def hash_sha512(self, ctx, *, text):
-        """Hashes in SHA512"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.sha512(text.encode()).hexdigest()}```"
-        )
-
-    @_hash.command(name="sha1")
-    async def hash_sha1(self, ctx, *, text):
-        """Hashes in SHA1"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.sha1(text.encode()).hexdigest()}```"
-        )
-
-    @_hash.command(name="sha384")
-    async def hash_sha384(self, ctx, *, text):
-        """Hashes in SHA384"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.sha384(text.encode()).hexdigest()}```"
-        )
-
-    @_hash.command(name="md5")
-    async def hash_md5(self, ctx, *, text):
-        """Hashes in MD5"""
-        await ctx.neutral(
-            f"**Original:**```{text}```**Hashed:**```{hashlib.md5(text.encode()).hexdigest()}```"
-        )
+        hash_types = ["sha256", "sha512", "sha1", "md5"]
+        if hash_type in hash_types:
+            hasher = eval(f"hashlib.{hash_type}")
+            await ctx.neutral(f"**Hashed:** ```{hasher(text.encode()).hexdigest()}```")
+        else:
+            await ctx.error(f"Hasher {hash_type} not found")
 
     @commands.command()
     async def tree(self, ctx):
