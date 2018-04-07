@@ -20,6 +20,7 @@ EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 
 class Games:
+    """Games"""
     def __init__(self, bot: KernBot):
         self.bot = bot
 
@@ -105,15 +106,12 @@ class Games:
     @commands.cooldown(1, 30, commands.BucketType.channel)
     @commands.group(invoke_without_command=True)
     async def trivia(self, ctx: commands.Context, *, category: str = None):
-        """Provides a trivia functionality. 5 questions. Can pass a category
-        ```{0}trivia [category]```"""
+        """Provides a trivia functionality. 5 questions. Can pass a category"""
         await self.trivia_command(ctx, category)
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx):
-        """Gives a list of possible categories usable with the trivia command
-        ```{0}trivia list```
-        """
+        """Gives a list of possible categories usable with the trivia command"""
         cat_string = ""
         for category in await self.trivia_categories():
             cat_string += f"{category.title()}\n"

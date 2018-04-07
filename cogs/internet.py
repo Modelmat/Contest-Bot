@@ -65,8 +65,7 @@ class Internet:
 
     @commands.group(invoke_without_command=True)
     async def youtube(self, ctx, *, keyword: str):
-        """Searches YouTube for a video
-        ```{0}youtube <keyword>```"""
+        """Searches YouTube for a video"""
         url = f"https://www.youtube.com/results?search_query={keyword}&sp=EgIQAQ%253D%253D"
         vids = await self.get_youtube_videos(url)
 
@@ -78,8 +77,7 @@ class Internet:
 
     @youtube.command()
     async def trending(self, ctx, num_results=5):
-        """Gets current trending videos
-        ```{0}youtube tending [num_results: 5]```"""
+        """Gets current trending videos"""
         url = "https://www.youtube.com/feed/trending"
         vids = await self.get_youtube_videos(url, 77, num_results)
         results = "\n".join([f"{index+1}) {title}" for index, title in enumerate(vids)])
@@ -87,14 +85,12 @@ class Internet:
 
     @youtube.command()
     async def channel(self, ctx, channel, num_videos=5):
-        """Get a channel's latest 5 videos
-        ```{0}youtube channel [num_videos: 5]```"""
+        """Get a channel's latest 5 videos"""
         pass
 
     @youtube.command()
     async def playlist(self, ctx, playlist, num_videos=5):
-        """Get a playlist's 1st 5 videos
-        ```{0}youtube playlist [num_videos: 5]```"""
+        """Get a playlist's 1st 5 videos"""
         pass
 
     async def get_demotivators(self):
@@ -122,8 +118,7 @@ class Internet:
 
     @commands.command()
     async def demotivate(self, ctx, *, search_term):
-        """Provides an embed with a demotivating quote & poster
-        ```{0}demotivate <search_term>```"""
+        """Provides an embed with a demotivating quote & poster"""
         async with ctx.typing():
             search_term = search_term.lower()
             demotivators = await self.get_demotivators()
@@ -148,8 +143,7 @@ class Internet:
 
     @commands.command(hidden=True)
     async def hack(self, ctx, *, url: cc.Url):
-        """Starts a fake hacking instance on a specified URL.
-        ```{0}hack <url>```"""
+        """Starts a fake hacking instance on a specified URL."""
         loading, th, hu, te, on = self.bot.get_emojis(395834326450831370, 396890900783038499, 396890900158218242,
                                                       396890900753547266, 396890900426653697)
         table_data, table, open_ports, open_data = gen_data()
@@ -190,8 +184,7 @@ class Internet:
 
     @commands.command()
     async def obama(self, ctx, *, text: str):
-        """Makes obama speak.
-        ```{0}obama <text>```"""
+        """Makes obama speak."""
         if len(text) - len(ctx.prefix + "obama") > 280:
             return await ctx.send("A maximum character total of 280 is enforced. You sent: `{}` characters".format(
                 len(text)))
@@ -209,7 +202,7 @@ class Internet:
 
     @commands.command(aliases=["translate_mixup", "googletrans"])
     async def translate(self, ctx, *, text):
-        """Translates text to 5 random languages then back to English."""
+        """Translates text to 10 random languages then back to English."""
         async with ctx.typing():
             prevlang = "en"
             for language in sample(list(aiogoogletrans.LANGUAGES), 10):

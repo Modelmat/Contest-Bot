@@ -50,6 +50,7 @@ def get_delta(time_period, limit):
 
 
 class Statistics:
+    """Function related to statistics"""
     def __init__(self, bot):
         self.bot = bot
 
@@ -102,8 +103,7 @@ class Statistics:
     @commands.group(aliases=["crypto"])
     async def coin(self, ctx):
         """Provides information on cryptocurrencies
-        This root command is not working.
-        ```{0}coin <coin>```"""
+        This root command is not working."""
         #self.statistics [coin]
         if ctx.invoked_subcommand is None and ctx.subcommand_passed is None:
             raise commands.MissingRequiredArgument(
@@ -117,8 +117,7 @@ class Statistics:
 
     @coin.command(name="list")
     async def coin_list(self, ctx):
-        """Provides a list of possible coin names.
-        ```{0}coin list```"""
+        """Provides a list of possible coin names."""
         await ctx.neutral(
             """All coins names are in shorthand format.
 For a full list of coins, the orange text underneath the coin names [here](https://www.cryptocompare.com/coins/list/USD/1) is the key.
@@ -126,14 +125,9 @@ Full name support is incoming.""",
             rqst_by=False,
             timestamp=False)
 
-    @coin.command(name="day", aliases=["daily"])
-    async def coin_day(self,
-                       ctx,
-                       coin: UpperConv,
-                       currency: UpperConv = "USD",
-                       days: IntConv = 30):
-        """Creates a graph upon day information of a currencies.
-        ```{0}coin day <coin> [currency] [days]```"""
+    @coin.command(name="day", aliases=["daily", "days"])
+    async def coin_day(self, ctx, coin: UpperConv, currency: UpperConv = "USD", days: IntConv = 30):
+        """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("day", coin, currency, days)
             print('done')
@@ -141,28 +135,18 @@ Full name support is incoming.""",
                                                 days)
             await ctx.send(file=graph, embed=embed)
 
-    @coin.command(name="hour", aliases=["hourly"])
-    async def coin_hour(self,
-                        ctx,
-                        coin: UpperConv,
-                        currency: UpperConv = "USD",
-                        hours: IntConv = 6):
-        """Creates a graph upon day information of a currencies.
-        ```{0}coin hour <coin> [currency] [hours]```"""
+    @coin.command(name="hour", aliases=["hourly", "hours"])
+    async def coin_hour(self, ctx, coin: UpperConv, currency: UpperConv = "USD", hours: IntConv = 6):
+        """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("hour", coin, currency, hours)
             graph, embed = self.gen_graph_embed(data, "Hours", coin, currency,
                                                 hours)
             await ctx.send(file=graph, embed=embed)
 
-    @coin.command(name="minute")
-    async def coin_minute(self,
-                          ctx,
-                          coin: UpperConv,
-                          currency: UpperConv = "USD",
-                          minutes: IntConv = 60):
-        """Creates a graph upon day information of a currencies.
-        ```{0}coin minute <coin> [currency] [minutes]```"""
+    @coin.command(name="minute", aliases=["minutes"])
+    async def coin_minute(self, ctx, coin: UpperConv, currency: UpperConv = "USD", minutes: IntConv = 60):
+        """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("minute", coin, currency, minutes)
             graph, embed = self.gen_graph_embed(data, "Minutes", coin,

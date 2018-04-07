@@ -8,6 +8,7 @@ from custom_classes import KernBot
 
 
 class Errors:
+    """Error Handling"""
     def __init__(self, bot: KernBot):
         self.bot = bot
 

@@ -8,7 +8,8 @@ from discord.ext import commands
 from custom_classes import CreateDocumentation
 
 
-class DiscordPy:
+class Discord:
+    """Commands related to discord.py library"""
     documentation: Dict[str, dict]
 
     def __init__(self, bot):
@@ -29,7 +30,6 @@ class DiscordPy:
         To display the source code of a subcommand you can separate it by
         periods, e.g. tag.create for the create subcommand of the tag command
         or by spaces.
-        ```{0}source <command>```
         """
 
         source_url = 'https://github.com/Modelmat/Kern-Bot'
@@ -67,8 +67,7 @@ class DiscordPy:
     async def docs(self, ctx, obj):
         """Displays the documentation for a discord command.
         e.g `discord.User` is User, and `commands.Bot` is Bot
-        Note this is not paginated and is very spammy
-        ```{0}docs <object>```"""
+        Note this is not paginated and is currently very spammy"""
         try:
             obj = self.documentation[obj.lower()]
         except KeyError:
@@ -80,4 +79,4 @@ class DiscordPy:
 
 
 def setup(bot):
-    bot.add_cog(DiscordPy(bot))
+    bot.add_cog(Discord(bot))

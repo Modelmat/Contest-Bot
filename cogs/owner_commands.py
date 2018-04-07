@@ -26,7 +26,7 @@ class Owner:
     @commands.command(hidden=True)
     async def update_lib(self, ctx):
         await self.bot.pull_remotes()
-        await ctx.send("""Instigate Pull Request. To update;
+        await ctx.send("""Instigated Pull Request. To update;
 ```pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]```""")
 
     @commands.group(hidden=True)
@@ -82,8 +82,7 @@ class Owner:
 
     @commands.command(hidden=True, name="eval", aliases=['exec'])
     async def k_eval(self, ctx, *, body: str):
-        """Evaluates code
-        ```{0}eval <code>```"""
+        """Evaluates code"""
 
         def cleanup_code(content):
             if content.startswith('```') and content.endswith('```'):

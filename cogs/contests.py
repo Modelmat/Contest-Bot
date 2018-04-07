@@ -41,21 +41,7 @@ class Contests:
                 rqst_by=False)
 
     def generate_embed(self, message_author: discord.User, title, description, image_url=None, colour=0x00ff00):
-        """Generates a discord embed object off the given parameters
-
-        Arguments:
-            message_author {discord.User} -- Allows for the mention and user's logo to be added to the embed
-            title {string} -- Title of the embed, the first heading
-            description {string} -- The description of this object
-            footer_text {string} -- The text shown in the footer, usually for commands that operate upon this
-
-        Keyword Arguments:
-            colour {hex} -- Used for the bar on the left's colour (default: {0x00ff00} -- green)
-            image_url {string} -- The image shown at the bottom of the embed. (default: {""} -- no image)
-
-        Returns:
-            [discord.Embed] -- The embed object generated.
-        """
+        """Generates a discord embed object off the given parameters"""
         embed = discord.Embed(title=title, description=description, colour=colour)
         embed.set_author(name=f"Author: {message_author.display_name}", icon_url=message_author.avatar_url)
         if image_url is not None:
@@ -65,8 +51,7 @@ class Contests:
 
     @commands.command()
     async def submit(self, ctx, *, args):
-        """Submits an item into a contest. Please note the spaces.
-        ```{0}submit <title> | <description> | [imageURL]```"""
+        """Submits an item into a contest. Please note the spaces."""
         input_split = tuple(args.split(" | "))
         if len(input_split) == 1:
             raise TypeError("submit missing 2 required positional arguments: 'description' and 'image_url'")
@@ -135,8 +120,7 @@ class Contests:
     @commands.check(manage_server_check)
     @commands.command()
     async def clear(self, ctx, submission_id: int):
-        """Allows for users with manage_server perms to remove submissions that are deemed invalid
-        ```{0}clear <submission_id>```"""
+        """Allows for users with manage_server perms to remove submissions that are deemed invalid"""
         await self.bot.database.clear_contest_submission(ctx, submission_id)
         await ctx.success(f"Submission with id {submission_id} successfully deleted.")
 

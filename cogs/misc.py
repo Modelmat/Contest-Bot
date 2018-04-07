@@ -44,6 +44,7 @@ class Misc:
 
     @commands.command()
     async def codestats(self, ctx):
+        """Provides information about the bot's code"""
         line_count = 0
         cog_count = 0
         files = [f for f in os.listdir(".") if ".py" in f] + ["cogs/" + f for f in os.listdir("cogs") if ".py" in f]
@@ -101,8 +102,7 @@ class Misc:
     @commands.command()
     async def raw(self, ctx, *, message=None):
         """Displays the raw code of a message.
-        The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you).
-        ```{0}raw <message>```"""
+        The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
         msg = None
         if message is not None:
             msg = await ctx.get_message(int(message))
@@ -195,8 +195,7 @@ class Misc:
     @commands.group(name="hash")
     async def _hash(self, ctx, hash_type, *, text):
         """Hashes a string of text
-        Hasers are: sha256, sha512, sha1, md5
-        ```{0}hash <hasher> <text>```"""
+        Hasers are: sha256, sha512, sha1, md5"""
         hash_types = ["sha256", "sha512", "sha1", "md5"]
         if hash_type in hash_types:
             hasher = eval(f"hashlib.{hash_type}")
@@ -234,16 +233,14 @@ class Misc:
 
     @commands.command(hidden=True)
     async def echo(self, ctx, *, text: commands.clean_content):
-        """Echoes the text sent
-        ```{0}echo <text>```"""
+        """Echoes the text sent"""
         await ctx.send(text)
 
     @commands.command()
     async def snowflake(self, ctx, snowflake: int):
         """Converts snowflake id into creation date.
         Bot requires no knowledge of user/emoji/guild/channel.
-        Provides date in D/M/Y format
-        ```{0}snowflake <id>```"""
+        Provides date in D/M/Y format"""
         try:
             timestamp = int(f"{snowflake:b}" [:-22], 2) + 1420070400000
             date = datetime.utcfromtimestamp(float(timestamp) / 1000)
@@ -273,8 +270,7 @@ class Misc:
 
     @commands.command(name="help")
     async def _help(self, ctx, *, command: str = None):
-        """Shows this message.
-        ```{0}help [command]```"""
+        """Shows this message."""
         cogs_dict = self.make_commands(ctx)
         embed = discord.Embed(color=discord.Colour.green())
         if command is None:
@@ -293,14 +289,16 @@ class Misc:
         elif command.lower() in [cog.lower() for cog in cogs_dict.keys()]:
             # actually a cog
             command = command.capitalize()
-            embed.description = inspect.cleandoc(
-                self.bot.get_cog(command).__doc__)
+            try:
+                embed.description = inspect.cleandoc(self.bot.get_cog(command).__doc__)
+            except AttributeError:
+                pass
             for cmd in self.bot.get_cog_commands(command):
                 if not cmd.hidden:
                     if cmd.help is None:
                         c_help = "No description"
                     else:
-                        c_help = cmd.help.format(ctx.clean_prefix())
+                        c_help = f"{cmd.help.format(ctx.clean_prefix())} ```{cmd.signature}```"
                     embed.add_field(
                         name=cmd.qualified_name, value=c_help, inline=False)
 
@@ -309,18 +307,15 @@ class Misc:
             if command.help is None:
                 command_help = "No description"
             else:
-                command_help = command.help.format(ctx.clean_prefix())
+                command_help = f"{command.help.format(ctx.clean_prefix())} ```{command.signature}```"
             embed.description = command_help
-            if command.aliases:
-                embed.add_field(
-                    name="Aliases", value=", ".join(command.aliases))
             if isinstance(command, commands.Group):
                 for cmd in command.commands:
                     if not cmd.hidden:
                         if cmd.help is None:
                             c_help = "No description"
                         else:
-                            c_help = cmd.help.format(ctx.clean_prefix())
+                            c_help = f"{cmd.help.format(ctx.clean_prefix())} ```{cmd.signature}```"
                         embed.add_field(
                             name=cmd.qualified_name,
                             value=c_help,
