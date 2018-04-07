@@ -181,18 +181,27 @@ async def on_message(message: discord.Message):
 
 @commands.is_owner()
 @bot.command(name="reload", hidden=True)
-async def reload_cog(ctx, cog_name: str):
+async def reload_cog(ctx, *cog_names: str):
     """Reload the cog `cog_name`"""
-    try:
-        bot.unload_extension("cogs." + cog_name)
-        print("Cog unloaded.", end=' | ')
-        bot.load_extension("cogs." + cog_name)
-        print("Cog loaded.")
-    except ModuleNotFoundError:
-        await ctx.error(f"Cog {cog_name} not found.", "")
-    else:
-        await ctx.send("Cog `{}` successfully reloaded.".format(cog_name))
+    good = []
+    bad = []
+    for cog_name in cog_names:
+        try:
+            bot.unload_extension("cogs." + cog_name)
+            print("Cog unloaded.", end=' | ')
+            bot.load_extension("cogs." + cog_name)
+            print("Cog loaded.")
+            good.append(cog_name)
+        except:
+            bad.append(cog_name)
+            traceback.print_exc()
 
+    string = f"{len(good)} cog(s) reloaded successfully."
+    if good:
+        string += "\n**Success:**\n" + "\n".join(good)
+    if bad:
+        string += "\n**Fail:**\n" + "\n".join(bad)
+    await ctx.neutral(string)
 
 loop = asyncio.get_event_loop()
 try:
