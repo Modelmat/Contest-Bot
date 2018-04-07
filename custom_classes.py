@@ -241,19 +241,6 @@ class CustomContext(commands.Context):
         return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, *args,
                                   **kwargs)
 
-    async def send(self, content: str = None, *, tts=False, embed=None, file=None, files=None, delete_after=None, nonce=None):
-        if content:
-            contents = list(chunks(str(content), 1900))
-            do_it = bool("```" in contents[-1])
-            for cnt in contents[:-1]:
-                cnt = replace_backticks(cnt, do_it)
-                await super().send(cnt, delete_after=delete_after, tts=tts, nonce=nonce)
-            contents[-1] = replace_backticks(contents[-1], do_it)
-            return await super().send(
-                contents[-1], tts=tts, embed=embed, file=file, files=files, delete_after=delete_after, nonce=nonce)
-        return await super().send(
-            content=content, tts=tts, embed=embed, file=file, files=files, delete_after=delete_after, nonce=nonce)
-
 
 class Url(commands.Converter):
     async def convert(self, ctx, argument):
