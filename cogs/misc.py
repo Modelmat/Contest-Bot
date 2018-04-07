@@ -151,53 +151,45 @@ class Misc:
         await ctx.send("Pong. Time taken: `{:.0f}ms`".format(
             self.bot.latency * 1000))
 
-    def get_uptime(self):
+    @property
+    def uptime(self):
         delta_uptime = datetime.utcnow() - self.bot.launch_time
         hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
         minutes, seconds = divmod(remainder, 60)
         days, hours = divmod(hours, 24)
         output = str()
         if days > 0:
-            output += "{} days\n".format(days)
+            output += "{} days, ".format(days)
         if hours > 0:
-            output += "{} hours\n".format(hours)
+            output += "{} hours, ".format(hours)
         if minutes > 0:
-            output += "{} minutes\n".format(minutes)
+            output += "{} minutes, ".format(minutes)
         if seconds > 0:
-            output += "{} seconds\n".format(seconds)
+            output += "{} seconds".format(seconds)
         return output
 
-    @commands.command(aliases=['stats'])
+    @commands.command(aliases=['stats', 'about'])
     async def info(self, ctx):
         """Returns information about the bot."""
-        total_members = sum(1 for _ in self.bot.get_all_members())
-        total_servers = len(self.bot.guilds)
-        total_channels = sum(1 for _ in self.bot.get_all_channels())
-        cpu_usage = self.process.cpu_percent() / psutil.cpu_count()
-        ram_usage = self.process.memory_full_info().uss / 1024**2
         invite_url = f"https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&scope=bot"
-        embed = discord.Embed(
-            description=
-            f"[Invite URL]({invite_url})\n[Server Invite](https://discord.gg/nHmAkgg)\n[Bot Website](http://kern-bot.tk/)\n{self.bot.description}",
-            color=0x00ff00)
-        embed.set_author(
-            name=self.bot.owner, icon_url=self.bot.owner.avatar_url)
-        embed.add_field(
-            name="#\u20e3 Server Statistics:",
-            value="**Guilds**: {}\n**Channels**: {}\n**Users**: {}".format(
-                total_servers, total_channels, total_members))
-        embed.add_field(
-            name="🔌 Resource Usage:",
-            value="CPU: {:.2f} %\nRAM: {:.2f} MiB".format(
-                cpu_usage, ram_usage))
-        embed.add_field(name="⏰ Uptime:", value=self.get_uptime())
-        embed.add_field(
-            name="Running On:",
-            value=f"""<:python:416194389853863939>: {python_version()}
-<:discord:416194942520786945>: {get_distribution('discord.py').version} [discord.py]
-<:git:417177301244051525>: {self.bot.latest_commit} [Up-To-Date: {self.bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}]"""
-        )
+        embed = discord.Embed(description=self.bot.description, colour=0x00ff00)
+        embed.set_author(name=self.bot.owner, icon_url=self.bot.owner.avatar_url)
+        embed.description += f"""
+
+**Bot Details**
+<:channels:432082250465804289> **Channels** {sum(1 for _ in self.bot.get_all_channels())}
+<:servers:432077842285854720> **Servers** {len(self.bot.guilds)}
+<:members:432082250436444162> **Members** {sum(1 for _ in self.bot.get_all_members())} 
+<:ram:432080886985654273> **RAM Usage** {self.process.memory_full_info().uss / 1024**2} MB
+<:cpu:432077839228076033> **CPU Usage** {self.process.cpu_percent() / psutil.cpu_count()} % 
+<:uptime:432082654335336457> **Uptime** {self.uptime}
+<:python:416194389853863939> **Python** {python_version()}
+<:discord:416194942520786945> **Discord.py** {get_distribution('discord.py').version}
+<:git:417177301244051525> **Git** {self.bot.latest_commit} [Up-To-Date: {self.bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}]
+"""
+        embed.add_field(name="Links", value=f"[Invite URL]({invite_url})\n[Server Invite](https://discord.gg/nHmAkgg)\n[Bot Website](http://kern-bot.tk/)")
         embed.timestamp = datetime.utcnow()
+        embed.set_footer(text="Hover over emojis")
         await ctx.send(embed=embed)
 
     @commands.command()
