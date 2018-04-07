@@ -80,7 +80,7 @@ async def on_guild_join(guild: discord.Guild):
                                       datetime.utcnow().strftime('%H:%M:%S UTC')),
         colour=discord.Colour.green(),
         timestamp=datetime.utcnow())
-    await bot.get_channel(bot.logs).send(embed=e)
+    await bot.logs.send(embed=e)
     await bot.update_dbots_server_count(dbl_token)
 
 
@@ -91,7 +91,7 @@ async def on_guild_remove(guild: discord.Guild):
                                     datetime.utcnow().strftime('%H:%M:%S UTC')),
         colour=discord.Colour.red(),
         timestamp=datetime.utcnow())
-    await bot.get_channel(bot.logs).send(embed=e)
+    await bot.logs.send(embed=e)
     await bot.update_dbots_server_count(dbl_token)
 
 
