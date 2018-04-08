@@ -14,12 +14,6 @@ class Discord:
 
     def __init__(self, bot):
         self.bot = bot
-        self.documentation = {}
-        bot.loop.create_task(self.__ainit__())
-
-    async def __ainit__(self):
-        self.documentation = await CreateDocumentation().generate_documentation()
-        print('Got Docs')
 
     async def __local_check(self, ctx):
         return "discord" in ctx.guild.name or await ctx.bot.is_owner(ctx.author)
@@ -69,11 +63,15 @@ class Discord:
         e.g `discord.User` is User, and `commands.Bot` is Bot
         Note this is not paginated and is currently very spammy"""
         try:
-            obj = self.documentation[obj.lower()]
+            obj = self.bot.documentation[obj.lower()]
         except KeyError:
             return await ctx.error(f"Object `{obj}` does not exist", "No Documentation Found")
-        em = discord.Embed(title=f"*{obj['type']}* {obj['name']}{obj['arguments']}", description=obj["description"],
-                           url=obj["url"])
+        em = discord.Embed()
+        em.description = f"""
+**[*{obj['type']}* {obj['name']}{obj['arguments']}]({obj["url"]})**
+
+{obj["description"]}
+        """
         msg = await ctx.send(embed=em)
         # implement pagination
 

@@ -69,6 +69,7 @@ class KernBot(commands.Bot):
         self.owner = None
         self.latest_message_time = None
         self.latest_commit = None
+        self.documentation = {}
         self.prefixes_cache = {}
 
         self.launch_time = datetime.utcnow()
@@ -103,6 +104,7 @@ class KernBot(commands.Bot):
 
         await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
         # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
+        self.documentation = await CreateDocumentation().generate_documentation()
 
     async def download_xml(self, link):
         xml = BytesIO()
