@@ -101,4 +101,5 @@ ENV/
 .mypy_cache/
 
 *secret*
-vscode./
+.vscode/
+workspace.xml

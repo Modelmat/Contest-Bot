@@ -226,6 +226,7 @@ class Internet:
 ```{}```
 **End result**: 
 {}""".format(ctx.author, "\n".join([aiogoogletrans.LANGUAGES[l] for l in langs]), result.text))
+        ctx.command.reset_cooldown()
 
 
 def setup(bot):
