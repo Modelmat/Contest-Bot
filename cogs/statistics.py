@@ -7,7 +7,7 @@ import async_timeout
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from fuzzyfinder.main import fuzzyfinder
+from fuzzywuzzy import process
 
 import discord
 from discord.ext import commands
@@ -188,10 +188,9 @@ Full name support is incoming.""",
             em = discord.Embed(
                 title="Unknown Location",
                 description=f"🏙 `{location}` not found.")
-            locations = list(
-                fuzzyfinder(location.lower(), self.bot.weather.keys()))
-            if locations:
-                em.add_field(name="Did you mean?", value=locations[0])
+            location = process.extractOne(location.lower(), self.bot.weather.keys())
+            if location[1] > 75:
+                em.add_field(name="Did you mean?", value=location[0])
             return await ctx.send(embed=em)
 
         place = loc['description']

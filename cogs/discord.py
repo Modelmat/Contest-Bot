@@ -5,7 +5,7 @@ from typing import Dict
 import discord
 from discord.ext import commands
 
-from fuzzyfinder.main import fuzzyfinder
+from fuzzywuzzy import process
 
 class Discord:
     """Commands related to discord.py library"""
@@ -62,13 +62,14 @@ class Discord:
         e.g `discord.User` is User, and `commands.Bot` is Bot
         Note this is not paginated and is currently very spammy"""
         try:
-            objs = list(fuzzyfinder(obj.lower(), self.bot.documentation.keys()))
+            objs = [o[0] for o in process.extract(obj.lower(), self.bot.documentation.keys()) if o[1] > 75]
             obj = self.bot.documentation[obj]
         except KeyError:
             op = ""
-            if len(objs) > 1:
-                op = "\n**Did you mean:**\n\n- {}".format("\n- ".join([f"[{o}]({self.bot.documentation[o]['url']}])"
-                                                                     for o in objs[:5]]))
+            if objs:
+                op = "\n**Did you mean:**\n\n- {}".format("\n- ".join(
+                     [f"[{o}]({self.bot.documentation[o]['url']}])" for o in objs]
+                ))
             return await ctx.error(f"Object `{obj}` does not exist{op}", "No Documentation Found")
         em = discord.Embed()
         em.description = f"""

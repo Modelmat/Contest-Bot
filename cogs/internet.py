@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from tabulate import tabulate
 import aiogoogletrans
 
-from fuzzyfinder.main import fuzzyfinder
+from fuzzywuzzy import process
 
 import discord
 from discord.ext import commands
@@ -124,15 +124,15 @@ class Internet:
             demotivators = await self.get_demotivators()
             dem = demotivators.get(search_term)
             if dem is None:
-                sugs = list(fuzzyfinder(search_term, demotivators.keys()))
-                if not sugs:
+                fuzzy = process.extractOne(search_term, demotivators.keys())
+                if fuzzy[1] < 75:
                     return await ctx.error("No demotivator found.")
-                dem = demotivators.get(sugs[0])
+                dem = demotivators.get(fuzzy[0])
             e = discord.Embed(colour=discord.Colour.green(), description=dem['quote'])
             e.set_author(
                 name=dem['title'],
                 url=dem['product_url'],
-                icon_url="http://cdn.shopify.com/s/files/1/0535/6917/t/29/assets/favicon.png?3483196325227810892",
+                icon_url="http://cdn.shopify.com/s/files/1/0535/6917/t/29/assets/favicon.png",
             )
             e.set_footer(
                 text="Data from Despair, Inc",
