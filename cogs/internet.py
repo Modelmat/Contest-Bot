@@ -135,7 +135,7 @@ class Internet:
                 icon_url="http://cdn.shopify.com/s/files/1/0535/6917/t/29/assets/favicon.png?3483196325227810892",
             )
             e.set_footer(
-                text="Data from Despair, Inc • Requested by: {}".format(ctx.message.author),
+                text="Data from Despair, Inc",
                 icon_url=ctx.message.author.avatar_url)
             e.timestamp = datetime.utcnow()
             e.set_image(url=dem['img_url'])
@@ -205,7 +205,7 @@ class Internet:
     async def translate(self, ctx, *, text):
         """Translates text to 10 random languages then back to English."""
         async with ctx.typing():
-            text = text[:500]
+            text = text[:900]
             langs = []
             prevlang = (await self.translator.translate(text)).src
             if "zh" in prevlang:
@@ -217,7 +217,7 @@ class Internet:
                 langs.append(language)
                 prevlang = language
             result = await self.translator.translate(text, dest="en")
-            if len(result.text + text) > 1980:
+            if len(result.text) > 1900:
                 result.text = await ctx.upload(result.text)
             else:
                 result.text = "```" + result.text + "```"

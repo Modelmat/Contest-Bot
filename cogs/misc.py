@@ -327,11 +327,8 @@ class Misc:
                                    "")
 
         embed.timestamp = datetime.utcnow()
-        embed.set_author(
-            name=str(command).capitalize(), url="https://discord.gg/nHmAkgg")
-        embed.set_footer(
-            text="Requested by: {}".format(ctx.message.author),
-            icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name=str(command).capitalize(),
+                         url="https://discord.gg/nHmAkgg")
         await ctx.send(embed=embed)
 
 
