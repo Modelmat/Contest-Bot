@@ -126,12 +126,13 @@ class Misc:
             embed_text += "*Message has {} embed(s).*".format(len(msg.embeds))
         embed = discord.Embed(
             description=raw + embed_text,
-            timestamp=datetime.utcnow(),
-            colour=discord.Colour.blurple())
+            timestamp=msg.created_at,
+            colour=0x36393E)
         embed.set_author(
             name="Message by: {}".format(msg.author),
             icon_url=msg.author.avatar_url)
-        await ctx.send(f"Message by: {msg.author}\n{raw} {embed_text}")
+        embed.set_footer(text="Sent")
+        await ctx.send(embed=embed)
 
     @raw.error
     async def raw_error_handler(self, ctx, error):
