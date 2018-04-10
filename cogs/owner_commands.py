@@ -139,13 +139,14 @@ class Owner:
             value = stdout.getvalue()
             await ctx.add_reaction("👍")
             await ctx.del_reaction(loading_emoji)
-
+            if value:
+                value = repr(value)
             if ret is None:
                 if value:
-                    await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{rep(value)}```")
+                    await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{value}```")
             else:
                 self._last_result = ret
-                await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{repr(value)}{repr(ret)}```")
+                await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{value}{repr(ret)}```")
 
             try:
                 await ctx.message.delete()
