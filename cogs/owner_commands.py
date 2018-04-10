@@ -142,10 +142,10 @@ class Owner:
 
             if ret is None:
                 if value:
-                    await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{value}```")
+                    await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{rep(value)}```")
             else:
                 self._last_result = ret
-                await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{value}{ret}```")
+                await ctx.send(f"**Input:**\n```py\n{body}```\n**Returns:**```py\n{repr(value)}{repr(ret)}```")
 
             try:
                 await ctx.message.delete()
