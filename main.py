@@ -13,41 +13,44 @@ import custom_classes as cc
 
 
 # update: pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]
-async def server_prefix(bots: cc.KernBot, message):
-    if not message.guild:
-        return bots.prefix
+def server_prefix(bot_prefixes: list):
+    async def prefix(bots: cc.KernBot, message: discord.Message):
+        if not message.guild:
+            return commands.when_mentioned_or(*bot_prefixes)(bots, message)
 
-    if bots.prefixes_cache.get(message.guild.id) is None:
-        guild_prefixes = await bots.database.get_prefixes(message)
-        bots.prefixes_cache[message.guild.id] = list(set(guild_prefixes))
+        if bots.prefixes_cache.get(message.guild.id) is None:
+            guild_prefixes = await bots.database.get_prefixes(message)
+            bots.prefixes_cache[message.guild.id] = list(set(guild_prefixes))
 
-    prefixes = []
+        prefixes = []
 
-    for prefix in [bots.prefix, *bots.prefixes_cache[message.guild.id]]:
-        prefixes.append(prefix + " ")
-        prefixes.append(prefix.upper() + "")
-        prefixes.append(prefix)
-        prefixes.append(prefix.upper())
+        for prefix in [*bot_prefixes, *bots.prefixes_cache[message.guild.id]]:
+            prefixes.append(prefix + " ")
+            prefixes.append(prefix.upper() + "")
+            prefixes.append(prefix)
+            prefixes.append(prefix.upper())
 
-    return commands.when_mentioned_or(*prefixes)(bots, message)
+
+        return commands.when_mentioned_or(*prefixes)(bots, message)
+
+    return prefix
 
 
 try:
     token = environ["AUTH_KEY"]
     name = environ["BOT_NAME"]
-    bot_prefix = environ["BOT_PREFIX"]
+    bot_prefixes = environ["BOT_PREFIX"].split(", ")
     dbl_token = environ["DBL_TOKEN"]
 except KeyError:
     with open("client.secret", encoding="utf-8") as file:
         lines = [l.strip() for l in file]
         token = lines[0]
         name = lines[3]
-        bot_prefix = lines[4]
+        bot_prefixes = lines[4].split(", ")
         dbl_token = lines[5]
 
 bot = cc.KernBot(
-    bot_prefix,
-    command_prefix=server_prefix,
+    command_prefix=server_prefix(bot_prefixes),
     case_insensitive=True,
     description="Multiple functions, including contests, definitions, and more.",
     activity=discord.Game(name="Start-up 101"))
