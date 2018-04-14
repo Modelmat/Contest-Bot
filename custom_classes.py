@@ -4,7 +4,7 @@ from signal import SIGTERM
 import sys
 from os import listdir
 from os.path import isfile, join
-from datetime import datetime
+from datetime import datetime, timedelta
 import asyncio
 from concurrent.futures import FIRST_COMPLETED
 from random import choice
@@ -68,6 +68,7 @@ class KernBot(commands.Bot):
         self.owner = None
         self.latest_message_time = None
         self.latest_commit = None
+        self.obama_is_up = (datetime.utcnow() - timedelta(days=1), True)
         self.documentation = {}
         self.prefixes_cache = {}
         self.weather = {}
@@ -189,9 +190,6 @@ class KernBot(commands.Bot):
             async with self.session.get("https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63"):
                 pass
 
-    class ResponseError(Exception):
-        pass
-
 
 class CustomContext(commands.Context):
     async def paginator(self, num_entries, max_fields=5, base_embed=discord.Embed()):
@@ -214,7 +212,7 @@ class CustomContext(commands.Context):
         except discord.Forbidden:
             pass
 
-    async def __embed(self, title, description, colour, rqst_by, timestamp, channel, *args, **kwargs):
+    async def __embed(self, title, description, colour, rqst_by, timestamp, channel, footer, **kwargs):
         e = discord.Embed(colour=colour)
         if title is not None:
             e.title = str(title)
@@ -222,28 +220,29 @@ class CustomContext(commands.Context):
             e.description = str(description)
         if rqst_by:
             e.set_footer(icon_url=self.message.author.avatar_url)
+        if footer:
+            e.set_footer(text=footer)
         if timestamp:
             e.timestamp = datetime.utcnow()
         if channel is None:
-            return await self.send(embed=e, *args, **kwargs)
-        return await channel.send(embed=e, *args, **kwargs)
+            return await self.send(embed=e, **kwargs)
+        return await channel.send(embed=e, **kwargs)
 
-    async def error(self, error, title="Error:", *args, channel: discord.TextChannel = None, **kwargs):
+    async def error(self, error, title="Error:", channel: discord.TextChannel=None, footer=None, **kwargs):
         if isinstance(error, Exception):
             if title == "Error:":
                 title = error.__class__.__name__
             error = str(error)
-        return await self.__embed(title, error, discord.Colour.red(), False, False, channel, *args, **kwargs)
+        return await self.__embed(title, error, discord.Colour.red(), False, False, channel, footer, **kwargs)
 
-    async def success(self, success, title="Success:", *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
-        return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp, channel, *args, **kwargs)
+    async def success(self, success, title="Success:", channel: discord.TextChannel = None, rqst_by=True, timestamp=True, footer=None, **kwargs):
+        return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp, channel, footer, **kwargs)
 
-    async def neutral(self, text, title=None, *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
-        return await self.__embed(title, text, 0x36393E, rqst_by, timestamp, channel, *args, **kwargs)
+    async def neutral(self, text, title=None, channel: discord.TextChannel=None, rqst_by=True, timestamp=True, footer=None, **kwargs):
+        return await self.__embed(title, text, 0x36393E, rqst_by, timestamp, channel, footer, **kwargs)
 
-    async def warning(self, warning, title=None, *args, channel: discord.TextChannel = None, rqst_by=True, timestamp=True, **kwargs):
-        return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, *args,
-                                  **kwargs)
+    async def warning(self, warning, title=None, channel: discord.TextChannel=None, rqst_by=True, timestamp=True, footer=None, **kwargs):
+        return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, footer, **kwargs)
 
     async def upload(self, content):
         async with self.bot.session.post("http://mystb.in/documents", data=content) as r:

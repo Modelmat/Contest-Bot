@@ -1,7 +1,7 @@
 import random
 from asyncio import sleep, TimeoutError as a_TimeoutError
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import sample
 
 import async_timeout
@@ -28,6 +28,14 @@ def gen_data():
     open_data = [data[0:3] for data in table_data if data[2]]
     open_ports = ", ".join([str(data[0]) for data in open_data if data[2] == "true"])
     return table_data, table, open_ports, open_data
+
+async def is_obama_up(ctx):
+    if ctx.bot.obama_is_up[0] + timedelta(minutes=10) > datetime.utcnow():
+        with async_timeout.timeout(5):
+            async with ctx.bot.session.post(
+                    url="http://talkobamato.me/synthesize.py", data={"input_text": "Is talkobamato.me up?"}) as resp:
+                ctx.bot.obama_is_up = (datetime.utcnow(), resp.status < 400)
+    return ctx.bot.obama_is_up[1]
 
 
 class Internet:
@@ -165,24 +173,22 @@ class Internet:
         # Now do fake atatck on unsecure port (note, add a RFC 1149 reference)
 
     async def create_video(self, text):
-        with async_timeout.timeout(20):
+        with async_timeout.timeout(10):
             async with self.bot.session.post(
                     url="http://talkobamato.me/synthesize.py", data={"input_text": text}) as resp:
                 if resp.status >= 400:
-                    raise self.bot.ResponseError(f"Obama responded with status {resp.status}")
-                text = await resp.text()
+                    raise discord.HTTPException(resp, f"{resp.url} returned error code {resp.status}")
                 url = resp.url
 
-        while '<source src="' not in text:
-            with async_timeout.timeout(10):
-                async with self.bot.session.get(url) as resp:
-                    text = await resp.text()
-
-        start = text.index('<source src="') + len('<source src="')
-        end = text.index('" type="video/mp4">')
-        link = "http://talkobamato.me/" + text[start:end]
+        key = url.query['speech_key']
+        link = f"http://talkobamato.me/synth/output/{key}/obama.mp4"
+        with async_timeout.timeout(10):
+            async with self.bot.session.get(link) as resp:
+                if resp.status >= 400:
+                    raise discord.HTTPException(resp, f"{resp.url} returned error code {resp.status}")
         return link
 
+    @commands.check(is_obama_up)
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
     async def obama(self, ctx, *, text: str):
@@ -198,8 +204,13 @@ class Internet:
     async def obama_error_handler(self, ctx, error):
         error = getattr(error, "original", error)
         if isinstance(error, a_TimeoutError):
-            await ctx.error("Obama server is not responding.", "Request Timed Out")
-        else:  # includes bot response error
+            await ctx.error("http://talkobamato.me/ is not responding.", "Request Timed Out")
+        elif isinstance(error, discord.HTTPException):
+            await ctx.error(error.text, error.response.reason, footer="Don't worry. We just propogate this error from the server.")
+            ctx.bot.obama_is_up = (datetime.utcnow(), False)
+        elif isinstance(error, commands.CheckFailure):
+            await ctx.error("http://talkobamato.me/ is currently down.", "Command Disabled")
+        else:
             await ctx.error(error)
 
     @commands.cooldown(1, 5, commands.BucketType.channel)

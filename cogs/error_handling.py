@@ -33,9 +33,6 @@ class Errors:
         elif isinstance(error, asyncio.TimeoutError):
             await ctx.error("The internet is gone?!?!?!?", "Timeout Error")
 
-        elif isinstance(error, self.bot.ResponseError):
-            await ctx.error(error, "Response Code > 400:")
-
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)} seconds",
                             "Command on Cooldown")
