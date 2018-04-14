@@ -14,7 +14,13 @@ pip-delete-this-directory.txt
 venv/
 ENV/
 
+# secret files
 *secret*
+
+# ide files
 .vscode/
 workspace.xml
-.idea/shelf
+.idea/
+
+# windows retarded files
+Thumbs.db
