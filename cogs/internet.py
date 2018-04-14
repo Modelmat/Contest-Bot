@@ -141,6 +141,7 @@ class Internet:
             e.set_image(url=dem['img_url'])
             await ctx.send(embed=e)
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(hidden=True)
     async def hack(self, ctx, *, url: cc.Url):
         """Starts a fake hacking instance on a specified URL."""
@@ -182,6 +183,7 @@ class Internet:
         link = "http://talkobamato.me/" + text[start:end]
         return link
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
     async def obama(self, ctx, *, text: str):
         """Makes obama speak."""
