@@ -106,7 +106,7 @@ ENV/
 # ide files
 .vscode/
 workspace.xml
-.idea/shelf
+.idea/
 
 # windows retarded files
 Thumbs.db
