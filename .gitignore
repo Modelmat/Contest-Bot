@@ -100,7 +100,13 @@ ENV/
 # mypy
 .mypy_cache/
 
+# secret files
 *secret*
+
+# ide files
 .vscode/
 workspace.xml
 .idea/shelf
+
+# windows retarded files
+Thumbs.db
