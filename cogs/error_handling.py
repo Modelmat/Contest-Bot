@@ -1,11 +1,16 @@
 import asyncio
+import cgitb
+import os
 import traceback
+import webbrowser
 
+import aiofiles
 import discord
 from discord.ext import commands
 
 from custom_classes import KernBot
 
+cgitb.enable()
 
 class Errors:
     """Error Handling"""
@@ -39,7 +44,7 @@ class Errors:
 
         else:
             # add more detailed debug
-            await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
+            # await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
 
             await self.bot.logs.send("""
 **Command:** {}
@@ -48,8 +53,20 @@ class Errors:
 **Guild: ** {}
 ```py\n{}```
             """.format(ctx.command,
-                       type(error).__qualname__, ctx.author, ctx.guild, "".join(
-                           traceback.format_exception(type(error), error, error.__traceback__))))
+                       type(error).__qualname__,
+                       ctx.author,
+                       ctx.guild, "".join(traceback.format_exception(type(error),
+                                                                     error,
+                                                                     error.__traceback__)
+                                          )))
+            traceback.print_exception(type(error), error, error.__traceback__)
+
+            if self.bot.testing:
+                async with aiofiles.open("error.html", mode="w") as f:
+                    await f.write(cgitb.html((type(error), error, error.__traceback__)))
+                webbrowser.open_new_tab(f"file://{os.path.realpath('error.html')}")
+                await asyncio.sleep(5)
+                await self.bot.loop.run_in_executor(None, os.remove, "error.html")
 
 
 def setup(bot: commands.Bot):

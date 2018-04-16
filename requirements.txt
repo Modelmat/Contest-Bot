@@ -13,3 +13,4 @@ matplotlib==2.1.2
 aioftp==0.10.1
 xmljson==0.1.9
 aiogoogletrans==3.0
+aiofiles==0.3.2
