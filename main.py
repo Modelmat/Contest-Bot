@@ -191,12 +191,13 @@ async def reload_cog(ctx, *cog_names: str):
     for cog_name in cog_names:
         try:
             bot.unload_extension("cogs." + cog_name)
-            print("Cog unloaded.", end=' | ')
+            print(f"{cog_name} unloaded.", end=' | ')
             bot.load_extension("cogs." + cog_name)
-            print("Cog loaded.")
+            print(f"{cog_name} loaded.")
             good.append(cog_name)
         except:
             bad.append(cog_name)
+            print(f"{cog_name} failed to load")
             traceback.print_exc()
 
     string = f"{len(good)} cog(s) reloaded successfully."
