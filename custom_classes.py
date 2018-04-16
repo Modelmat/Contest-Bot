@@ -62,7 +62,8 @@ def replace_backticks(content, do_it):
 
 
 class KernBot(commands.Bot):
-    def __init__(self, debug=False, *args, **kwargs):
+    def __init__(self, testing=False, debug=False, *args, **kwargs):
+        self.testing = testing
 
         self.session = None
         self.owner = None

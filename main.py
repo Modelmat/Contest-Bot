@@ -41,8 +41,10 @@ try:
     name = environ["BOT_NAME"]
     bot_prefixes = environ["BOT_PREFIX"].split(", ")
     dbl_token = environ["DBL_TOKEN"]
+    testing = False
 except KeyError:
     with open("client.secret", encoding="utf-8") as file:
+        testing = True
         lines = [l.strip() for l in file]
         token = lines[0]
         name = lines[3]
@@ -53,7 +55,8 @@ bot = cc.KernBot(
     command_prefix=server_prefix(bot_prefixes),
     case_insensitive=True,
     description="Multiple functions, including contests, definitions, and more.",
-    activity=discord.Game(name="Start-up 101"))
+    activity=discord.Game(name="Start-up 101"),
+    testing=testing)
 
 
 async def load_extensions(bots):
