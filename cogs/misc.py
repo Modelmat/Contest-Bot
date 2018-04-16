@@ -264,7 +264,7 @@ class Misc:
         for cmd in self.bot.commands:
             if cmd.cog_name is None and not cmd.hidden and cmd.can_run(ctx):
                 cogs_dict['No Category'] = cogs_dict.get(
-                    'No Category', []) + [[cmd.name] + cmd.aliases]
+                    'No Category', []) + [cmd.name]
         cogs_dict = OrderedDict(
             [(key, val) for key, val in cogs_dict.items() if val])
         return cogs_dict
