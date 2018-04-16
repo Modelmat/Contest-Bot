@@ -24,7 +24,7 @@ def server_prefix(bot_prefixes: list):
 
         prefixes = []
 
-        for prefix in [*bot_prefixes, *bots.prefixes_cache[message.guild.id]]:
+        for prefix in sorted([*bot_prefixes, *bots.prefixes_cache[message.guild.id]], key=len):
             prefixes.append(prefix + " ")
             prefixes.append(prefix.upper() + "")
             prefixes.append(prefix)
