@@ -67,7 +67,7 @@ class Games:
         return results
 
     @commands.cooldown(1, 30, commands.BucketType.channel)
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, enabled=False)
     async def trivia(self, ctx: commands.Context, *, category: str = None):
         """Provides a trivia functionality. 5 questions. Can pass a category"""
         results = await self.get_trivia_results(category)
