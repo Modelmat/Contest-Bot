@@ -271,10 +271,10 @@ class Misc:
                 continue
             cogs_dict[cog] = cogs_dict.get(cog, []) + [
                 cmd for cmd in self.bot.get_cog_commands(cog)
-                if not cmd.hidden and cmd.can_run(ctx)
+                if not cmd.hidden and cmd.can_run(ctx) and cmd.enabled
             ]
         for cmd in self.bot.commands:
-            if cmd.cog_name is None and not cmd.hidden and cmd.can_run(ctx):
+            if cmd.cog_name is None and not cmd.hidden and cmd.can_run(ctx) and cmd.enabled:
                 cogs_dict['No Category'] = cogs_dict.get(
                     'No Category', []) + [cmd.name]
         cogs_dict = OrderedDict(
