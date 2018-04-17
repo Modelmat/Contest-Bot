@@ -1,5 +1,5 @@
 import random
-from asyncio import sleep, TimeoutError as a_TimeoutError
+import asyncio
 from collections import OrderedDict
 from datetime import datetime
 from random import sample
@@ -132,7 +132,7 @@ class Internet:
         msg = await ctx.send(f"Looking for open ports in <{url}>")
         content = msg.content
         await msg.edit(content=f"{content}\nPort: {th}{hu}{te}{on}{loading}")
-        await sleep(10)
+        await asyncio.sleep(10)
 
         if not open_ports:
             return await msg.edit(content=f":x: Port scan complete. No insecure ports found.")
@@ -154,7 +154,7 @@ class Internet:
 
         key = url.query['speech_key']
         link = f"http://talkobamato.me/synth/output/{key}/obama.mp4"
-        await sleep(text//5)
+        await asyncio.sleep(text//5)
         with async_timeout.timeout(10):
             async with self.bot.session.get(link) as resp:
                 if resp.status >= 400:
@@ -175,13 +175,11 @@ class Internet:
     @obama.error
     async def obama_error_handler(self, ctx, error):
         error = getattr(error, "original", error)
-        if isinstance(error, a_TimeoutError):
+        if isinstance(error, asyncio.TimeoutError):
             await ctx.error("http://talkobamato.me/ is not responding.", "Request Timed Out")
         elif isinstance(error, discord.HTTPException):
             await ctx.error(error.text, error.response.reason, footer="Don't worry. We just propogate this error from the server.")
             ctx.bot.obama_is_up = (datetime.utcnow(), False)
-        else:
-            await ctx.error(error)
 
     @commands.cooldown(1, 5, commands.BucketType.channel)
     @cc.command(aliases=["translate_mixup", "googletrans"])

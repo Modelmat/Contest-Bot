@@ -3,6 +3,7 @@ import cgitb
 import os
 import traceback
 import webbrowser
+import inspect
 
 import aiofiles
 import discord
@@ -10,23 +11,21 @@ from discord.ext import commands
 
 import custom_classes as cc
 
-cgitb.enable()
+cgitb.enable(format="raw")
 
 class Errors:
     """Error Handling"""
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx: cc.KernContext, error):
         # This prevents any commands already handled locally being run here.
         error = getattr(error, "original", error)
-        if hasattr(ctx.command, 'on_error') or \
-           hasattr(ctx.cog, f'_{ctx.cog.__class__.__name__}__error'):
-            return
 
-        ignored = (commands.NotOwner, commands.CheckFailure, commands.CommandNotFound, discord.Forbidden)
+        ignored = [commands.NotOwner, commands.CheckFailure, commands.CommandNotFound, discord.Forbidden]
+        ignored += [eval(e) for e in ctx.command.handled_errors + ctx.cog.handled_errors]
 
-        if isinstance(error, ignored):
+        if isinstance(error, tuple(ignored)):
             return
 
         elif isinstance(error, commands.DisabledCommand):
@@ -53,7 +52,7 @@ class Errors:
 
         else:
             # add more detailed debug
-            # await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
+            await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
 
             await self.bot.logs.send("""
 **Command:** {}

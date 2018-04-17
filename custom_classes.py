@@ -1,24 +1,27 @@
-from urllib.parse import urlparse
-from io import BytesIO
-from signal import SIGTERM
+import ast
+import asyncio
+import inspect
 import sys
+import textwrap
+import traceback
+from concurrent.futures import FIRST_COMPLETED
+from datetime import datetime, timedelta
+from io import BytesIO
+from math import ceil
 from os import listdir
 from os.path import isfile, join
-from datetime import datetime, timedelta
-import asyncio
-from concurrent.futures import FIRST_COMPLETED
 from random import choice
+from signal import SIGTERM
+from urllib.parse import urlparse
 from xml.etree.ElementTree import fromstring
-import async_timeout
-from bs4 import BeautifulSoup
-from math import ceil
 
-import aiohttp
 import aioftp
-
+import aiohttp
+import async_timeout
 import discord
-from discord.ext import commands
 import xmljson
+from bs4 import BeautifulSoup
+from discord.ext import commands
 
 import database as db
 
@@ -61,10 +64,6 @@ def replace_backticks(content, do_it):
 
 
 class KernGroup(commands.Group):
-    def __init__(self, **attrs):
-        self.handled_errors = attrs.pop("errors", [])
-        super().__init__(**attrs)
-
     async def can_run(self, ctx):
         if not self.enabled:
             return False
@@ -80,10 +79,6 @@ class KernGroup(commands.Group):
 
 
 class KernCommand(commands.Command):
-    def __init__(self, name, callback, **kwargs):
-        self.handled_errors = kwargs.get("errors", [])
-        super().__init__(name, callback, **kwargs)
-
     async def can_run(self, ctx):
         if not self.enabled:
             return False
@@ -95,6 +90,53 @@ def command(name=None, cls=KernCommand, **attrs):
 
 def group(name=None, **attrs):
     return command(name=name, cls=KernGroup, **attrs)
+
+
+class Ast:
+    def __init__(self, cls):
+        self.ifs = []
+        self.errors = []
+        code = getattr(cls, "on_error", getattr(cls, f'_{cls.__class__.__name__}__error', None))
+        if code:
+            self.code = ast.parse(textwrap.dedent(inspect.getsource(code)))
+
+            self.orelse(self.code.body[0].body[1])
+            self.generate_errors()
+
+    def generate_errors(self):
+        for i in self.ifs:
+            func = getattr(i.test, "func")
+            if func and self.bir(func).get("id", "") == "isinstance":
+                value = i.test.args[1]
+                value_d = self.bir(value)
+                if value_d.get("id"):
+                    self.errors.append(value.id)
+                elif value_d.get("value"):
+                    self.errors.append(self.do_at(value.value, value.attr))
+                elif value_d.get("elts"):
+                    for error in value.elts:
+                        if self.bir(error).get("id"):
+                            self.errors.append(error.id)
+                        elif self.bir(error).get("value"):
+                            self.errors.append(self.do_at(error.value, error.attr))
+
+    def orelse(self, node):
+        if isinstance(node, ast.If):
+            self.ifs.append(node)
+        node = getattr(node, "orelse", [])
+        if node and isinstance(node[0], ast.If):
+            self.orelse(node[0])
+
+    def bir(self, object):
+        return {i: getattr(object, i) for i in dir(object) if not i.startswith("__") and not "_" in i}
+
+    def do_at(self, node, name):
+        if isinstance(node, ast.Name):
+            return f"{node.id}.{name}"
+        if isinstance(node.value, ast.Attribute):
+            return self.do_at(node.value, f"{node.attr}.{name}")
+        else:
+            return f"{node.value.id}.{node.attr}.{name}"
 
 
 class KernBot(commands.Bot):
@@ -136,6 +178,17 @@ class KernBot(commands.Bot):
         self.database = db.Database(self)
 
         self.loop.set_debug(debug)
+
+        self.load_extensions()
+
+    def load_extensions(self):
+        for extension in self.exts:
+            try:
+                self.load_extension("cogs." + extension)
+            except (discord.ClientException, ModuleNotFoundError, SyntaxError):
+                print(f'Failed to load extension {extension}.')
+                traceback.print_exc()
+                quit()
 
     def add_task(self, function):
         self.tasks.append(self.loop.create_task(function))
@@ -353,6 +406,10 @@ class CoinError(Exception):
 
     def __repr__(self):
         return "CoinError({0.message}, {0.coin}, {0.currency}, {0.limit})".format(self)
+
+
+class AlreadySubmitted(Exception):
+    pass
 
 
 class UpperConv(commands.Converter):

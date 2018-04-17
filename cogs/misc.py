@@ -155,8 +155,6 @@ class Misc:
         elif isinstance(error, ValueError):
             await ctx.error("Message ID not an integer",
                             "Incorrect argument type")
-        else:
-            await ctx.error(error)
 
     @cc.command()
     async def ping(self, ctx):

@@ -58,18 +58,6 @@ bot = cc.KernBot(
     activity=discord.Game(name="Start-up 101"),
     testing=testing)
 
-
-async def load_extensions(bots):
-    await asyncio.sleep(2)
-    for extension in bots.exts:
-        try:
-            bots.load_extension("cogs." + extension)
-        except (discord.ClientException, ModuleNotFoundError):
-            print(f'Failed to load extension {extension}.')
-            traceback.print_exc()
-            await bot.suicide()
-
-
 @bot.event
 async def on_connect():
     await bot.update_dbots_server_count(dbl_token)
@@ -100,10 +88,20 @@ async def on_guild_remove(guild: discord.Guild):
     await bot.logs.send(embed=e)
     await bot.update_dbots_server_count(dbl_token)
 
+async def get_handled_errors(cog_name=None):
+    if cog_name:
+        for cmd in bot.get_cog_commands(cog_name):
+            cmd.handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, cmd)).errors
+        bot.get_cog(cog_name).handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, bot.get_cog(cog_name))).errors
+    for cmd in bot.commands:
+        cmd.handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, cmd)).errors
+    for cog in bot.cogs.values():
+        cog.handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, cog)).errors
 
 @bot.event
 async def on_ready():
-    await load_extensions(bot)
+    bot.loop.create_task(get_handled_errors())
+
     await bot.change_presence(status=discord.Status.online)
     bot.owner = (await bot.application_info()).owner
     if bot.user.name != name:
@@ -189,9 +187,12 @@ async def reload_cog(ctx, *cog_names: str):
     bad = []
     for cog_name in cog_names:
         try:
+            exts_b = set(bot.cogs.keys())
             bot.unload_extension("cogs." + cog_name)
+            exts_a = set(bot.cogs.keys())
             print(f"{cog_name} unloaded.", end=' | ')
             bot.load_extension("cogs." + cog_name)
+            await get_handled_errors(list(exts_b - exts_a)[0])
             print(f"{cog_name} loaded.")
             good.append(cog_name)
         except:

@@ -8,10 +8,6 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class AlreadySubmitted(Exception):
-    pass
-
-
 async def manage_server_check(ctx):
     if commands.is_owner():
         return True
@@ -29,7 +25,7 @@ class Contests:
 
     async def __error(self, ctx, error):
         error = getattr(error, "original", error)
-        if isinstance(error, (TypeError, ValueError, AlreadySubmitted)):
+        if isinstance(error, (TypeError, ValueError, cc.AlreadySubmitted)):
             await ctx.error(error)
         else:
             print('Ignoring {} in command {}'.format(type(error).__qualname__, ctx.command))
@@ -105,11 +101,11 @@ class Contests:
         await self.bot.database.add_submission_rating(ctx, rating, submission_id)
         await ctx.success(f"Successfully voted on submission {submission_id}")
 
-    @vote.error
-    async def vote_error_handler(self, ctx, error):
-        error = getattr(error, "original", error)
-        await ctx.error(error, "Error while voting: ")
-        await ctx.error(error, "Error while voting:", channel=self.bot.logs)
+    # @vote.error
+    # async def vote_error_handler(self, ctx, error):
+    #     error = getattr(error, "original", error)
+    #     await ctx.error(error, "Error while voting: ")
+    #     await ctx.error(error, "Error while voting:", channel=self.bot.logs)
 
     @cc.command()
     async def remove(self, ctx):
