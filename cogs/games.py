@@ -24,29 +24,16 @@ class Games:
     def __init__(self, bot: KernBot):
         self.bot = bot
 
-    async def trivia_categories(self, category=None):
-        with async_timeout.timeout(10):
-            async with self.bot.session.get("https://opentdb.com/api_category.php") as resp:
-                cats = (await resp.json())['trivia_categories']
-
-        categories = {}
-        for cat in cats:
-            categories[cat['name'].lower()] = cat['id']
-
-        if not category:
-            return categories
-
-        c_id = categories.get(category.lower())
-        if c_id is None:
-            raise ValueError("Category `{}` does not exist.".format(category))
-        return c_id
 
     async def get_trivia_results(self, category=None):
         results = []
         if category is None:
             url = TRIVIA_URL
         else:
-            url = TRIVIA_URL + "&category=" + str(await self.trivia_categories(category))
+            category_id = self.bot.categories.get(category.lower())
+            if category_id is None:
+                raise ValueError(f"Category `{category}` does not exist.")
+            url = f"{TRIVIA_URL}&category={category_id}"
 
         with async_timeout.timeout(10):
             async with self.bot.session.get(url) as resp:

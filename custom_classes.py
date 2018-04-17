@@ -75,6 +75,7 @@ class KernBot(commands.Bot):
         self.weather = {}
         self.demotivators = {}
         self.tasks = []
+        self.categories = {}
 
         self.launch_time = datetime.utcnow()
         self.crypto = {"market_price": {}, "coins": []}
@@ -89,6 +90,7 @@ class KernBot(commands.Bot):
         self.add_task(self.init())
         self.add_task(self.status_changer())
         self.add_task(self.get_demotivators())
+        self.add_task(self.get_trivia_categories())
 
         try:
             self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.suicide("SIGTERM Shutdown")))
@@ -112,10 +114,19 @@ class KernBot(commands.Bot):
         # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
         self.documentation = await CreateDocumentation().generate_documentation()
 
+    async def get_trivia_categories(self):
+        with async_timeout.timeout(10):
+            async with self.session.get("https://opentdb.com/api_category.php") as resp:
+                cats = (await resp.json())['trivia_categories']
+
+        categories = {}
+        for cat in cats:
+            self.categories[cat['name'].lower()] = cat['id']
+
     async def get_demotivators(self):
         url = "https://despair.com/collections/posters"
         with async_timeout.timeout(10):
-            async with self.bot.session.get(url) as resp:
+            async with self.session.get(url) as resp:
                 soup = BeautifulSoup((await resp.read()).decode('utf-8'), "lxml")
 
         for div_el in soup.find_all('div', {'class': 'column'}):
@@ -321,8 +332,8 @@ class IntConv(commands.Converter):
 class CreateDocumentation:
     def __init__(self):
         self.documentation = {}
-        self.api = "http://rapptz.github.io/discord.py/docs/api.html"
-        self.commands = "http://rapptz.github.io/discord.py/docs/ext/commands/api.html"
+        self.api = "http://discordpy.readthedocs.io/en/rewrite/api.html"
+        self.commands = "http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html"
 
     @staticmethod
     def parse_ps(el):
