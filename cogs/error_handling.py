@@ -29,6 +29,9 @@ class Errors:
         if isinstance(error, ignored):
             return
 
+        elif isinstance(error, commands.DisabledCommand):
+            await ctx.error(f"`{ctx.command}` is disabled.", "Command Disabled")
+
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.error(f"Argument `{error.param}` is missing!", "Missing Required Argument(s)")
 
