@@ -1,18 +1,17 @@
 import random
 from asyncio import sleep, TimeoutError as a_TimeoutError
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import datetime
 from random import sample
 
-import async_timeout
-from bs4 import BeautifulSoup
-from tabulate import tabulate
 import aiogoogletrans
-
-from fuzzywuzzy import process
-
+import async_timeout
 import discord
+from bs4 import BeautifulSoup
 from discord.ext import commands
+from fuzzywuzzy import process
+from tabulate import tabulate
+
 import custom_classes as cc
 
 PROTOCOLS = ['ssh', 'smb', 'smtp', 'ftp', 'imap', 'http', 'https', 'pop', 'htcpcp', 'telnet', 'tcp', 'ipoac']
@@ -117,12 +116,16 @@ class Internet:
         return demotivators
 
     @commands.command()
-    async def demotivate(self, ctx, *, search_term):
-        """Provides an embed with a demotivating quote & poster"""
+    async def demotivate(self, ctx, *, search_term=""):
+        """Provides an embed with a demotivating quote & poster.
+        Without a search_term specified a random result is returned."""
         async with ctx.typing():
             search_term = search_term.lower()
             demotivators = await self.get_demotivators()
-            dem = demotivators.get(search_term)
+            if search_term:
+                dem = demotivators.get(search_term)
+            else:
+                dem = sample(list(demotivators.values()), 1)[0]
             if dem is None:
                 fuzzy = process.extractOne(search_term, demotivators.keys())
                 if fuzzy[1] < 75:
@@ -132,7 +135,7 @@ class Internet:
             e.set_author(
                 name=dem['title'],
                 url=dem['product_url'],
-                icon_url="http://cdn.shopify.com/s/files/1/0535/6917/t/29/assets/favicon.png",
+                icon_url="https://i.imgur.com/SAQRxIc.png",
             )
             e.set_footer(
                 text="Data from Despair, Inc",
@@ -229,7 +232,7 @@ class Internet:
 ```{}```
 **End result**: 
 {}""".format(ctx.author, "\n".join([aiogoogletrans.LANGUAGES[l] for l in langs]), result.text))
-        ctx.command.reset_cooldown()
+        ctx.command.reset_cooldown(ctx)
 
 
 def setup(bot):
