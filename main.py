@@ -141,9 +141,6 @@ async def on_resumed():
             description=f"Down since: {datetime.utcnow().strftime('%H:%M:%S')}",
             colour=discord.Colour.red())
         await bot.logs.send(embed=em)
-    print(bot.latest_message_time)
-    print(bot.latest_message_time == datetime.utcnow())
-    print(datetime.utcnow() + timedelta(seconds=30))
 
 
 @bot.event
