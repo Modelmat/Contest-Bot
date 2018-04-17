@@ -132,12 +132,6 @@ class Games:
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)}",
                             "Command on Cooldown")
-        elif isinstance(error, commands.DisabledCommand):
-            if self.bot.is_owner(ctx.author):
-                await ctx.reinvoke()
-            else:
-                await ctx.error(f"The trivia command has been disabled because of some internal issues.\nNo worries, it will be fixed soon",
-                                "Command Disabled")
         else:
             await ctx.error(error)
             ctx.command.reset_cooldown(ctx)
