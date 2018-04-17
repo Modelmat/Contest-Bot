@@ -73,6 +73,8 @@ class KernBot(commands.Bot):
         self.documentation = {}
         self.prefixes_cache = {}
         self.weather = {}
+        self.demotivators = {}
+        self.tasks = []
 
         self.launch_time = datetime.utcnow()
         self.crypto = {"market_price": {}, "coins": []}
@@ -84,9 +86,9 @@ class KernBot(commands.Bot):
         self.exts = sorted(
             [extension for extension in [f.replace('.py', '') for f in listdir("cogs") if isfile(join("cogs", f))]])
 
-        self.loop.create_task(self.init())
-
-        self.status_task = self.loop.create_task(self.status_changer())
+        self.add_task(self.init())
+        self.add_task(self.status_changer())
+        self.add_task(self.get_demotivators())
 
         try:
             self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.suicide("SIGTERM Shutdown")))
@@ -97,6 +99,9 @@ class KernBot(commands.Bot):
 
         self.loop.set_debug(debug)
 
+    def add_task(self, function):
+        self.tasks.append(self.loop.create_task(function))
+
     async def init(self):
         self.session = aiohttp.ClientSession()
         with async_timeout.timeout(30):
@@ -106,6 +111,26 @@ class KernBot(commands.Bot):
         await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
         # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
         self.documentation = await CreateDocumentation().generate_documentation()
+
+    async def get_demotivators(self):
+        url = "https://despair.com/collections/posters"
+        with async_timeout.timeout(10):
+            async with self.bot.session.get(url) as resp:
+                soup = BeautifulSoup((await resp.read()).decode('utf-8'), "lxml")
+
+        for div_el in soup.find_all('div', {'class': 'column'}):
+            a_el = div_el.a
+            if a_el and a_el.div:
+                title = a_el['title']
+                img_url = "http:" + a_el.div.img['data-src']
+                product_url = "http://despair.com" + a_el['href']
+                quote = a_el.find('span', {'class': 'price'}).p.string
+                self.demotivators[title.lower()] = {
+                    'title': title,
+                    'img_url': img_url,
+                    'quote': quote,
+                    'product_url': product_url
+                }
 
     async def download_xml(self, link):
         xml = BytesIO()
@@ -146,7 +171,7 @@ class KernBot(commands.Bot):
         await self.database.pool.close()
         self.session.close()
         await self.close()
-        self.status_task.cancel()
+        [task.cancel() for task in self.tasks]
         sys.exit(0)
 
     async def wait_for_any(self, events, checks, timeout=None):
