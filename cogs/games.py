@@ -30,7 +30,7 @@ class Games:
         if category is None:
             url = TRIVIA_URL
         else:
-            category_id = self.bot.categories.get(category.lower())
+            category_id = self.bot.trivia_categories.get(category.lower())
             if category_id is None:
                 raise ValueError(f"Category `{category}` does not exist.")
             url = f"{TRIVIA_URL}&category={category_id}"
@@ -117,7 +117,7 @@ class Games:
     async def trivia_list(self, ctx):
         """Gives a list of possible categories usable with the trivia command"""
         cat_string = ""
-        for category in await self.trivia_categories():
+        for category in self.bot.trivia_categories:
             cat_string += f"{category.title()}\n"
         await ctx.neutral(cat_string, "Categories:")
 
@@ -130,6 +130,12 @@ class Games:
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)}",
                             "Command on Cooldown")
+        elif isinstance(error, commands.DisabledCommand):
+            if self.bot.is_owner(ctx.author):
+                await ctx.reinvoke()
+            else:
+                await ctx.error(f"The trivia command has been disabled because of some internal issues.\nNo worries, it will be fixed soon",
+                                "Command Disabled")
         else:
             await ctx.error(error)
             ctx.command.reset_cooldown(ctx)

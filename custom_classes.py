@@ -75,7 +75,7 @@ class KernBot(commands.Bot):
         self.weather = {}
         self.demotivators = {}
         self.tasks = []
-        self.categories = {}
+        self.trivia_categories = {}
 
         self.launch_time = datetime.utcnow()
         self.crypto = {"market_price": {}, "coins": []}
@@ -121,7 +121,7 @@ class KernBot(commands.Bot):
 
         categories = {}
         for cat in cats:
-            self.categories[cat['name'].lower()] = cat['id']
+            self.trivia_categories[cat['name'].lower()] = cat['id']
 
     async def get_demotivators(self):
         url = "https://despair.com/collections/posters"
