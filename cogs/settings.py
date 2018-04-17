@@ -5,7 +5,7 @@ from custom_classes import KernBot
 
 
 async def manage_server_check(ctx):
-    if commands.is_owner():
+    if ctx.bot.is_owner(ctx.author):
         return True
     elif commands.has_permissions(manage_server=True):
         return True
