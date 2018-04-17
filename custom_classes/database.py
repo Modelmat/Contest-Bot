@@ -32,10 +32,13 @@ servers_table = """
                 )
                 """
 
+
 class DudPool:
     _closed = True
+
     async def close(self):
         return
+
 
 class Database:
     """Accessing database functions"""
@@ -120,8 +123,7 @@ class Database:
             await con.execute(sql, prefix, ctx.guild.id)
         return prefix
 
-    #async def enable_default_prefix(self, ctx):
-
+    # async def enable_default_prefix(self, ctx):
 
     async def get_prefixes(self, ctx):
         async with self.pool.acquire() as con:

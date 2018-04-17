@@ -30,7 +30,6 @@ def server_prefix(bot_prefixes: list):
             prefixes.append(prefix)
             prefixes.append(prefix.upper())
 
-
         return commands.when_mentioned_or(*prefixes)(bots, message)
 
     return prefix
@@ -57,6 +56,7 @@ bot = cc.KernBot(
     description="Multiple functions, including contests, definitions, and more.",
     activity=discord.Game(name="Start-up 101"),
     testing=testing)
+
 
 @bot.event
 async def on_connect():
@@ -88,6 +88,7 @@ async def on_guild_remove(guild: discord.Guild):
     await bot.logs.send(embed=e)
     await bot.update_dbots_server_count(dbl_token)
 
+
 async def get_handled_errors(cog_name=None):
     if cog_name:
         for cmd in bot.get_cog_commands(cog_name):
@@ -97,6 +98,7 @@ async def get_handled_errors(cog_name=None):
         cmd.handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, cmd)).errors
     for cog in bot.cogs.values():
         cog.handled_errors = (await bot.loop.run_in_executor(None, cc.Ast, cog)).errors
+
 
 @bot.event
 async def on_ready():
@@ -206,6 +208,7 @@ async def reload_cog(ctx, *cog_names: str):
     if bad:
         string += "\n**Fail:**\n" + "\n".join(bad)
     await ctx.neutral(string)
+
 
 loop = asyncio.get_event_loop()
 try:

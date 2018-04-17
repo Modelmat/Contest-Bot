@@ -20,6 +20,7 @@ EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 class Games:
     """Games"""
+
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
@@ -40,7 +41,7 @@ class Games:
 
         with async_timeout.timeout(10):
             async with self.bot.session.get(url) as resp:
-                raw_results =  (await resp.json())['results']
+                raw_results = (await resp.json())['results']
 
         for r in raw_results:
             d = {}
@@ -95,7 +96,7 @@ class Games:
             if str(reaction) == "⏹":
                 return ctx.command.reset_cooldown(ctx)
 
-            your_answer = answers[int(str(reaction)[0]) -1]
+            your_answer = answers[int(str(reaction)[0]) - 1]
             corrects.append((your_answer, result['correct_answer']))
 
         if not corrects:
@@ -105,7 +106,7 @@ class Games:
         correct_qs = 0
         for answer in corrects:
             if answer[0] == answer[1]:
-                correct_qs +=1
+                correct_qs += 1
                 des += f"\n✅ {answer[0]}"
             else:
                 des += f"\n❌{answer[0]} ➡ {answer[1]}"
@@ -131,5 +132,5 @@ class Games:
             ctx.command.reset_cooldown(ctx)
 
 
-def setup(bot: commands.Bot):
+def setup(bot: cc.KernBot):
     bot.add_cog(Games(bot))

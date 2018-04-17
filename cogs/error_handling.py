@@ -13,8 +13,10 @@ import custom_classes as cc
 
 cgitb.enable(format="raw")
 
+
 class Errors:
     """Error Handling"""
+
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
@@ -77,5 +79,5 @@ class Errors:
                 await self.bot.loop.run_in_executor(None, os.remove, "error.html")
 
 
-def setup(bot: commands.Bot):
+def setup(bot: cc.KernBot):
     bot.add_cog(Errors(bot))

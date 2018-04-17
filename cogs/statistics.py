@@ -1,10 +1,11 @@
-#pylint: disable-msg=C0413
+# pylint: disable-msg=C0413
 import io
 from inspect import Parameter
 from datetime import datetime, timedelta
 
 import async_timeout
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from fuzzywuzzy import process
@@ -15,13 +16,13 @@ from discord.ext import commands
 import custom_classes as cc
 
 ICON_CODES = {
-    1: "☀",
-    2: "🌙",
-    3: "🌤",
-    4: "☁",
-    6: "🌁",
-    8: "🌧",
-    9: "💨",
+    1 : "☀",
+    2 : "🌙",
+    3 : "🌤",
+    4 : "☁",
+    6 : "🌁",
+    8 : "🌧",
+    9 : "💨",
     10: "🌫",
     11: "🌦",
     13: "🌧",
@@ -33,7 +34,7 @@ ICON_CODES = {
     19: "🌀",
 }
 ELEMENT_CODES = {
-    "precipitation_range": "Precipitation: ",
+    "precipitation_range"    : "Precipitation: ",
     "air_temperature_minimum": "Min: ",
     "air_temperature_maximum": "Max: ",
 }
@@ -51,14 +52,15 @@ def get_delta(time_period, limit):
 
 class Statistics:
     """Function related to statistics"""
+
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def get_data(self, time_period, coin, currency, limit):
         if self.bot.crypto['market_price'].get(coin) is None or \
-           self.bot.crypto['market_price'][coin].get(currency) is None or \
-           self.bot.crypto['market_price'][coin][currency].get(time_period) is None or \
-           self.bot.crypto['market_price'][coin][currency][time_period]['timestamp'] < datetime.utcnow():
+                self.bot.crypto['market_price'][coin].get(currency) is None or \
+                self.bot.crypto['market_price'][coin][currency].get(time_period) is None or \
+                self.bot.crypto['market_price'][coin][currency][time_period]['timestamp'] < datetime.utcnow():
             with async_timeout.timeout(10):
                 async with self.bot.session.get(
                         f"https://min-api.cryptocompare.com/data/histo{time_period}?fsym={coin}&tsym={currency}&limit={limit}"
@@ -70,10 +72,10 @@ class Statistics:
             self.bot.crypto['market_price'][coin] = {
                 currency: {
                     time_period: {
-                        'high': [[-i, v['high']] for i, v in enumerate(vals)],
-                        'low': [[-i, v['low']] for i, v in enumerate(vals)],
+                        'high'     : [[-i, v['high']] for i, v in enumerate(vals)],
+                        'low'      : [[-i, v['low']] for i, v in enumerate(vals)],
                         'timestamp':
-                        datetime.utcnow() + get_delta(time_period, limit),
+                            datetime.utcnow() + get_delta(time_period, limit),
                     },
                 },
             }
@@ -104,14 +106,14 @@ class Statistics:
     async def coin(self, ctx):
         """Provides information on cryptocurrencies
         This root command is not working."""
-        #self.statistics [coin]
+        # self.statistics [coin]
         if ctx.invoked_subcommand is None and ctx.subcommand_passed is None:
             raise commands.MissingRequiredArgument(
                 param=Parameter(
                     name="currency", kind=Parameter.POSITIONAL_ONLY))
 
         elif ctx.invoked_subcommand is None and ctx.subcommand_passed:
-            #do stuff with subcommand_passed
+            # do stuff with subcommand_passed
             return await ctx.error(
                 f"Not implemented yet. Try `{ctx.prefix}coin day`.", "")
 
@@ -219,7 +221,7 @@ Full name support is incoming.""",
             em.add_field(name=emoji_name + name, value=value)
 
         await ctx.send(embed=em)
-        #for item in loc['forecast-period']:
+        # for item in loc['forecast-period']:
         #    print(item, end="\n\n\n")
 
 
