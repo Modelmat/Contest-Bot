@@ -42,6 +42,7 @@ class Database:
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.ready = False
         try:
             self.dsn = os.environ["DATABASE_URL"]
         except KeyError:
@@ -53,29 +54,27 @@ class Database:
         if __name__ in '__main__':
             asyncio.get_event_loop().run_until_complete(self.init())
         else:
-            self.lock = asyncio.Lock()
             bot.loop.create_task(self.init())
 
     async def init(self):
         ssl_object = ssl.create_default_context()
         ssl_object.check_hostname = False
         ssl_object.verify_mode = ssl.CERT_NONE
-        async with self.lock:
-            try:
-                self.pool = await asyncpg.create_pool(self.dsn, ssl=ssl_object)
-            except (asyncpg.exceptions.InvalidCatalogNameError,
-                    asyncpg.exceptions.InvalidPasswordError,
-                    ValueError, TimeoutError, gaierror) as e:
-                em = discord.Embed(title="Database failed to connect",
-                                   description="Prefixes will still work, most other db commands will not",
-                                   colour=discord.Colour.orange())
-                print(e.__class__.__name__, str(e))
-                self.pool = DudPool()
-                while self.bot.logs is None:
-                    print('enter')
-                    await asyncio.sleep(1)
-                await self.bot.logs.send(embed=em)
-                return await self.bot.suicide("Database not connected")
+        try:
+            self.pool = await asyncpg.create_pool(self.dsn, ssl=ssl_object)
+        except (asyncpg.exceptions.InvalidCatalogNameError,
+                asyncpg.exceptions.InvalidPasswordError,
+                ValueError, TimeoutError, gaierror) as e:
+            em = discord.Embed(title="Database failed to connect",
+                               description="Prefixes will still work, most other db commands will not",
+                               colour=discord.Colour.orange())
+            print(e.__class__.__name__, str(e))
+            self.pool = DudPool()
+            while self.bot.logs is None:
+                print('enter')
+                await asyncio.sleep(1)
+            await self.bot.logs.send(embed=em)
+            return await self.bot.suicide("Database not connected")
 
         async with self.pool.acquire() as con:
             if not await con.fetch("SELECT relname FROM pg_class WHERE relname = 'servers'"):
@@ -84,6 +83,8 @@ class Database:
             if not await con.fetch("SELECT relname FROM pg_class WHERE relname = 'submissions'"):
                 await con.execute(submissions_table)
                 print("Created submissions table")
+
+        self.ready = True
 
     async def generate_id(self):
         """Generate the ID needed to index the submissions"""

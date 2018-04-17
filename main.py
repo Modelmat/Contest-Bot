@@ -153,36 +153,35 @@ async def on_socket_raw_receive(_):
 
 @bot.event
 async def on_message(message: discord.Message):
-    if bot.database is None or message.author.bot:
+    if bot.database is None or not bot.database.ready or message.author.bot:
         return
-    async with bot.database.lock:
-        if " && " in message.content:
-            cmds_run_before = []
-            failed_to_run = {}
-            messages = message.content.split(" && ")
-            for msg in messages:
-                message.content = msg
-                ctx = await bot.get_context(message, cls=cc.CustomContext)
-                if ctx.valid:
-                    if msg.strip(ctx.prefix) not in cmds_run_before:
-                        await bot.invoke(ctx)
-                        cmds_run_before.append(msg.strip(ctx.prefix))
-                    else:
-                        failed_to_run[msg.strip(ctx.prefix)] = "This command has been at least once before."
-                else:
-                    if ctx.prefix is not None:
-                        failed_to_run[msg.strip(ctx.prefix)] = "Command not found."
-
-            if failed_to_run and len(failed_to_run) != len(message.content.split(" && ")):
-                errors = ""
-                for fail, reason in failed_to_run.items():
-                    errors += f"{fail}: {reason}\n"
-                await ctx.error(f"```{errors}```", "These failed to run:")
-
-        else:
-            # is a command returned
+    if " && " in message.content:
+        cmds_run_before = []
+        failed_to_run = {}
+        messages = message.content.split(" && ")
+        for msg in messages:
+            message.content = msg
             ctx = await bot.get_context(message, cls=cc.CustomContext)
-            await bot.invoke(ctx)
+            if ctx.valid:
+                if msg.strip(ctx.prefix) not in cmds_run_before:
+                    await bot.invoke(ctx)
+                    cmds_run_before.append(msg.strip(ctx.prefix))
+                else:
+                    failed_to_run[msg.strip(ctx.prefix)] = "This command has been at least once before."
+            else:
+                if ctx.prefix is not None:
+                    failed_to_run[msg.strip(ctx.prefix)] = "Command not found."
+
+        if failed_to_run and len(failed_to_run) != len(message.content.split(" && ")):
+            errors = ""
+            for fail, reason in failed_to_run.items():
+                errors += f"{fail}: {reason}\n"
+            await ctx.error(f"```{errors}```", "These failed to run:")
+
+    else:
+        # is a command returned
+        ctx = await bot.get_context(message, cls=cc.CustomContext)
+        await bot.invoke(ctx)
 
 
 @commands.is_owner()
