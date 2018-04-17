@@ -29,14 +29,6 @@ def gen_data():
     open_ports = ", ".join([str(data[0]) for data in open_data if data[2] == "true"])
     return table_data, table, open_ports, open_data
 
-async def is_obama_up(ctx):
-    if ctx.bot.obama_is_up[0] + timedelta(minutes=10) > datetime.utcnow():
-        with async_timeout.timeout(5):
-            async with ctx.bot.session.post(
-                    url="http://talkobamato.me/synthesize.py", data={"input_text": "Is talkobamato.me up?"}) as resp:
-                ctx.bot.obama_is_up = (datetime.utcnow(), resp.status < 400)
-    return ctx.bot.obama_is_up[1]
-
 
 class Internet:
     """Web functions (that make requests)"""
@@ -182,13 +174,13 @@ class Internet:
 
         key = url.query['speech_key']
         link = f"http://talkobamato.me/synth/output/{key}/obama.mp4"
+        await sleep(text//5)
         with async_timeout.timeout(10):
             async with self.bot.session.get(link) as resp:
                 if resp.status >= 400:
                     raise discord.HTTPException(resp, f"{resp.url} returned error code {resp.status}")
         return link
 
-    @commands.check(is_obama_up)
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command()
     async def obama(self, ctx, *, text: str):
@@ -208,8 +200,6 @@ class Internet:
         elif isinstance(error, discord.HTTPException):
             await ctx.error(error.text, error.response.reason, footer="Don't worry. We just propogate this error from the server.")
             ctx.bot.obama_is_up = (datetime.utcnow(), False)
-        elif isinstance(error, commands.CheckFailure):
-            await ctx.error("http://talkobamato.me/ is currently down.", "Command Disabled")
         else:
             await ctx.error(error)
 
