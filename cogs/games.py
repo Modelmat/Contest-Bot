@@ -1,12 +1,11 @@
 import asyncio
 import html
 from datetime import datetime
-from random import shuffle
 
 import async_timeout
-
 import discord
 from discord.ext import commands
+
 from custom_classes import KernBot
 
 
@@ -24,6 +23,10 @@ class Games:
     def __init__(self, bot: KernBot):
         self.bot = bot
 
+    async def add_reactions(self, message, number):
+        for index in range(number):
+            await message.add_reaction(EMOJIS[index + 1])
+        await message.add_reaction("⏹")
 
     async def get_trivia_results(self, category=None):
         results = []
@@ -54,11 +57,11 @@ class Games:
         return results
 
     @commands.cooldown(1, 30, commands.BucketType.channel)
-    @commands.group(invoke_without_command=True, enabled=False)
+    @commands.group(invoke_without_command=True)
     async def trivia(self, ctx: commands.Context, *, category: str = None):
         """Provides a trivia functionality. 5 questions. Can pass a category"""
         results = await self.get_trivia_results(category)
-        corrects = {}
+        corrects = []
 
         for result in results:
             colour = COLOURS[result['difficulty']]
@@ -75,39 +78,38 @@ class Games:
             for index, question in enumerate(answers):
                 e.description += "\n{} {}".format(EMOJIS[index + 1], question)
 
-            msg = await ctx.send(embed=e, delete_after=15)
-
-            for index in range(len(answers)):
-                await msg.add_reaction(EMOJIS[index + 1])
-            await msg.add_reaction("⏹")
+            msg = await ctx.send(embed=e, delete_after=20)
 
             def same(reaction, member):
                 return ctx.message.author == member and reaction.emoji in list(
                     EMOJIS.values()) + ["⏹"] and reaction.message.id == msg.id
 
+            self.bot.loop.create_task(self.add_reactions(msg, len(answers)))
+
             try:
                 reaction, _ = await self.bot.wait_for("reaction_add", check=same, timeout=15)
             except asyncio.TimeoutError:
-                await ctx.error("You took too long to add an emoji.", "Timeout Error")
+                await ctx.error("You took too long to add an emoji.", "Timeout")
                 break
 
             if str(reaction) == "⏹":
-                ctx.command.reset_cooldown(ctx)
-                return
+                return ctx.command.reset_cooldown(ctx)
 
-            corrects[answers[int(str(reaction)[0]) - 1]] = result['correct_answer']
+            your_answer = answers[int(str(reaction)[0]) -1]
+            corrects.append((your_answer, result['correct_answer']))
 
         if not corrects:
             return
 
         des = "You answered:"
         correct_qs = 0
-        for yours, correct in corrects.items():
-            if yours == correct:
-                correct_qs += 1
-                des += f"\n✅ {correct}"
+        for answer in corrects:
+            if answer[0] == answer[1]:
+                correct_qs +=1
+                des += f"\n✅ {answer[0]}"
             else:
-                des += f"\n❌{yours} ➡ {correct}"
+                des += f"\n❌{answer[0]} ➡ {answer[1]}"
+
         des += "\n\nFor a total score of {}/{}".format(correct_qs, len(corrects))
 
         await ctx.success(des, "Results")
