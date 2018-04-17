@@ -158,7 +158,7 @@ async def on_message(message: discord.Message):
         messages = message.content.split(" && ")
         for msg in messages:
             message.content = msg
-            ctx = await bot.get_context(message, cls=cc.CustomContext)
+            ctx = await bot.get_context(message, cls=cc.KernContext)
             if ctx.valid:
                 if msg.strip(ctx.prefix) not in cmds_run_before:
                     await bot.invoke(ctx)
@@ -177,7 +177,7 @@ async def on_message(message: discord.Message):
 
     else:
         # is a command returned
-        ctx = await bot.get_context(message, cls=cc.CustomContext)
+        ctx = await bot.get_context(message, cls=cc.KernContext)
         await bot.invoke(ctx)
 
 

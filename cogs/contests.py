@@ -1,10 +1,11 @@
+import asyncio
 import json
 import traceback
-import asyncio
+
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 
 class AlreadySubmitted(Exception):
@@ -23,7 +24,7 @@ async def manage_server_check(ctx):
 class Contests:
     """Contest functions"""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def __error(self, ctx, error):
@@ -37,8 +38,7 @@ class Contests:
             await ctx.error(
                 "```{}: {}```".format(type(error).__qualname__, error),
                 title=f"Ignoring exception in command *{ctx.command}*:",
-                channel=self.bot.logs,
-                rqst_by=False)
+                channel=self.bot.logs)
 
     def generate_embed(self, message_author: discord.User, title, description, image_url=None, colour=0x00ff00):
         """Generates a discord embed object off the given parameters"""
@@ -49,7 +49,7 @@ class Contests:
         embed.set_thumbnail(url=message_author.avatar_url)
         return embed
 
-    @commands.command()
+    @cc.command()
     async def submit(self, ctx, *, args):
         """Submits an item into a contest. Please note the spaces."""
         input_split = tuple(args.split(" | "))
@@ -82,7 +82,7 @@ class Contests:
         else:
             await ctx.error("Incorrect channel to submit in", delete_after=10)
 
-    @commands.command(name="list", aliases=['list_submissions'])
+    @cc.command(name="list", aliases=['list_submissions'])
     async def list_s(self, ctx):
         """Lists contest submissions for this server"""
         submissions = await self.bot.database.list_contest_submissions(ctx)
@@ -99,7 +99,7 @@ class Contests:
         await ctx.neutral(compiled, f"Submissions leaderboard for {ctx.guild} [/{max_points}]")
         return [submission['submission_id'] for submission in submissions]
 
-    @commands.command()
+    @cc.command()
     async def vote(self, ctx, rating: int, submission_id: int):
         """Votes on a submission"""
         await self.bot.database.add_submission_rating(ctx, rating, submission_id)
@@ -111,21 +111,21 @@ class Contests:
         await ctx.error(error, "Error while voting: ")
         await ctx.error(error, "Error while voting:", channel=self.bot.logs)
 
-    @commands.command()
+    @cc.command()
     async def remove(self, ctx):
         """Removes your submission"""
         await self.bot.database.remove_contest_submission(ctx)
         await ctx.success(f"{ctx.author.mention} Your submission was successfully removed.")
 
     @commands.check(manage_server_check)
-    @commands.command()
+    @cc.command()
     async def clear(self, ctx, submission_id: int):
         """Allows for users with manage_server perms to remove submissions that are deemed invalid"""
         await self.bot.database.clear_contest_submission(ctx, submission_id)
         await ctx.success(f"Submission with id {submission_id} successfully deleted.")
 
     @commands.check(manage_server_check)
-    @commands.command()
+    @cc.command()
     async def purge(self, ctx):
         """Purges all submissions"""
         length = len(await self.bot.database.list_contest_submissions(ctx))

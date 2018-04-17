@@ -12,7 +12,7 @@ import psutil
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 COUNTRY_CODES = {
     "AU": "Australia",
@@ -37,12 +37,12 @@ COUNTRY_CODES = {
 class Misc:
     """Miscellaneous functions"""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
         self.process = psutil.Process()
         self.bot.remove_command('help')
 
-    @commands.command()
+    @cc.command()
     async def please(self, ctx, action, item="you"):
         """You can now make this bot do things!"""
         if len(action) < 3:
@@ -55,7 +55,7 @@ class Misc:
             action = action[:-1]
         await ctx.send(f"I am {action}ing {item}")
 
-    @commands.command()
+    @cc.command()
     async def codestats(self, ctx):
         """Provides information about the bot's code"""
         line_count = 0
@@ -70,12 +70,12 @@ class Misc:
 **Commands**: {len(ctx.bot.commands)}""",
                           "Code Statistics", timestamp=False)
 
-    @commands.command()
+    @cc.command()
     async def emoji(self, ctx, *, emoji):
         """Converts a Discord unicode emoji to a standard uncode emoji, for copying"""
         await ctx.send(f"`{emoji}`")
 
-    @commands.command()
+    @cc.command()
     async def person(self, ctx):
         """Generates a random person"""
         with async_timeout.timeout(10):
@@ -111,7 +111,7 @@ class Misc:
 
         await ctx.send(embed=em)
 
-    @commands.command()
+    @cc.command()
     async def raw(self, ctx, *, message=None):
         """Displays the raw code of a message.
         The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
@@ -158,7 +158,7 @@ class Misc:
         else:
             await ctx.error(error)
 
-    @commands.command()
+    @cc.command()
     async def ping(self, ctx):
         """Returns time taken for a internet packet to go from this bot to discord"""
         await ctx.send("Pong. Time taken: `{:.0f}ms`".format(
@@ -181,7 +181,7 @@ class Misc:
             output += "{} seconds".format(seconds)
         return output
 
-    @commands.command(aliases=['stats', 'about'])
+    @cc.command(aliases=['stats', 'about'])
     async def info(self, ctx):
         """Returns information about the bot."""
         invite_url = f"https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&scope=bot"
@@ -205,7 +205,7 @@ class Misc:
         embed.set_footer(text="Hover over emojis")
         await ctx.send(embed=embed)
 
-    @commands.group(name="hash")
+    @cc.group(name="hash")
     async def _hash(self, ctx, hash_type, *, text):
         """Hashes a string of text
         Hasers are: sha256, sha512, sha1, md5"""
@@ -216,7 +216,7 @@ class Misc:
         else:
             await ctx.error(f"Hasher {hash_type} not found")
 
-    @commands.command()
+    @cc.command()
     async def tree(self, ctx):
         """Provides a directory tree like view of the server's channels"""
         tree_string = f"For user {ctx.author}\n{ctx.guild}\n"
@@ -237,19 +237,19 @@ class Misc:
 
         await ctx.send(f"```fix\n{tree_string}```")
 
-    @commands.command()
+    @cc.command()
     async def invite(self, ctx):
         """Sends the bot's invite URL"""
         await ctx.send(
             f"Add to your server: https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&scope=bot"
         )
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def echo(self, ctx, *, text: commands.clean_content):
         """Echoes the text sent"""
         await ctx.send(text)
 
-    @commands.command()
+    @cc.command()
     async def snowflake(self, ctx, snowflake: int):
         """Converts snowflake id into creation date.
         Bot requires no knowledge of user/emoji/guild/channel.
@@ -264,27 +264,26 @@ class Misc:
         else:
             await ctx.send(date.strftime("%d/%m/%Y %H:%M:%S"))
 
-    def make_commands(self, ctx):
+    async def make_commands(self, ctx):
         cogs_dict = OrderedDict()
         for cog in self.bot.cogs:
             if getattr(cog, "hidden", False):
                 continue
             cogs_dict[cog] = cogs_dict.get(cog, []) + [
-                cmd for cmd in self.bot.get_cog_commands(cog)
-                if not cmd.hidden and cmd.can_run(ctx) and cmd.enabled
+                cmd for cmd in self.bot.get_cog_commands(cog) if not cmd.hidden and await cmd.can_run(ctx)
             ]
         for cmd in self.bot.commands:
-            if cmd.cog_name is None and not cmd.hidden and cmd.can_run(ctx) and cmd.enabled:
+            if cmd.cog_name is None and not cmd.hidden and await cmd.can_run(ctx):
                 cogs_dict['No Category'] = cogs_dict.get(
                     'No Category', []) + [cmd.name]
         cogs_dict = OrderedDict(
             [(key, val) for key, val in cogs_dict.items() if val])
         return cogs_dict
 
-    @commands.command(name="help")
+    @cc.command(name="help")
     async def _help(self, ctx, *, command: str = None):
         """Shows this message."""
-        cogs_dict = self.make_commands(ctx)
+        cogs_dict = await self.make_commands(ctx)
         embed = discord.Embed(color=discord.Colour.green())
         if command is None:
             command = "Help"

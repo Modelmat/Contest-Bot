@@ -9,13 +9,13 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 
 class Owner:
     """Owner only commands"""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
         self.hidden = True
         self._last_result = None
@@ -23,13 +23,13 @@ class Owner:
     async def __local_check(self, ctx):
         return await self.bot.is_owner(ctx.author)
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def update_lib(self, ctx):
         await self.bot.pull_remotes()
         await ctx.send("""Instigated Pull Request. To update;
 ```pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]```""")
 
-    @commands.group(hidden=True)
+    @cc.group(hidden=True)
     async def vps(self, ctx):
         """Commands for controlling the VPS"""
         pass
@@ -46,31 +46,31 @@ class Owner:
         system('heroku ps:scale worker=1 --app discord-kern-bot')
         await ctx.success("Starting VPS instance")
 
-    @commands.command(hidden=True, aliases=['restart'])
+    @cc.command(hidden=True, aliases=['restart'])
     async def rebirth(self, ctx):
         """Owner of this bot only command; Restart the bot"""
         await ctx.success("", f"Restarting @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.suicide("Restarting")
         execl(executable, 'python "' + "".join(argv) + '"')
 
-    @commands.command(hidden=True, aliases=['shutdown', 'die'])
+    @cc.command(hidden=True, aliases=['shutdown', 'die'])
     async def suicide(self, ctx):
         """Owner of this bot only command; Shutdown the bot"""
         await ctx.success("", f"Shutting Down @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.suicide()
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def leave(self, ctx):
         """Leaves this server"""
         await ctx.success("Leaving `{}`".format(ctx.guild))
         await ctx.guild.leave()
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def servers(self, ctx):
         """Sends the servers this bot is in"""
         await ctx.send("My servers:```ini\n[{}]```".format(", ".join([guild.name for guild in self.bot.guilds])))
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def announce(self, ctx, *, message):
         """Announces a message to everyone"""
         for guild in self.bot.guilds:
@@ -80,7 +80,7 @@ class Owner:
                     break
         await ctx.send("Success.")
 
-    @commands.command(hidden=True, name="eval", aliases=['exec'])
+    @cc.command(hidden=True, name="eval", aliases=['exec'])
     async def k_eval(self, ctx, *, body: str):
         """Evaluates code"""
 

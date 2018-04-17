@@ -6,7 +6,7 @@ import async_timeout
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 
 def rgb(r, g, b):
@@ -20,7 +20,7 @@ EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 class Games:
     """Games"""
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def add_reactions(self, message, number):
@@ -57,8 +57,8 @@ class Games:
         return results
 
     @commands.cooldown(1, 30, commands.BucketType.channel)
-    @commands.group(invoke_without_command=True)
-    async def trivia(self, ctx: commands.Context, *, category: str = None):
+    @cc.group(invoke_without_command=True)
+    async def trivia(self, ctx: cc.KernContext, *, category: str = None):
         """Provides a trivia functionality. 5 questions. Can pass a category"""
         results = await self.get_trivia_results(category)
         corrects = []

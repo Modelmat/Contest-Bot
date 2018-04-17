@@ -4,20 +4,22 @@ from typing import Dict
 
 import discord
 from discord.ext import commands
-
 from fuzzywuzzy import process
+
+import custom_classes as cc
+
 
 class Discord:
     """Commands related to discord.py library"""
     documentation: Dict[str, dict]
 
-    def __init__(self, bot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def __local_check(self, ctx):
         return "discord" in ctx.guild.name or await ctx.bot.is_owner(ctx.author)
 
-    @commands.command()
+    @cc.command()
     async def source(self, ctx, *, command: str = None):
         """Displays my full source code or for a specific command.
         To display the source code of a subcommand you can separate it by
@@ -56,7 +58,7 @@ class Discord:
         else:
             return embed
 
-    @commands.command(aliases=["documentation", "rtfd"])
+    @cc.command(aliases=["documentation", "rtfd"])
     async def docs(self, ctx, obj):
         """Displays the documentation for a discord command.
         e.g `discord.User` is User, and `commands.Bot` is Bot

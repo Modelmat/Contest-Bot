@@ -47,7 +47,6 @@ def chunks(s, n):
     for start in range(0, len(s), n):
         yield s[start:start + n]
 
-
 def replace_backticks(content, do_it):
     if not do_it:
         return content
@@ -59,6 +58,43 @@ def replace_backticks(content, do_it):
         content += "```"
         content = "```" + content
     return content
+
+
+class KernGroup(commands.Group):
+    def __init__(self, **attrs):
+        self.handled_errors = attrs.pop("errors", [])
+        super().__init__(**attrs)
+
+    async def can_run(self, ctx):
+        if not self.enabled:
+            return False
+        return super().can_run(ctx)
+
+    def command(self, *args, **kwargs):
+        def decorator(func):
+            result = command(*args, **kwargs)(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+
+class KernCommand(commands.Command):
+    def __init__(self, name, callback, **kwargs):
+        self.handled_errors = kwargs.get("errors", [])
+        super().__init__(name, callback, **kwargs)
+
+    async def can_run(self, ctx):
+        if not self.enabled:
+            return False
+        return super().can_run(ctx)
+
+
+def command(name=None, cls=KernCommand, **attrs):
+    return commands.command(name=name, cls=cls, **attrs)
+
+def group(name=None, **attrs):
+    return command(name=name, cls=KernGroup, **attrs)
 
 
 class KernBot(commands.Bot):
@@ -228,7 +264,7 @@ class KernBot(commands.Bot):
                 pass
 
 
-class CustomContext(commands.Context):
+class KernContext(commands.Context):
     async def paginator(self, num_entries, max_fields=5, base_embed=discord.Embed()):
         return await Paginator.init(self, num_entries, max_fields, base_embed)
 
@@ -436,7 +472,7 @@ class CreateDocumentation:
 
 class Paginator:
     @classmethod
-    async def init(cls, ctx: CustomContext, data: dict, max_fields: int=5, base_embed: discord.Embed()=None):
+    async def init(cls, ctx: KernContext, data: dict, max_fields: int=5, base_embed: discord.Embed()=None):
         """data = {section_name: {title: value}}"""
         self = Paginator()
         self.message = None

@@ -1,13 +1,14 @@
-from os import environ, path
-import re
 import json
+import re
+from os import environ, path
 from random import sample
 
 import async_timeout
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
+
 
 # Add: https://developer.oxforddictionaries.com/documentation#!/Search/get_search_source_lang, and check for no definitions (key error)
 
@@ -15,7 +16,7 @@ from custom_classes import KernBot
 class Dictionary:
     """Provides dictionary functionality"""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
         self.dictionary_base_url = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/{}'
         self.image_base_url = 'https://duckduckgo.com/'
@@ -97,7 +98,7 @@ class Dictionary:
                 name="Did you mean?", value="\n".join(similar_words))
         return embed
 
-    @commands.command(aliases=['synonyms'])
+    @cc.command(aliases=['synonyms'])
     async def synonym(self, ctx, *, term):
         """Return an embed of synonyms for the word passed.`"""
         async with ctx.typing():
@@ -136,7 +137,7 @@ class Dictionary:
 
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=['antonyms'])
+    @cc.command(aliases=['antonyms'])
     async def antonym(self, ctx, *, term):
         """Return an embed of antonyms for the word passed."""
         async with ctx.typing():
@@ -175,7 +176,7 @@ class Dictionary:
 
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=['meaning'])
+    @cc.command(aliases=['meaning'])
     async def define(self, ctx, *, term):
         """Return an embed of definitions for the word passed. Includes image and more."""
         async with ctx.typing():

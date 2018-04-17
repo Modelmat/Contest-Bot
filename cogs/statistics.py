@@ -12,7 +12,7 @@ from fuzzywuzzy import process
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot, CoinError, UpperConv, IntConv
+import custom_classes as cc
 
 ICON_CODES = {
     1: "☀",
@@ -51,7 +51,7 @@ def get_delta(time_period, limit):
 
 class Statistics:
     """Function related to statistics"""
-    def __init__(self, bot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def get_data(self, time_period, coin, currency, limit):
@@ -65,7 +65,7 @@ class Statistics:
                 ) as resp:
                     js = await resp.json()
             if js['Response'] != "Success":
-                raise CoinError(js['Message'], coin, currency, limit)
+                raise cc.CoinError(js['Message'], coin, currency, limit)
             vals = js['Data']
             self.bot.crypto['market_price'][coin] = {
                 currency: {
@@ -100,7 +100,7 @@ class Statistics:
         em.set_image(url=f"attachment://{graph_name}")
         return graph, em
 
-    @commands.group(aliases=["crypto"])
+    @cc.group(aliases=["crypto"])
     async def coin(self, ctx):
         """Provides information on cryptocurrencies
         This root command is not working."""
@@ -126,7 +126,7 @@ Full name support is incoming.""",
             timestamp=False)
 
     @coin.command(name="day", aliases=["daily", "days"])
-    async def coin_day(self, ctx, coin: UpperConv, currency: UpperConv = "USD", days: IntConv = 30):
+    async def coin_day(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", days: cc.IntConv = 30):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("day", coin, currency, days)
@@ -136,7 +136,7 @@ Full name support is incoming.""",
             await ctx.send(file=graph, embed=embed)
 
     @coin.command(name="hour", aliases=["hourly", "hours"])
-    async def coin_hour(self, ctx, coin: UpperConv, currency: UpperConv = "USD", hours: IntConv = 6):
+    async def coin_hour(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", hours: cc.IntConv = 6):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("hour", coin, currency, hours)
@@ -145,7 +145,7 @@ Full name support is incoming.""",
             await ctx.send(file=graph, embed=embed)
 
     @coin.command(name="minute", aliases=["minutes"])
-    async def coin_minute(self, ctx, coin: UpperConv, currency: UpperConv = "USD", minutes: IntConv = 60):
+    async def coin_minute(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", minutes: cc.IntConv = 60):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("minute", coin, currency, minutes)
@@ -158,7 +158,7 @@ Full name support is incoming.""",
     @coin_hour.error
     async def coin_error_handler(self, ctx, error):
         error = getattr(error, "original", error)
-        if isinstance(error, CoinError):
+        if isinstance(error, cc.CoinError):
             if "toSymbol" in str(error):
                 await ctx.error(f"Currency `{error.currency}` does not exist.",
                                 "")
@@ -175,11 +175,11 @@ Full name support is incoming.""",
         else:
             await ctx.error(error)
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def auweather(self, ctx, *, location):
         await ctx.send(await self.bot.get_weather())
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def auforecast(self, ctx, *, location):
         # add weekdays, then RADAR images, and current temp etc.
         try:

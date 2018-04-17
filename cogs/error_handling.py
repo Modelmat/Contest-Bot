@@ -8,13 +8,13 @@ import aiofiles
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 cgitb.enable()
 
 class Errors:
     """Error Handling"""
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     async def on_command_error(self, ctx, error):

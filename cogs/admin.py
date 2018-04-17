@@ -3,7 +3,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 
 async def message_purge_perm_check(ctx):
@@ -18,11 +18,11 @@ async def message_purge_perm_check(ctx):
 class Admin:
     """Administration commands."""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     @commands.check(message_purge_perm_check)
-    @commands.group(invoke_without_command=True)
+    @cc.group(invoke_without_command=True)
     async def delete(self, ctx):
         """Deletes the last message sent by this bot"""
         async for message in ctx.channel.history(limit=100):
@@ -83,7 +83,7 @@ Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
                     await asyncio.sleep(5)
                     await ctx.message.delete()
 
-    @commands.command(hidden=True)
+    @cc.command(hidden=True)
     async def roles(self, ctx, *, member: discord.Member = None):
         """Shows the roles of the bot or member"""
         if member is None:
@@ -94,7 +94,7 @@ Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
             await ctx.success("```ini\n[{roles}]```", f"Roles for `{member.display_name}`:")
 
     @commands.guild_only()
-    @commands.group(aliases=["permissions"])
+    @cc.group(aliases=["permissions"])
     async def perms(self, ctx):
         """Permissions command group top (does nothing)"""
         pass

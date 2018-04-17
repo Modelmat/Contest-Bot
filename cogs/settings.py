@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from custom_classes import KernBot
+import custom_classes as cc
 
 
 async def manage_server_check(ctx):
@@ -18,16 +18,16 @@ async def manage_server_check(ctx):
 class Settings:
     """Sets and gets the settings for the bot"""
 
-    def __init__(self, bot: KernBot):
+    def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
-    @commands.group()
+    @cc.group()
     async def get(self, ctx):
         """Commands related to determining the value of settings."""
         pass
 
     @commands.check(manage_server_check)
-    @commands.group(name="set")
+    @cc.group(name="set")
     async def _set(self, ctx):
         """Commands related to the changing of settings."""
         pass
