@@ -21,11 +21,11 @@ class Errors:
         self.bot = bot
 
     async def on_command_error(self, ctx: cc.KernContext, error):
-        # This prevents any commands already handled locally being run here.
+        # This prevents any errors already handled locally being run here.
         error = getattr(error, "original", error)
 
         ignored = [commands.NotOwner, commands.CheckFailure, commands.CommandNotFound, discord.Forbidden]
-        ignored += [eval(e) for e in ctx.command.handled_errors + ctx.cog.handled_errors]
+        ignored += [eval(e) for e in getattr(ctx.command, "handled_errors", []) + getattr(ctx.cog, "handled_errors", [])]
 
         if isinstance(error, tuple(ignored)):
             return
