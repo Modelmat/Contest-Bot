@@ -27,14 +27,6 @@ class Contests:
         error = getattr(error, "original", error)
         if isinstance(error, (TypeError, ValueError, cc.AlreadySubmitted)):
             await ctx.error(error)
-        else:
-            print('Ignoring {} in command {}'.format(type(error).__qualname__, ctx.command))
-            traceback.print_exception(type(error), error, error.__traceback__)
-            await ctx.error("An unhandled exception occurred. Don't worry, we know about it now. 👍")
-            await ctx.error(
-                "```{}: {}```".format(type(error).__qualname__, error),
-                title=f"Ignoring exception in command *{ctx.command}*:",
-                channel=self.bot.logs)
 
     def generate_embed(self, message_author: discord.User, title, description, image_url=None, colour=0x00ff00):
         """Generates a discord embed object off the given parameters"""
