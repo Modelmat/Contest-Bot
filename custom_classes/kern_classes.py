@@ -95,6 +95,7 @@ class KernContext(commands.Context):
         return link
 
     async def send(self, content: str = None, *, tts=False, embed=None, file=None, files=None, delete_after=None, nonce=None):
+        content = str(content) if content is not None else None
         if content and len(content) > 1990:
             content = "**Output too long**:" + await self.upload(content)
 
