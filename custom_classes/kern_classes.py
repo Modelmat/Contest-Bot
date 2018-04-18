@@ -10,7 +10,7 @@ class KernGroup(commands.Group):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
-        return super().can_run(ctx)
+        return await super().can_run(ctx)
 
     def command(self, *args, **kwargs):
         def decorator(func):
@@ -25,7 +25,7 @@ class KernCommand(commands.Command):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
-        return super().can_run(ctx)
+        return await super().can_run(ctx)
 
 
 def command(name=None, cls=KernCommand, **attrs):
