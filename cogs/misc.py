@@ -71,7 +71,7 @@ class Misc:
         await ctx.neutral(f"{member.mention} was {index}{end}")
 
     @cc.command()
-    async def please(self, ctx, action, item="you"):
+    async def please(self, ctx, action: commands.clean_content, item: commands.clean_content, *, person: commands.clean_content="you"):
         """You can now make this bot do things!"""
         if len(action) < 3:
             return await ctx.error(f"{action} is not long enough.", "Invalid Input")
@@ -81,7 +81,7 @@ class Misc:
             action = action[-2:] + "y"
         elif action[-1] == "e":
             action = action[:-1]
-        await ctx.send(f"I am {action}ing {item}")
+        await ctx.send(f"I am {action}ing {item} {person}")
 
     @cc.command()
     async def codestats(self, ctx):
