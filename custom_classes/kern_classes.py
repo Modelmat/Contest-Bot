@@ -1,12 +1,17 @@
+from datetime import datetime
+
 import discord
 from discord.ext import commands
 
-from datetime import datetime
-
+from custom_classes import Ast
 from .paginator import Paginator
 
 
 class KernGroup(commands.Group):
+    def __init__(self, **attrs):
+        self.handled_errors = []
+        super().__init__(**attrs)
+
     async def can_run(self, ctx):
         if not self.enabled:
             return False
@@ -20,12 +25,24 @@ class KernGroup(commands.Group):
 
         return decorator
 
+    def error(self, coro):
+        self.handled_errors = Ast(coro).errors
+        return super().error(coro)
+
 
 class KernCommand(commands.Command):
+    def __init__(self, name, callback, **kwargs):
+        self.handled_errors = []
+        super().__init__(name, callback, **kwargs)
+
     async def can_run(self, ctx):
         if not self.enabled:
             return False
         return await super().can_run(ctx)
+
+    def error(self, coro):
+        self.handled_errors = Ast(coro).errors
+        return super().error(coro)
 
 
 def command(name=None, cls=KernCommand, **attrs):
