@@ -3,7 +3,6 @@ import cgitb
 import os
 import traceback
 import webbrowser
-import inspect
 
 import aiofiles
 import discord
@@ -72,7 +71,7 @@ class Errors:
             traceback.print_exception(type(error), error, error.__traceback__)
 
             if self.bot.testing:
-                async with aiofiles.open("error.html", mode="w") as f:
+                async with aiofiles.open("error.html", mode="w", encoding="utf-8") as f:
                     await f.write(cgitb.html((type(error), error, error.__traceback__)))
                 webbrowser.open_new_tab(f"file://{os.path.realpath('error.html')}")
                 await asyncio.sleep(5)
