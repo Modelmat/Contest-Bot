@@ -1,7 +1,5 @@
 [![Discord Bots](https://discordbots.org/api/widget/380598116488970261.svg?usernamecolor=FFFFFF&topcolor=000000)](https://discordbots.org/bot/380598116488970261) 
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 # Kern Bot
 
 Kern Bot is a bot by [![Modelmat](https://discordbots.org/api/widget/owner/380598116488970261.svg?noav)](https://discordbots.org/bot/380598116488970261) 
