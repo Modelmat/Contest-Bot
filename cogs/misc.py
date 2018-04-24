@@ -226,7 +226,9 @@ class Misc:
 <:discord:416194942520786945> **Discord.py** {get_distribution('discord.py').version}
 <:git:417177301244051525> **Git** {self.bot.latest_commit} [Up-To-Date: {self.bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}]
 """
-        embed.add_field(name="Links", value=f"[Invite URL]({invite_url})\n[Server Invite](https://discord.gg/nHmAkgg)\n[Bot Website](http://kern-bot.tk/)")
+        embed.add_field(name="Links", value=(f"[Invite URL]({invite_url})\n"
+                                             f"[Server Invite](https://discord.gg/nHmAkgg)\n"
+                                             f"[Bot Website](https://kern-bot.carrd.co/)"))
         embed.timestamp = datetime.utcnow()
         embed.set_footer(text="Hover over emojis")
         await ctx.send(embed=embed)
