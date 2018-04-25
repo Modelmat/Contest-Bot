@@ -31,8 +31,8 @@ python3 main.py
 
 # Configuration
 All the lines in each line in the docs will be like this. However, only enter the `ENVIRONMENT_VARIABLE`, ignoring the comments. These variables can also be environment variables (acessible by `os.environ`).
-```
-ENVIRONMENT_VARIABLE {Description}
+```py
+ENVIRONMENT_VARIABLE # Description
 ```
 
 
@@ -49,6 +49,6 @@ DATABASE_URL # PostgreSQL DB Url with auth
 
 **Example**:
 {BOT_PREFIXES}
-```
+```py
 !, ?, %  # note the spaces
 ```
