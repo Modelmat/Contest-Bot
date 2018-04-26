@@ -210,7 +210,7 @@ class Misc:
     @cc.command(aliases=['stats', 'about'])
     async def info(self, ctx):
         """Returns information about the bot."""
-        invite_url = discord.utils.oauth_url(self.bot.user.id)
+        invite_url = discord.utils.oauth_url(self.bot.user.id, permissions=discord.Permissions(270336))
         embed = discord.Embed(description=self.bot.description, colour=0x00ff00)
         embed.set_author(name=self.bot.owner, icon_url=self.bot.owner.avatar_url)
         embed.description += f"""
@@ -268,7 +268,7 @@ class Misc:
     @cc.command()
     async def invite(self, ctx):
         """Sends the bot's invite URL"""
-        await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id)}>")
+        await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id, permissions=discord.Permissions(270336))}>")
 
     @cc.command(hidden=True)
     async def echo(self, ctx, *, text: commands.clean_content):
