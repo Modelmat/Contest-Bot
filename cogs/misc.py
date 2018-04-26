@@ -210,7 +210,6 @@ class Misc:
     @cc.command(aliases=['stats', 'about'])
     async def info(self, ctx):
         """Returns information about the bot."""
-        invite_url = discord.utils.oauth_url(self.bot.user.id, permissions=discord.Permissions(270336))
         embed = discord.Embed(description=self.bot.description, colour=0x00ff00)
         embed.set_author(name=self.bot.owner, icon_url=self.bot.owner.avatar_url)
         embed.description += f"""
@@ -226,7 +225,7 @@ class Misc:
 <:discord:416194942520786945> **Discord.py** {get_distribution('discord.py').version}
 <:git:417177301244051525> **Git** {self.bot.latest_commit} [Up-To-Date: {self.bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}]
 """
-        embed.add_field(name="Links", value=(f"[Invite URL]({invite_url})\n"
+        embed.add_field(name="Links", value=(f"[Invite URL]({self.bot.invite_url})\n"
                                              f"[Server Invite](https://discord.gg/nHmAkgg)\n"
                                              f"[Bot Website](https://kern-bot.carrd.co/)"))
         embed.timestamp = datetime.utcnow()
@@ -268,7 +267,7 @@ class Misc:
     @cc.command()
     async def invite(self, ctx):
         """Sends the bot's invite URL"""
-        await ctx.send(f"<{discord.utils.oauth_url(self.bot.user.id, permissions=discord.Permissions(270336))}>")
+        await ctx.send(f"<{self.bot.invite_url}>")
 
     @cc.command(hidden=True)
     async def echo(self, ctx, *, text: commands.clean_content):

@@ -49,13 +49,13 @@ except KeyError:
         prefixes = lines[4].split(", ")
         dbl_token = lines[5]
 
-description = """Kern bot is a bot by Modelmat#8218.
+description = f"""Kern is a discord bot by Modelmat#8218.
 
-It was originally designed as a contests bot, but has since expanded
-to incorporate many other functions as the owner sees fit.
+Its original concept was for a contests bot, but this has expanded to incorporate many other functions as the owner sees fit.
 
-It is in activte development and as such any errors can be reported
-to the owner in the support server, linked below."""
+It is in active development and as such any errors found can be reported to the owner in the support server which is linked below.
+
+"""
 
 bot = cc.KernBot(
     command_prefix=server_prefix(prefixes),
@@ -98,6 +98,7 @@ async def on_guild_remove(guild: discord.Guild):
 
 @bot.event
 async def on_ready():
+    bot.invite_url = discord.utils.oauth_url(bot.user.id, permissions=discord.Permissions(270336))
     await bot.change_presence(status=discord.Status.online)
     bot.owner = (await bot.application_info()).owner
     if bot.user.name != name:
