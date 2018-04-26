@@ -11,7 +11,7 @@ Kern Bot is a bot by Modelmat#8218
 
 It has multiple features include YouTube® search, Trivia, Contests (semi-working), dictionaries, and other Miscellaneous functions.
 
-To add this bot to your server, use [this](https://discordapp.com/oauth2/authorize?client_id=380598116488970261&scope=bot) link.
+To add this bot to your server, use [this](https://discordapp.com/oauth2/authorize?client_id=380598116488970261&scope=bot&permissions=270336) link.
 
 
 
