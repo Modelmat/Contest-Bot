@@ -154,7 +154,7 @@ class Internet:
 
         key = url.query['speech_key']
         link = f"http://talkobamato.me/synth/output/{key}/obama.mp4"
-        await asyncio.sleep(text//5)
+        await asyncio.sleep(len(text) // 5)
         with async_timeout.timeout(10):
             async with self.bot.session.get(link) as resp:
                 if resp.status >= 400:
