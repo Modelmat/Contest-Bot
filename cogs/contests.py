@@ -77,12 +77,12 @@ class Contests:
         if not submissions:
             return await ctx.error(f"The server `{ctx.guild.name}` has no contest submissions.", "No submissions")
         compiled = str()
-        for index, submission in enumerate(submissions):
+        for index, submission in enumerate(submissions, start=1):
             embed = discord.Embed.from_data(json.loads(submission['embed']))
             s_id = submission['submission_id']
             author = ctx.guild.get_member(submission['owner_id'])
             rating = submission['rating'] or "NIL"
-            compiled += f"{index + 1}). **{embed.title}** by {author.mention} [id: {s_id}]. **Rating:** `{rating}` points.\n"
+            compiled += f"{index}). **{embed.title}** by {author.mention} [id: {s_id}]. **Rating:** `{rating}` points.\n"
         max_points = await self.bot.database.get_max_rating(ctx)
         await ctx.neutral(compiled, f"Submissions leaderboard for {ctx.guild} [/{max_points}]")
         return [submission['submission_id'] for submission in submissions]

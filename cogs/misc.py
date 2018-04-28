@@ -56,8 +56,8 @@ class Misc:
             return await ctx.error(f"{number} is too big. Try less than 11.", "Bad Argument")
         mems = sorted(ctx.guild.members, key=lambda x: x.joined_at)[:number]
         oup = ""
-        for i, mem in enumerate(mems):
-            oup += f"{mem.mention} was {i+1}{INDEXES.get(str(i + 1), 'ᵗʰ')}\n"
+        for i, mem in enumerate(mems, start=1):
+            oup += f"{mem.mention} was {i}{INDEXES.get(str(i), 'ᵗʰ')}\n"
         await ctx.neutral(oup, "First Member(s)", timestamp=ctx.guild.created_at, footer="Guild created at")
 
     @cc.command()

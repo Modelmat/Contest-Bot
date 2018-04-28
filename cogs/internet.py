@@ -79,7 +79,7 @@ class Internet:
         """Gets current trending videos"""
         url = "https://www.youtube.com/feed/trending"
         vids = await self.get_youtube_videos(url, 77, num_results)
-        results = "\n".join([f"{index+1}) {title}" for index, title in enumerate(vids)])
+        results = "\n".join([f"{index}) {title}" for index, title in enumerate(vids, start=1)])
         await ctx.neutral(results, "YouTube Trending")
 
     @youtube.command()
