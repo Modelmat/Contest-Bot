@@ -26,7 +26,8 @@ XML_PARSER = xmljson.GData(dict_type=dict)
 
 
 class KernBot(commands.Bot):
-    def __init__(self, testing=False, debug=False, *args, **kwargs):
+    def __init__(self, github_auth, testing=False, debug=False, *args, **kwargs):
+        self.github_auth = aiohttp.BasicAuth(github_auth[0], github_auth[1])
         self.testing = testing
 
         self.session = None

@@ -107,13 +107,14 @@ class KernContext(commands.Context):
         return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, footer, **kwargs)
 
     async def upload(self, content):
-        async with self.bot.session.post("http://mystb.in/documents", data=content) as r:
-            link = "http://mystb.in/" + (await r.json())["key"] + ".py"
+        json = {"files": {"output.md": {"content": content}}}
+        async with self.bot.session.post("https://api.github.com/gists", json=json, auth=self.bot.github_auth) as r:
+            link = (await r.json())["html_url"]
         return link
 
     async def send(self, content: str = None, *, tts=False, embed=None, file=None, files=None, delete_after=None, nonce=None):
         content = str(content) if content is not None else None
         if content and len(content) > 1990:
-            content = "**Output too long**:" + await self.upload(content)
+            content = "**Output too long**: " + await self.upload(content)
 
         return await super().send(content=content, tts=tts, embed=embed, file=file, files=files, delete_after=delete_after, nonce=nonce)

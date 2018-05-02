@@ -39,6 +39,7 @@ try:
     name = environ["BOT_NAME"]
     prefixes = environ["BOT_PREFIX"].split(", ")
     dbl_token = environ["DBL_TOKEN"]
+    github_auth = environ["GITHUB_AUTH"].split(":")
     testing = False
 except KeyError:
     with open("client.secret", encoding="utf-8") as file:
@@ -48,6 +49,7 @@ except KeyError:
         name = lines[3]
         prefixes = lines[4].split(", ")
         dbl_token = lines[5]
+        github_auth = lines[7].split(":")
 
 description = f"""Kern is a discord bot by Modelmat#8218.
 
@@ -58,12 +60,12 @@ It is in active development and as such any errors found can be reported to the 
 """
 
 bot = cc.KernBot(
+    github_auth,
     command_prefix=server_prefix(prefixes),
     case_insensitive=True,
     description=description,
     activity=discord.Game(name="Start-up 101"),
     testing=testing)
-
 
 @bot.event
 async def on_connect():
