@@ -145,11 +145,5 @@ class Owner:
                 self._last_result = ret
                 await ctx.send(f"**Input:**\n```py\n{body}\n```\n**Returns:**\n```py\n{value}{ret}\n```")
 
-            try:
-                await ctx.message.delete()
-            except discord.HTTPException:
-                pass
-
-
 def setup(bot):
     bot.add_cog(Owner(bot))

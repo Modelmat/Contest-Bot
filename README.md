@@ -45,10 +45,15 @@ BOT_NAME     # Bot's Username
 BOT_PREFIXES # Bot's Command Prefix - comma seperated
 DBL_TOKEN    # Discordbots.org
 DATABASE_URL # PostgreSQL DB Url with auth
+GITHUB_OAUTH # GitHub OAuth token for Gists
 ```
 
 **Example**:
 {BOT_PREFIXES}
 ```py
 !, ?, %  # note the spaces
+```
+{GITHUB_OAUTH}
+```py
+modelmat:403926033d001b5279df37cbbe5287b7c7c267fa # not real
 ```
