@@ -102,7 +102,7 @@ class CreateDocumentation:
     async def generate_documentation(self):
         async with aiohttp.ClientSession() as s:
             async with s.get(self.api) as r:
-                self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
+                self.parse_soup(BeautifulSoup(await r.text(encoding="utf-8"), "lxml"), r.url)
             async with s.get(self.commands) as r:
-                self.parse_soup(BeautifulSoup(await r.text(), "lxml"), r.url)
+                self.parse_soup(BeautifulSoup(await r.text(encoding="utf-8"), "lxml"), r.url)
         return self.documentation

@@ -11,8 +11,6 @@ import custom_classes as cc
 
 class Discord:
     """Commands related to discord.py library"""
-    documentation: Dict[str, dict]
-
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
