@@ -1,4 +1,4 @@
-git+git://github.com/Modelmat/discord.py@rewrite
+git+git://github.com/rapptz/discord.py@rewrite
 aiohttp==2.2.5
 async-timeout==2.0.0
 asyncpg==0.15.0
