@@ -97,14 +97,14 @@ class KernContext(commands.Context):
             error = str(error)
         return await self.__embed(title, error, discord.Colour.red(), False, False, channel, footer, **kwargs)
 
-    async def success(self, success, title="Success:", channel: discord.TextChannel = None, rqst_by=True, timestamp=datetime.utcnow(), footer=None, **kwargs):
-        return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp, channel, footer, **kwargs)
+    async def success(self, success, title="Success:", channel: discord.TextChannel = None, rqst_by=True, timestamp=None, footer=None, **kwargs):
+        return await self.__embed(title, success, discord.Colour.green(), rqst_by, timestamp or datetime.utcnow(), channel, footer, **kwargs)
 
-    async def neutral(self, text, title=None, channel: discord.TextChannel = None, rqst_by=True, timestamp=datetime.utcnow(), footer=None, **kwargs):
-        return await self.__embed(title, text, 0x36393E, rqst_by, timestamp, channel, footer, **kwargs)
+    async def neutral(self, text, title=None, channel: discord.TextChannel = None, rqst_by=True, timestamp=None, footer=None, **kwargs):
+        return await self.__embed(title, text, 0x36393E, rqst_by, timestamp or datetime.utcnow(), channel, footer, **kwargs)
 
-    async def warning(self, warning, title=None, channel: discord.TextChannel = None, rqst_by=True, timestamp=datetime.utcnow(), footer=None, **kwargs):
-        return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp, channel, footer, **kwargs)
+    async def warning(self, warning, title=None, channel: discord.TextChannel = None, rqst_by=True, timestamp=None, footer=None, **kwargs):
+        return await self.__embed(title, warning, discord.Colour.orange(), rqst_by, timestamp or datetime.utcnow(), channel, footer, **kwargs)
 
     async def upload(self, content):
         json = {"files": {"output.md": {"content": content}}}
