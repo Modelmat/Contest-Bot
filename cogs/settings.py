@@ -82,8 +82,7 @@ class Settings:
     @get.command(name="prefixes")
     async def get_prefixes(self, ctx):
         """Get the bot's prefix for this server"""
-        prefixes = self.bot.prefixes_cache.get(ctx.guild.id,
-                                               []) + [self.bot.prefix]
+        prefixes = self.bot.prefixes_cache.get(ctx.guild.id) or [ctx.clean_prefix()]
         await ctx.send("Prefixes for {}: ```{}```".format(
             ctx.guild.name, ", ".join(prefixes)))
 
