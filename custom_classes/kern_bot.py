@@ -35,7 +35,6 @@ class KernBot(commands.Bot):
         self.latest_message_time = None
         self.latest_commit = None
         self.invite_url = None
-        self.obama_is_up = (datetime.utcnow() - timedelta(days=1), True)
         self.documentation = {}
         self.prefixes_cache = {}
         self.weather = {}

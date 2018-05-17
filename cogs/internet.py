@@ -179,7 +179,6 @@ class Internet:
             await ctx.error("http://talkobamato.me/ is not responding.", "Request Timed Out")
         elif isinstance(error, discord.HTTPException):
             await ctx.error(error.text, error.response.reason, footer="Don't worry. We just propogate this error from the server.")
-            ctx.bot.obama_is_up = (datetime.utcnow(), False)
 
     @commands.cooldown(1, 5, commands.BucketType.channel)
     @cc.command(aliases=["translate_mixup", "googletrans"])
