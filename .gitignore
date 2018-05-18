@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -16,8 +18,9 @@ ENV/
 *secret*
 
 # ide files
-.idea/
 .vscode/
+workspace.xml
+.idea/
 
 # windows retarded files
 Thumbs.db
