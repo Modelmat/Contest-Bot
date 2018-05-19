@@ -1,6 +1,6 @@
 from datetime import datetime
 import inspect
-from collections import OrderedDict
+from collections import defaultdict
 import os
 import hashlib
 from platform import python_version
@@ -289,83 +289,49 @@ class Misc:
         else:
             await ctx.send(date.strftime("%d/%m/%Y %H:%M:%S"))
 
-    async def make_commands(self, ctx):
-        cogs_dict = OrderedDict()
-        for cog in self.bot.cogs:
-            if getattr(cog, "hidden", False):
-                continue
-            cogs_dict[cog] = cogs_dict.get(cog, []) + [
-                cmd for cmd in self.bot.get_cog_commands(cog) if not cmd.hidden and await cmd.can_run(ctx)
-            ]
-        for cmd in self.bot.commands:
-            if cmd.cog_name is None and not cmd.hidden and await cmd.can_run(ctx):
-                cogs_dict['No Category'] = cogs_dict.get(
-                    'No Category', []) + [cmd.name]
-        cogs_dict = OrderedDict(
-            [(key, val) for key, val in cogs_dict.items() if val])
-        return cogs_dict
+    async def make_commands(self, ctx, long_description=False):
+        total_commands = 0
+        cogs_dict = defaultdict(list)
+        for command in set(self.bot.walk_commands()):
+            if not command.hidden and await command.can_run(ctx):
+                if long_description:
+                    value = command.long_doc
+                else:
+                    value = command.short_doc or "No description."
+                data = {"name": command.qualified_name,
+                        "value": value}
+                cogs_dict[command.cog_name or "No Category"].append(data)
+                total_commands += 1
+
+        return cogs_dict, total_commands
 
     @cc.command(name="help")
     async def _help(self, ctx, *, command: str = None):
         """Shows this message."""
-        cogs_dict = await self.make_commands(ctx)
-        embed = discord.Embed(color=discord.Colour.green())
-        if command is None:
-            command = "Help"
-            embed.description = "{0}\nUse `{1}help command` for further detail.".format(
-                self.bot.description, ctx.clean_prefix())
-            for cog, cmds in cogs_dict.items():
-                commands_l = []
-                for cmd in cmds:
-                    commands_l.append(f"{cmd}")
-                embed.add_field(
-                    name=cog.capitalize(),
-                    value=", ".join(commands_l),
-                    inline=False)
+        cogs_dict, total_commands = await self.make_commands(ctx, bool(command))
+        embed = discord.Embed(title="Help",
+                              description=self.bot.description,
+                              colour=discord.Colour.green(),
+                              timestamp=datetime.utcnow())
+        embed.set_footer(text=f"{total_commands} commands",
+                         icon_url=ctx.author.avatar_url)
+        embed.add_field(name="Links", value=(f"[Invite URL]({self.bot.invite_url})\n"
+                                             f"[Server Invite](https://discord.gg/nHmAkgg)\n"
+                                             f"[Bot Website](https://kern-bot.carrd.co/)"))
 
-        elif command.lower() in [cog.lower() for cog in cogs_dict.keys()]:
-            # actually a cog
-            command = command.capitalize()
-            try:
-                embed.description = inspect.cleandoc(self.bot.get_cog(command).__doc__)
-            except AttributeError:
-                pass
-            for cmd in self.bot.get_cog_commands(command):
-                if not cmd.hidden:
-                    if cmd.help is None:
-                        c_help = "No description"
-                    else:
-                        c_help = f"{cmd.help.format(ctx.clean_prefix())} ```{cmd.signature}```"
-                    embed.add_field(
-                        name=cmd.qualified_name, value=c_help, inline=False)
+        if not command:
+            await ctx.paginate(cogs_dict, embed)
 
-        elif self.bot.get_command(command) is not None:
-            command = self.bot.get_command(command)
-            if command.help is None:
-                command_help = "No description"
-            else:
-                command_help = f"{command.help.format(ctx.clean_prefix())} ```{command.signature}```"
-            embed.description = command_help
-            if isinstance(command, commands.Group):
-                for cmd in command.commands:
-                    if not cmd.hidden:
-                        if cmd.help is None:
-                            c_help = "No description"
-                        else:
-                            c_help = f"{cmd.help.format(ctx.clean_prefix())} ```{cmd.signature}```"
-                        embed.add_field(
-                            name=cmd.qualified_name,
-                            value=c_help,
-                            inline=False)
+        elif command.title() in cogs_dict:
+            cog_dict = {command.title(): cogs_dict[command.title()]}
+            await ctx.paginate(cog_dict, embed, page=2, max_fields=3)
+
+        elif self.bot.get_command(command):
+            embed.description = self.bot.get_command(command).long_doc
+            await ctx.send(embed=embed)
 
         else:
-            return await ctx.error(f"The command `{command}` does not exist.",
-                                   "")
-
-        embed.timestamp = datetime.utcnow()
-        embed.set_author(name=str(command).capitalize(),
-                         url="https://discord.gg/nHmAkgg")
-        await ctx.send(embed=embed)
+            return await ctx.error(f"The command `{command}` does not exist.", "")
 
 
 def setup(bot):
