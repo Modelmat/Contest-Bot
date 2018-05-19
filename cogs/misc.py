@@ -327,6 +327,7 @@ class Misc:
             await ctx.paginate(cog_dict, embed, page=2, max_fields=3)
 
         elif self.bot.get_command(command):
+            embed.clear_fields()
             embed.description = self.bot.get_command(command).long_doc
             await ctx.send(embed=embed)
 
