@@ -1,6 +1,5 @@
 git+git://github.com/rapptz/discord.py@rewrite
-aiohttp==2.2.5
-async-timeout==2.0.0
+aiohttp==3.2.1
 asyncpg==0.15.0
 beautifulsoup4==4.6.0
 lxml==4.1.1
@@ -12,5 +11,5 @@ lxml==4.1.1
 matplotlib==2.1.2
 aioftp==0.10.1
 xmljson==0.1.9
-aiogoogletrans==3.0
+git+git://github.com/Modelmat/aiogoogletrans@master
 aiofiles==0.3.2
