@@ -326,13 +326,19 @@ class Misc:
             cog_dict = {command.title(): cogs_dict[command.title()]}
             await ctx.paginate(cog_dict, embed, page=2, max_fields=3)
 
-        elif self.bot.get_command(command):
-            embed.clear_fields()
-            embed.description = self.bot.get_command(command).long_doc
-            await ctx.send(embed=embed)
-
         else:
-            return await ctx.error(f"The command `{command}` does not exist.", "")
+            cmd = self.bot.get_command(command)
+            if await cmd.can_run(ctx):
+                embed.clear_fields()
+                embed.description = cmd.long_doc
+                for subcommand in getattr(cmd, "commands", []):
+                    embed.add_field(name=subcommand.name,
+                                    value=subcommand.long_doc,
+                                    inline=False)
+
+                await ctx.send(embed=embed)
+            else:
+                await ctx.error(f"The command `{command}` does not exist.", "")
 
 
 def setup(bot):
