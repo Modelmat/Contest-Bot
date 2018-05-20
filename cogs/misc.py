@@ -139,40 +139,35 @@ class Misc:
 
         await ctx.send(embed=em)
 
+    async def clean_content(self, ctx, content):
+        return await commands.clean_content(escape_markdown=True).convert(ctx, content)
+
     @cc.command()
     async def raw(self, ctx, *, message=None):
         """Displays the raw code of a message.
         The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
-        msg = None
-        if message is not None:
-            msg = await ctx.get_message(int(message))
+        if message:
+            try:
+                message = await ctx.get_message(int(message))
+            except ValueError:
+                message = message
         else:
-            async for message in ctx.history(limit=10):
-                if message.author == ctx.author:
-                    continue
-                msg = message
-                break
+            async for msg in ctx.history(limit=100):
+                if msg.author != ctx.author:
+                    message = msg
+                    break
 
-        if msg is None:
-            msg = ctx.message
-            msg.content = msg.content.split('raw ')[1]
+        embed = None
+        content = await self.clean_content(ctx, message.content)
 
-        raw = await commands.clean_content(escape_markdown=True).convert(
-            ctx, msg.content)
-        if raw:
-            raw = f"​\n{raw}\n​"
-        embed_text = str()
-        if msg.embeds:
-            embed_text += "*Message has {} embed(s).*".format(len(msg.embeds))
-        embed = discord.Embed(
-            description=raw + embed_text,
-            timestamp=msg.created_at,
-            colour=0x36393E)
-        embed.set_author(
-            name="Message by: {}".format(msg.author),
-            icon_url=msg.author.avatar_url)
-        embed.set_footer(text="Sent")
-        await ctx.send(embed=embed)
+        if message.embeds:
+            embed = message.embeds[0]
+            embed.description = await self.clean_content(ctx, embed.description or "")
+            for index, field in enumerate(embed.fields):
+                value = await self.clean_content(ctx, field.value)
+                embed.set_field_at(index, name=field.name, value=value)
+
+        await ctx.send(content, embed=embed)
 
     @raw.error
     async def raw_error_handler(self, ctx, error):
