@@ -38,7 +38,7 @@ jobs:
           name: syntax tests
           command: |
             . venv/bin/activate
-            python -m compileall main.py cogs custom_class -fq
+            python -m compileall main.py cogs custom_classes -fq
 
       - store_artifacts:
           path: test-reports
