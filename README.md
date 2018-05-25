@@ -1,5 +1,6 @@
-
 # Kern Bot
+![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg)
+
 [![Servers](https://discordbots.org/api/widget/servers/380598116488970261.svg)](https://discordbots.org/bot/380598116488970261) 
 [![Owner](https://discordbots.org/api/widget/owner/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261) 
 [![Status](https://discordbots.org/api/widget/status/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261)
