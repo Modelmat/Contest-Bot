@@ -20,14 +20,18 @@ class Errors:
         self.bot = bot
 
     async def on_command_error(self, ctx: cc.KernContext, error):
-        # This prevents any errors already handled locally being run here.
         error = getattr(error, "original", error)
 
-        ignored = [commands.NotOwner, commands.CheckFailure, commands.CommandNotFound, discord.Forbidden]
+        ignored = [commands.NotOwner, commands.CommandNotFound, discord.Forbidden]
+        # This ignores any errors that are being handled at command or cog level
         ignored += [eval(e) for e in getattr(ctx.command, "handled_errors", []) + getattr(ctx.cog, "handled_errors", [])]
 
         if isinstance(error, tuple(ignored)):
             return
+
+        elif isinstance(error, commands.CheckFailure):
+            if self.bot.is_owner(ctx.author):
+                await ctx.reinvoke()
 
         elif isinstance(error, commands.DisabledCommand):
             if self.bot.is_owner(ctx.author):
