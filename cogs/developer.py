@@ -1,6 +1,5 @@
 import inspect
 import os
-from typing import Dict
 
 import discord
 from discord.ext import commands
@@ -9,7 +8,7 @@ from fuzzywuzzy import process
 import custom_classes as cc
 
 
-class Discord:
+class Developer:
     """Commands related to discord.py library"""
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
@@ -62,7 +61,7 @@ class Discord:
         e.g `discord.User` is User, and `commands.Bot` is Bot
         Note this is not paginated and is currently very spammy"""
         try:
-            objs = [o[0] for o in process.extract(obj.lower(), self.bot.documentation.keys()) if o[1] > 75]
+            objs = [o[0] for o in process.extract(obj, self.bot.documentation.keys()) if o[1] > 75]
             obj = self.bot.documentation[obj]
         except KeyError:
             op = ""
@@ -81,4 +80,4 @@ class Discord:
 
 
 def setup(bot):
-    bot.add_cog(Discord(bot))
+    bot.add_cog(Developer(bot))
