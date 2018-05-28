@@ -24,7 +24,7 @@ class Errors:
 
         ignored = [commands.NotOwner, commands.CommandNotFound, discord.Forbidden]
         # This ignores any errors that are being handled at command or cog level
-        ignored += [eval(e) for e in getattr(ctx.command, "handled_errors", []) + getattr(ctx.cog, "handled_errors", [])]
+        ignored += ctx.command.handled_errors + ctx.cog.handled_errors
 
         if isinstance(error, tuple(ignored)):
             return

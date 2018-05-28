@@ -2,6 +2,12 @@ import ast
 import textwrap
 import inspect
 
+# For possible errors encountered via ast
+import discord
+from discord.ext import commands
+import custom_classes as cc
+import asyncio
+
 
 class Ast:
     def __init__(self, coro):
@@ -19,15 +25,15 @@ class Ast:
                 value = i.test.args[1]
                 value_d = self.bir(value)
                 if value_d.get("id"):
-                    self.errors.append(value.id)
+                    self.errors.append(eval(value.id))
                 elif value_d.get("value"):
-                    self.errors.append(self.do_at(value.value, value.attr))
+                    self.errors.append(eval(self.do_at(value.value, value.attr)))
                 elif value_d.get("elts"):
                     for error in value.elts:
                         if self.bir(error).get("id"):
-                            self.errors.append(error.id)
+                            self.errors.append(eval(error.id))
                         elif self.bir(error).get("value"):
-                            self.errors.append(self.do_at(error.value, error.attr))
+                            self.errors.append(eval(self.do_at(error.value, error.attr)))
 
     def orelse(self, node):
         if isinstance(node, ast.If):

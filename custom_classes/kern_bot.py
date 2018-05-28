@@ -21,6 +21,7 @@ from discord.ext import commands
 from . import database as db
 from .documentation import CreateDocumentation
 from .data_classes import *
+import custom_classes as cc
 
 XML_PARSER = xmljson.GData(dict_type=dict)
 
@@ -68,6 +69,16 @@ class KernBot(commands.Bot):
 
         self.load_extensions()
 
+    async def init(self):
+        self.session = aiohttp.ClientSession()
+        with async_timeout.timeout(30):
+            async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
+                self.crypto['coins'] = {k.upper(): v for k, v in (await resp.json())['Data'].items()}
+
+        await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
+        # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
+        self.documentation = await CreateDocumentation().generate_documentation()
+
     def load_extensions(self):
         for extension in self.exts:
             try:
@@ -80,15 +91,14 @@ class KernBot(commands.Bot):
     def add_task(self, function):
         self.tasks.append(self.loop.create_task(function))
 
-    async def init(self):
-        self.session = aiohttp.ClientSession()
-        with async_timeout.timeout(30):
-            async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
-                self.crypto['coins'] = {k.upper(): v for k, v in (await resp.json())['Data'].items()}
+    def add_cog(self, cog):
+        error_coro = getattr(cog, f"_{cog.__class__.__name__}__error", None)
+        if error_coro:
+            cog.handled_errors = cc.Ast(error_coro).errors
+        else:
+            cog.handled_errors = []
 
-        await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
-        # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
-        self.documentation = await CreateDocumentation().generate_documentation()
+        super().add_cog(cog)
 
     async def get_trivia_categories(self):
         with async_timeout.timeout(10):
