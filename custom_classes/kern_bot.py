@@ -14,6 +14,7 @@ import aiohttp
 import async_timeout
 from bs4 import BeautifulSoup
 import xmljson
+from collections import defaultdict
 
 import discord
 from discord.ext import commands
@@ -38,6 +39,7 @@ class KernBot(commands.Bot):
         self.invite_url = None
         self.documentation = {}
         self.prefixes_cache = {}
+        self.contest_channels = defaultdict(list)
         self.weather = {}
         self.demotivators = {}
         self.tasks = []
@@ -71,9 +73,12 @@ class KernBot(commands.Bot):
 
     async def init(self):
         self.session = aiohttp.ClientSession()
-        with async_timeout.timeout(30):
-            async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
-                self.crypto['coins'] = {k.upper(): v for k, v in (await resp.json())['Data'].items()}
+        try:
+            with async_timeout.timeout(30):
+                async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
+                    self.crypto['coins'] = {k.upper(): v for k, v in (await resp.json())['Data'].items()}
+        except asyncio.TimeoutError:
+            pass
 
         await asyncio.wait([self.get_forecast("anon/gen/fwo/" + link) for link in FORECAST_XML])
         # await asyncio.wait([self.get_weather("anon/gen/fwo/" + link) for link in WEATHER_XML])
@@ -101,9 +106,12 @@ class KernBot(commands.Bot):
         super().add_cog(cog)
 
     async def get_trivia_categories(self):
-        with async_timeout.timeout(10):
-            async with self.session.get("https://opentdb.com/api_category.php") as resp:
-                cats = (await resp.json())['trivia_categories']
+        try:
+            with async_timeout.timeout(10):
+                async with self.session.get("https://opentdb.com/api_category.php") as resp:
+                    cats = (await resp.json())['trivia_categories']
+        except asyncio.TimeoutError:
+            return
 
         categories = {}
         for cat in cats:
@@ -111,9 +119,12 @@ class KernBot(commands.Bot):
 
     async def get_demotivators(self):
         url = "https://despair.com/collections/posters"
-        with async_timeout.timeout(10):
-            async with self.session.get(url) as resp:
-                soup = BeautifulSoup((await resp.read()).decode('utf-8'), "lxml")
+        try:
+            with async_timeout.timeout(10):
+                async with self.session.get(url) as resp:
+                    soup = BeautifulSoup((await resp.read()).decode('utf-8'), "lxml")
+        except asyncio.TimeoutError:
+            return
 
         for div_el in soup.find_all('div', {'class': 'column'}):
             a_el = div_el.a
@@ -166,7 +177,7 @@ class KernBot(commands.Bot):
         em.timestamp = datetime.utcnow()
         await self.logs.send(embed=em)
         await self.database.pool.close()
-        self.session.close()
+        await self.session.close()
         await self.close()
         [task.cancel() for task in self.tasks]
         sys.exit(0)
@@ -205,10 +216,15 @@ class KernBot(commands.Bot):
         url = f"https://discordbots.org/api/bots/{self.user.id}/stats"
         headers = {"Authorization": dbl_token}
         payload = {"server_count": len(self.guilds)}
-        with async_timeout.timeout(10):
-            await self.session.post(url, data=payload, headers=headers)
+        try:
+            with async_timeout.timeout(10):
+                await self.session.post(url, data=payload, headers=headers)
+        except asyncio.TimeoutError:
+            pass
 
     async def pull_remotes(self):
-        with async_timeout.timeout(20):
-            async with self.session.get("https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63"):
-                pass
+        try:
+            with async_timeout.timeout(20):
+                await self.session.get("https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63")
+        except asyncio.TimeoutError:
+            pass
