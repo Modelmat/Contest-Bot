@@ -30,11 +30,11 @@ class Errors:
             return
 
         elif isinstance(error, commands.CheckFailure):
-            if self.bot.is_owner(ctx.author):
+            if await self.bot.is_owner(ctx.author):
                 await ctx.reinvoke()
 
         elif isinstance(error, commands.DisabledCommand):
-            if self.bot.is_owner(ctx.author):
+            if await self.bot.is_owner(ctx.author):
                 await ctx.reinvoke()
             else:
                 await ctx.error(f"`{ctx.command}` is disabled.", "Command Disabled")
@@ -49,7 +49,7 @@ class Errors:
             await ctx.error("The internet is gone?!?!?!?", "Timeout Error")
 
         elif isinstance(error, commands.CommandOnCooldown):
-            if self.bot.is_owner(ctx.author):
+            if await self.bot.is_owner(ctx.author):
                 await ctx.reinvoke()
             else:
                 await ctx.error(f"🛑 This command can't be used for another {round(error.retry_after)} seconds",
