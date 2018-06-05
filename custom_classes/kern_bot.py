@@ -204,7 +204,7 @@ class KernBot(commands.Bot):
             message, activity_type = choice(list(activities.items()))
             activity = discord.Activity(name=message.format(self), type=activity_type)
             await self.change_presence(activity=activity)
-            await asyncio.sleep(60)
+            await asyncio.sleep(600)
 
     def get_emojis(self, *ids):
         emojis = []
