@@ -1,60 +1,38 @@
-# Kern Bot
-![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg)
+<div align="center">
+            
+<img src="https://images.discordapp.net/avatars/380598116488970261/81a1bc5b8cae39c08be5dd9bfc867618.png?size=512" height=200></img>
+<h1><a href="#"><img src="https://i.imgur.com/xtMdMJH.png"></img></a></h1>
+  
+![Library](https://img.shields.io/badge/Library-discord.py-brightgreen.svg?style=for-the-badge&colorB=ea6567)
+![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg?style=for-the-badge&colorB=ea6567&label=tests)
+![Status](https://img.shields.io/badge/dynamic/json.svg?label=Status&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261%2Fstatus&query=%24.status&style=for-the-badge&colorB=ea6567)
 
-[![Servers](https://discordbots.org/api/widget/servers/380598116488970261.svg)](https://discordbots.org/bot/380598116488970261) 
-[![Owner](https://discordbots.org/api/widget/owner/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261) 
-[![Status](https://discordbots.org/api/widget/status/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261)
-[![Upvotes](https://discordbots.org/api/widget/upvotes/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261)
-[![Library](https://discordbots.org/api/widget/lib/380598116488970261.svg?noavatar=true)](https://discordbots.org/bot/380598116488970261)
-[![Server](https://discordapp.com/api/guilds/382780023926554625/widget.png?style=shield)](https://discord.gg/nHmAkgg)
+![Guilds](https://img.shields.io/badge/dynamic/json.svg?label=Servers&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261&query=$.server_count&style=for-the-badge&colorB=ea6567&logo=discord)
+[![Owner](https://img.shields.io/badge/dynamic/json.svg?label=Owner&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fusers%2F310316666171162626&query=%24.username&style=for-the-badge&colorB=ea6567)](https://discordbots.org/user/310316666171162626)
+[![Upvotes](https://img.shields.io/badge/dynamic/json.svg?label=Upvotes&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261&query=$.points&style=for-the-badge&colorB=ea6567)](https://discordbots.org/bot/380598116488970261/vote)
+![Prefix](https://img.shields.io/badge/Prefix-k:-red.svg?style=for-the-badge&colorB=ea6567)
 
-Kern Bot is a bot by Modelmat#8218
+[![Support-Server](https://discordapp.com/api/guilds/382780023926554625/widget.png?style=banner2)](https://discord.gg/nHmAkgg)
 
-It has multiple features include YouTube® search, Trivia, Contests (semi-working), dictionaries, and other Miscellaneous functions.
+</div>
 
-To add this bot to your server, use [this](https://discordapp.com/oauth2/authorize?client_id=380598116488970261&scope=bot&permissions=270336) link.
+## [Add Kern Bot to your server!](https://discordapp.com/oauth2/authorize?client_id=380598116488970261&scope=bot&permissions=270336)
+*See [here](#note-about-invite-permissions) for details on permissions required*
 
+Kern Bot provides an assorted set of commands, ranging from Trivia to [Obama Talking](http://talkobamato.me/). 
 
+| Administration | Contests | Dictionary | Internet   | Misc (1)  | Misc (2)    | Statistics | Developer |
+|----------------|----------|------------|------------|-----------|-------------|------------|-----------|
+| delete         | submit   | define     | YouTube    | hash      | please      | auweather  | source    |
+| clean          | vote     | antonym    | obama      | snowflake | tree        | auforecast | docs      |
+| perms          | list     | synonym    | demotivate | echo      | raw         | coin       |           |
+|                | remove   |            | hack       | codestats | whowasfirst |            |           |
+| **Games**      | purge    |            | translate  | person    | whatwas     |            |           |
+| trivia         | clear    |            |            | ping      | emoji       |            |           |
 
-To run this by yourself (you MUST provide a reference to this bot somewhere.)
-```bash
-#Clone this bot
-git clone https://github.com/Modelmat/Kern-Bot.git
-#move to bot dir
-cd Kern-Bot
-#install requirements
-python3 -m pip3 install -r requirements.txt
-#make config files
-touch client.secret
-#run bot
-python3 main.py
-```
+If you wish to run your own instance of this bot, please follow the [INSTALLING](Installing.md) file.
 
-# Configuration
-All the lines in each line in the docs will be like this. However, only enter the `ENVIRONMENT_VARIABLE`, ignoring the comments. These variables can also be environment variables (acessible by `os.environ`).
-```py
-ENVIRONMENT_VARIABLE # Description
-```
-
-
-`client.secret`
-```py
-AUTH_KEY     # Bot Token
-APP_ID       # Oxford Dictionary API
-APP_KEY      # Oxford Dictionary API
-BOT_NAME     # Bot's Username
-BOT_PREFIXES # Bot's Command Prefix - comma seperated
-DBL_TOKEN    # Discordbots.org
-DATABASE_URL # PostgreSQL DB Url with auth
-GITHUB_OAUTH # GitHub OAuth token for Gists
-```
-
-**Example**:
-{BOT_PREFIXES}
-```py
-!, ?, %  # note the spaces
-```
-{GITHUB_OAUTH}
-```py
-modelmat:403926033d001b5279df37cbbe5287b7c7c267fa # not real
-```
+### Note About Invite Permissions
+Neither of these are necessary however for a better user experience they are recommended.
+- `Manage Messages` is required for the removal of other user's reactions when in the help command.
+- `Use External Emojis` is required for when emojis are used from the server in some commands (e.g. `hack`)
