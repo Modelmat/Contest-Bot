@@ -30,7 +30,7 @@ Kern Bot provides an assorted set of commands, ranging from Trivia to [Obama Tal
 | **Games**      | purge    |            | translate  | person    | whatwas     |            |           |
 | trivia         | clear    |            |            | ping      | emoji       |            |           |
 
-If you wish to run your own instance of this bot, please follow the [INSTALLING](Installing.md) file.
+If you wish to run your own instance of this bot, please follow the [INSTALLING](INSTALLING.md) file.
 
 ### Note About Invite Permissions
 Neither of these are necessary however for a better user experience they are recommended.
