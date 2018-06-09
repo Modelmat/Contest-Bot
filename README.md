@@ -3,8 +3,8 @@
 <img src="https://images.discordapp.net/avatars/380598116488970261/81a1bc5b8cae39c08be5dd9bfc867618.png?size=512" height=200></img>
 <h1><a href="#"><img src="https://i.imgur.com/xtMdMJH.png"></img></a></h1>
   
-![Library](https://img.shields.io/badge/Library-discord.py-brightgreen.svg?style=for-the-badge&colorB=ea6567)
-![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg?style=for-the-badge&colorB=ea6567&label=tests)
+[![Library](https://img.shields.io/badge/Library-discord.py-brightgreen.svg?style=for-the-badge&colorB=ea6567)](https://github.com/Rapptz/discord.py)
+[![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg?style=for-the-badge&colorB=ea6567&label=tests)](https://circleci.com/gh/Modelmat/Kern-Bot)
 ![Status](https://img.shields.io/badge/dynamic/json.svg?label=Status&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261%2Fstatus&query=%24.status&style=for-the-badge&colorB=ea6567)
 
 ![Guilds](https://img.shields.io/badge/dynamic/json.svg?label=Servers&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261&query=$.server_count&style=for-the-badge&colorB=ea6567&logo=discord)
