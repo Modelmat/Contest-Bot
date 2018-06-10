@@ -1,3 +1,4 @@
+import aiofiles
 from datetime import datetime
 import inspect
 from collections import defaultdict
@@ -85,18 +86,22 @@ class Misc:
 
     @cc.command()
     async def codestats(self, ctx):
-        """Provides information about the bot's code"""
+        """Provides statistics on the bot's code"""
+        cog_count = len(self.bot.cogs)
+        commands_count = len(set(self.bot.walk_commands()))
+
         line_count = 0
-        cog_count = 0
-        files = [f for f in os.listdir(".") if ".py" in f] + ["cogs/" + f for f in os.listdir("cogs") if ".py" in f]
-        for f_name in files:
-            cog_count += 1
-            with open(f_name, encoding="utf-8") as f:
-                line_count += len(f.readlines())
+        directories = [".", "cogs", "custom_classes"]
+        files = [f"{d}/{f}" for d in directories for f in os.listdir(d) if ".py" in f]
+        for file in files:
+            async with aiofiles.open(file, encoding="utf-8") as f:
+                line_count += len(await f.readlines())
+
         await ctx.neutral(f"""**Lines**: {line_count}
 **Cogs**: {cog_count}
-**Commands**: {len(ctx.bot.commands)}""",
-                          "Code Statistics", timestamp=False)
+**Files**: {len(files)}
+**Commands**: {commands_count}""", timestamp=False)
+
 
     @cc.command()
     async def emoji(self, ctx, *, emoji):
