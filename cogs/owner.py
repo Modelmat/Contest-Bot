@@ -24,29 +24,6 @@ class Owner:
         return await self.bot.is_owner(ctx.author)
 
     @cc.command(hidden=True)
-    async def update_lib(self, ctx):
-        await self.bot.pull_remotes()
-        await ctx.send("""Instigated Pull Request. To update;
-```pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]```""")
-
-    @cc.group(hidden=True)
-    async def vps(self, ctx):
-        """Commands for controlling the VPS"""
-        pass
-
-    @vps.command()
-    async def stop(self, ctx):
-        """Stops the VPS Server"""
-        system('heroku ps:scale worker=0 --app discord-kern-bot')
-        await ctx.success("Stopping VPS instance")
-
-    @vps.command()
-    async def start(self, ctx):
-        """Starts the VPS server"""
-        system('heroku ps:scale worker=1 --app discord-kern-bot')
-        await ctx.success("Starting VPS instance")
-
-    @cc.command(hidden=True)
     async def restart(self, ctx):
         """Owner of this bot only command; Restart the bot"""
         await ctx.success("", f"Restarting @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
@@ -64,11 +41,6 @@ class Owner:
         """Leaves this server"""
         await ctx.success("Leaving `{}`".format(ctx.guild))
         await ctx.guild.leave()
-
-    @cc.command(hidden=True)
-    async def servers(self, ctx):
-        """Sends the servers this bot is in"""
-        await ctx.send("My servers:```ini\n[{}]```".format(", ".join([guild.name for guild in self.bot.guilds])))
 
     @cc.command(hidden=True)
     async def announce(self, ctx, *, message):
