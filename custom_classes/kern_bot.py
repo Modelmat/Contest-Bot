@@ -71,6 +71,12 @@ class KernBot(commands.Bot):
 
     async def init(self):
         self.session = aiohttp.ClientSession()
+
+        await self.wait_until_ready()
+        activity = discord.Activity(name="for prefix k; in {0} servers".format(len(self.guilds)),
+                                    type=discord.ActivityType.watching)
+        await self.change_presence(activity=activity)
+
         try:
             with async_timeout.timeout(30):
                 async with self.session.get("https://min-api.cryptocompare.com/data/all/coinlist") as resp:
@@ -184,20 +190,6 @@ class KernBot(commands.Bot):
         to_wait = [self.wait_for(event, check=check) for event, check in mapped]
         done, _ = await asyncio.wait(to_wait, timeout=timeout, return_when=FIRST_COMPLETED)
         return done.pop().result()
-
-    async def status_changer(self):
-        await self.wait_until_ready()
-        activities = {
-            "for new contests."       : discord.ActivityType.watching,
-            "{len(0.guilds)} servers.": discord.ActivityType.watching,
-            "bot commands"            : discord.ActivityType.listening,
-            "prefix {0.prefix}"       : discord.ActivityType.listening,
-        }
-        while not self.is_closed():
-            message, activity_type = choice(list(activities.items()))
-            activity = discord.Activity(name=message.format(self), type=activity_type)
-            await self.change_presence(activity=activity)
-            await asyncio.sleep(600)
 
     def get_emojis(self, *ids):
         emojis = []
