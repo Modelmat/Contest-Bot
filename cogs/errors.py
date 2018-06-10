@@ -22,11 +22,15 @@ class Errors:
     async def on_command_error(self, ctx: cc.KernContext, error):
         error = getattr(error, "original", error)
 
-        ignored = [commands.NotOwner, commands.CommandNotFound, discord.Forbidden]
-        # This ignores any errors that are being handled at command or cog level
-        ignored += ctx.command.handled_errors + ctx.cog.handled_errors
+        ignored = (commands.NotOwner, commands.CommandNotFound, discord.Forbidden)
 
         if isinstance(error, tuple(ignored)):
+            return
+
+        # This ignores any errors that are being handled at command or cog level
+        command_ignored = ctx.command.handled_errors + ctx.cog.handled_errors
+
+        if isinstance(error, tuple(command_ignored)):
             return
 
         elif isinstance(error, commands.CheckFailure):
