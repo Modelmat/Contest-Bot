@@ -59,7 +59,7 @@ class KernBot(commands.Bot):
                                            self.get_trivia_categories()))
 
         try:
-            self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.suicide("SIGTERM Shutdown")))
+            self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.close("SIGTERM Shutdown")))
         except NotImplementedError:
             pass
 
@@ -171,15 +171,14 @@ class KernBot(commands.Bot):
 
     #     return data
 
-    async def suicide(self, message="Shutting Down"):
+    async def close(self, message="Shutting Down"):
         print(f"\n{message}\n")
         em = discord.Embed(title=f"{message} @ {datetime.utcnow().strftime('%H:%M:%S')}", colour=discord.Colour.red())
         em.timestamp = datetime.utcnow()
         await self.logs.send(embed=em)
         await self.database.pool.close()
         await self.session.close()
-        await self.close()
-        sys.exit(0)
+        await super().close()
 
     async def wait_for_any(self, events, checks, timeout=None):
         if not isinstance(checks, list):

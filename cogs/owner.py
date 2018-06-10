@@ -46,18 +46,18 @@ class Owner:
         system('heroku ps:scale worker=1 --app discord-kern-bot')
         await ctx.success("Starting VPS instance")
 
-    @cc.command(hidden=True, aliases=['restart'])
-    async def rebirth(self, ctx):
+    @cc.command(hidden=True)
+    async def restart(self, ctx):
         """Owner of this bot only command; Restart the bot"""
         await ctx.success("", f"Restarting @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
-        await self.bot.suicide("Restarting")
+        await self.bot.close("Restarting")
         execl(executable, 'python "' + "".join(argv) + '"')
 
-    @cc.command(hidden=True, aliases=['shutdown', 'die'])
-    async def suicide(self, ctx):
+    @cc.command(hidden=True, aliases=["die"])
+    async def shutdown(self, ctx):
         """Owner of this bot only command; Shutdown the bot"""
         await ctx.success("", f"Shutting Down @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
-        await self.bot.suicide()
+        await self.bot.close()
 
     @cc.command(hidden=True)
     async def leave(self, ctx):
