@@ -11,6 +11,12 @@ from discord.ext import commands
 
 import custom_classes as cc
 
+ANNOUNCEMENT_FOOTER = "\n\n*This is an automated message sent by the bot's " \
+                      "owner to inform you of a change in this bot which " \
+                      "might cause issues in the operation of this bot in " \
+                      "your server. Please feel free to send this " \
+                      "announcement to the rest of your server*"
+
 
 class Owner:
     """Owner only commands"""
@@ -44,12 +50,16 @@ class Owner:
 
     @cc.command(hidden=True)
     async def announce(self, ctx, *, message):
-        """Announces a message to everyone"""
+        """Sends a message to all server owners"""
         for guild in self.bot.guilds:
-            for channel in guild.text_channels:
-                if channel.permissions_for(guild.me).send_messages:
-                    await channel.send(message)
-                    break
+            if "discord" in guild.name.lower():
+                continue
+
+            try:
+                await guild.owner.send(message + ANNOUNCEMENT_FOOTER)
+            except discord.Forbidden:
+                pass
+
         await ctx.send("Success.")
 
     @cc.command(hidden=True, name="eval", aliases=['exec'])
