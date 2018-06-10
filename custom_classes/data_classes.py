@@ -1,5 +1,8 @@
+import asyncio
 from discord.ext import commands
 from urllib.parse import urlparse
+import traceback
+
 
 FORECAST_XML = [
     "IDN11060.xml",  # NSW/ACT
@@ -38,6 +41,14 @@ def replace_backticks(content, do_it):
         content += "```"
         content = "```" + content
     return content
+
+
+async def run_tasks(*tasks):
+    for task in tasks:
+        try:
+            await task
+        except:
+            traceback.print_exc()
 
 
 class Url(commands.Converter):

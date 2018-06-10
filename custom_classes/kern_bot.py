@@ -42,7 +42,6 @@ class KernBot(commands.Bot):
         self.contest_channels = defaultdict(list)
         self.weather = {}
         self.demotivators = {}
-        self.tasks = []
         self.trivia_categories = {}
 
         self.launch_time = datetime.utcnow()
@@ -55,10 +54,9 @@ class KernBot(commands.Bot):
         self.exts = sorted(
             [extension for extension in [f.replace('.py', '') for f in listdir("cogs") if isfile(join("cogs", f))]])
 
-        self.add_task(self.init())
-        self.add_task(self.status_changer())
-        self.add_task(self.get_demotivators())
-        self.add_task(self.get_trivia_categories())
+        self.loop.create_task(cc.run_tasks(self.init(),
+                                           self.get_demotivators(),
+                                           self.get_trivia_categories()))
 
         try:
             self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.suicide("SIGTERM Shutdown")))
@@ -93,9 +91,6 @@ class KernBot(commands.Bot):
                 traceback.print_exc()
                 quit()
 
-    def add_task(self, function):
-        self.tasks.append(self.loop.create_task(function))
-
     def add_cog(self, cog):
         error_coro = getattr(cog, f"_{cog.__class__.__name__}__error", None)
         if error_coro:
@@ -113,7 +108,6 @@ class KernBot(commands.Bot):
         except asyncio.TimeoutError:
             return
 
-        categories = {}
         for cat in cats:
             self.trivia_categories[cat['name'].lower()] = cat['id']
 
@@ -179,7 +173,6 @@ class KernBot(commands.Bot):
         await self.database.pool.close()
         await self.session.close()
         await self.close()
-        [task.cancel() for task in self.tasks]
         sys.exit(0)
 
     async def wait_for_any(self, events, checks, timeout=None):
