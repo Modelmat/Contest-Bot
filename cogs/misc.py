@@ -323,17 +323,18 @@ class Misc:
 
         else:
             cmd = self.bot.get_command(command)
-            if await cmd.can_run(ctx):
-                embed.clear_fields()
-                embed.description = cmd.long_doc
-                for subcommand in getattr(cmd, "commands", []):
-                    embed.add_field(name=subcommand.name,
-                                    value=subcommand.long_doc,
-                                    inline=False)
+            if not cmd or not await cmd.can_run(ctx):
+                return await ctx.error(f"The command `{command}` does not exist.", "")
 
-                await ctx.send(embed=embed)
-            else:
-                await ctx.error(f"The command `{command}` does not exist.", "")
+            embed.clear_fields()
+            embed.description = cmd.long_doc
+            for subcommand in getattr(cmd, "commands", []):
+                embed.add_field(name=subcommand.name,
+                                value=subcommand.long_doc,
+                                inline=False)
+
+            await ctx.send(embed=embed)
+
 
 
 def setup(bot):
