@@ -44,7 +44,8 @@ class Errors:
                 await ctx.error(f"`{ctx.command}` is disabled.", "Command Disabled")
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.error(f"Argument `{error.param}` is missing!", "Missing Required Argument(s)")
+            await ctx.error(f"Argument `{str(error.param).split(':')[0]}` is missing!",
+                            "Missing Required Argument(s)")
 
         elif isinstance(error, commands.BadArgument):
             await ctx.error(str(error), "Bad Argument")
