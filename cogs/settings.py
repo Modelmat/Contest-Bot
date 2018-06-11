@@ -5,7 +5,7 @@ import custom_classes as cc
 
 
 async def manage_server_check(ctx):
-    if ctx.bot.is_owner(ctx.author):
+    if await ctx.bot.is_owner(ctx.author):
         return True
     elif commands.has_permissions(manage_server=True):
         return True
