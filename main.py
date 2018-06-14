@@ -5,11 +5,14 @@ import asyncio
 from platform import python_version
 from pkg_resources import get_distribution
 import async_timeout
+import warnings
 
 import discord
 from discord.ext import commands
 
 import custom_classes as cc
+
+warnings.simplefilter("ignore", UserWarning)
 
 
 # update: pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]
@@ -66,6 +69,7 @@ bot = cc.KernBot(
     description=description,
     activity=discord.Game(name="Start-up 101"),
     testing=testing)
+
 
 @bot.event
 async def on_connect():
