@@ -153,7 +153,7 @@ class Misc:
         The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
         if message:
             try:
-                message = await ctx.get_message(int(message))
+                message = (await ctx.get_message(int(message))).content
             except ValueError:
                 message = message
         else:
@@ -163,7 +163,7 @@ class Misc:
                     break
 
         embed = None
-        content = await self.clean_content(ctx, message.content)
+        content = await self.clean_content(ctx, message)
 
         if message.embeds:
             embed = message.embeds[0]
