@@ -105,7 +105,11 @@ async def on_guild_remove(guild: discord.Guild):
 @bot.event
 async def on_ready():
     bot.invite_url = discord.utils.oauth_url(bot.user.id, permissions=discord.Permissions(270336))
-    await bot.change_presence(status=discord.Status.online)
+
+    activity = discord.Activity(name=f"for prefix k; in {len(bot.guilds)} servers",
+                                type=discord.ActivityType.watching)
+    await bot.change_presence(activity=activity)
+
     bot.owner = (await bot.application_info()).owner
     if bot.user.name != name:
         print(f"\nName changed from '{bot.user.name}' to '{name}'")

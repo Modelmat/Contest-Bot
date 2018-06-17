@@ -64,10 +64,6 @@ class KernBot(commands.Bot):
         await self.ftp_client.connect("ftp.bom.gov.au", 21)
         await self.ftp_client.login()
 
-        await self.wait_until_ready()
-        activity = discord.Activity(name="for prefix k; in {0} servers".format(len(self.guilds)),
-                                    type=discord.ActivityType.watching)
-        await self.change_presence(activity=activity)
         self.demotivators = await cc.get_demotivators(self.session)
         self.trivia_categories = await cc.get_trivia_categories(self.session)
 
