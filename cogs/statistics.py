@@ -177,21 +177,21 @@ Full name support is incoming.""",
         else:
             await ctx.error(error)
 
-    @cc.command(hidden=True)
-    async def auweather(self, ctx, *, location):
-        await ctx.send(await self.bot.get_weather())
+    # @cc.command(hidden=True)
+    # async def auweather(self, ctx, *, location):
+    #     await ctx.send(await self.bot.get_weather())
 
     @cc.command(hidden=True)
     async def auforecast(self, ctx, *, location):
         # add weekdays, then RADAR images, and current temp etc.
         try:
-            loc = self.bot.weather[location.lower()]
+            loc = self.bot.forecast[location.lower()]
         except KeyError:
             em = discord.Embed(
                 title="Unknown Location",
                 description=f"🏙 `{location}` not found.")
             location = process.extractOne(location.lower(), self.bot.weather.keys())
-            if location[1] > 75:
+            if location and location[1] > 75:
                 em.add_field(name="Did you mean?", value=location[0])
             return await ctx.send(embed=em)
 

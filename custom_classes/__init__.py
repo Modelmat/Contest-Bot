@@ -5,3 +5,4 @@ from .documentation import CreateDocumentation
 from .kern_bot import KernBot
 from .kern_classes import *
 from .paginator import Paginator
+from .api_requests import *

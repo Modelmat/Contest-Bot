@@ -4,27 +4,6 @@ from urllib.parse import urlparse
 import traceback
 
 
-FORECAST_XML = [
-    "IDN11060.xml",  # NSW/ACT
-    "IDD10207.xml",  # NT
-    "IDQ11295.xml",  # QLD
-    "IDS10044.xml",  # SA
-    "IDT16710.xml",  # TAS
-    "IDV10753.xml",  # VIC
-    "IDW14199.xml",  # WA
-]
-
-WEATHER_XML = [
-    "IDN60920.xml",  # NSW/ACT
-    "IDD60920.xml",  # NT
-    "IDQ60920.xml",  # QLD
-    "IDS60920.xml",  # SA
-    "IDT60920.xml",  # TAS
-    "IDV60920.xml",  # VIC
-    "IDW60920.xml",  # WA
-]
-
-
 def chunks(s, n):
     for start in range(0, len(s), n):
         yield s[start:start + n]
@@ -41,14 +20,6 @@ def replace_backticks(content, do_it):
         content += "```"
         content = "```" + content
     return content
-
-
-async def run_tasks(*tasks):
-    for task in tasks:
-        try:
-            await task
-        except:
-            traceback.print_exc()
 
 
 class Url(commands.Converter):
