@@ -1,5 +1,6 @@
-import random
 import asyncio
+import json
+import random
 from collections import OrderedDict
 from datetime import datetime
 from random import sample
@@ -187,28 +188,35 @@ class Internet:
     async def translate(self, ctx, *, text):
         """Translates text to 10 random languages then back to English."""
         async with ctx.typing():
-            text = text[:900]
-            langs = []
-            prevlang = (await self.translator.translate(text)).src
-            if "zh" in prevlang:
-                prevlang = "en"
-            for language in sample(list(aiogoogletrans.LANGUAGES), 10):
-                if len(language) > 2:
-                    continue
-                text = (await self.translator.translate(text, dest=language, src=prevlang)).text
-                langs.append(language)
-                prevlang = language
-            result = await self.translator.translate(text, dest="en")
-            if len(result.text) > 1900:
-                result.text = await ctx.upload(result.text)
+            languages = sample(list(aiogoogletrans.LANGUAGES), 10)
+            source_language = (await self.translator.translate(text)).src
+            if source_language in languages:
+                languages.remove(source_language)
+            languages = languages[:9] + ["en"]
+
+            for language in languages:
+                translation = await self.translator.translate(text, dest=language)
+                text = translation.text
+
+            if len(text) > 1900:
+                text = await ctx.upload(text)
             else:
-                result.text = "```" + result.text + "```"
-            await ctx.send("""**User**: {}
-**Languages**: 
-```{}```
-**End result**: 
-{}""".format(ctx.author, "\n".join([aiogoogletrans.LANGUAGES[l] for l in langs]), result.text))
-        ctx.command.reset_cooldown(ctx)
+                text = f"```{text}```"
+
+            await ctx.send(f"""**User:** {ctx.author.display_name}
+**Languages:** ```{" > ".join(aiogoogletrans.LANGUAGES[l] for l in languages)}```
+**Result:** {text}""")
+
+    @translate.error
+    async def translate_error_handler(self, ctx, error):
+        error = getattr(error, "original", error)
+        if isinstance(error, json.JSONDecodeError):
+            await ctx.error("There was an error translating your input. "
+                            "Please try again.\n"
+                            f"Remove any emojis and try again")
+        elif isinstance(error, ValueError):
+            await ctx.error("There was an error translating your input. "
+                            "Please try again.")
 
 
 def setup(bot):
