@@ -10,5 +10,5 @@ lxml==4.1.1
 matplotlib==2.1.2
 aioftp==0.10.1
 xmljson==0.1.9
-git+git+https://github.com/Fogapod/aiogoogletrans
+git+git://github.com/Fogapod/aiogoogletrans
 aiofiles==0.3.2
