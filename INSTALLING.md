@@ -14,34 +14,34 @@ Step 2) Install the requirements needed (on linux `python3 -m pip`)
 ```bash
 $ pip install -r requirements.txt
 ```
-Step 3) Create the secrets file. Fill out out by following [these](#client-secret) steps.
+Step 3) Create the secrets file. Fill out out by following [these](#secrets) steps.
 ```bash
-$ echo > client.secret
+$ echo > .env
 ```
 Step 4) Run the bot
 ```bash
 $ py main.py
 ```
 
-# Client Secret
-The `client.secret` file should be a line-separated file like such, ignoring the comments
+# Secrets
+The `.env` file should be a dotnev-style file (KEY=VALUE), with the follow keys:
 ```
-AUTH_KEY     # Bot Token
+TOKEN        # Bot Token
 APP_ID       # Oxford Dictionary API
 APP_KEY      # Oxford Dictionary API
 BOT_NAME     # Bot's Username (updated if different)
 BOT_PREFIXES # Bot's Command Prefix - comma seperated
 DBL_TOKEN    # Discordbots.org
 DATABASE_URL # PostgreSQL DB Url with auth
-GITHUB_OAUTH # GitHub OAuth token for Gists
+GITHUB_AUTH  # GitHub OAuth token for Gists
 ```
-For example, the `BOT_PREFIXES` could be replaced with 
+For example, the `BOT_PREFIXES` could be:
 ```
-!, ?
+BOT_PREFIXES=!, ?
 ```
-or the github OAUTH replaced with (this is a fake key)
+or the github AUTH:
 ```
-modelmat:403926033d001b5279df37cbbe5287b7c7c267fa
+GITHUB_AUTH=username:oauth_key
 ```
 
 # Database Permissions

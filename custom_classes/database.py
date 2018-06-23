@@ -1,14 +1,16 @@
-import os
-from random import randint
-import ssl
+import asyncio
 import json
+import os
+import ssl
+from random import randint
 from socket import gaierror
 
-import asyncio
-
+import asyncpg
 import discord
 from discord.ext import commands
-import asyncpg
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # https://magicstack.github.io/asyncpg/current/
 # https://magicstack.github.io/asyncpg/current/api/index.html#prepared-statements
@@ -46,12 +48,7 @@ class Database:
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.ready = False
-        try:
-            self.dsn = os.environ["DATABASE_URL"]
-        except KeyError:
-            with open("client.secret", "r") as database_file:
-                lines = [l.strip() for l in database_file]
-                self.dsn = lines[6]
+        self.dsn = os.environ["DATABASE_URL"]
 
         self.pool = None
         if __name__ in '__main__':

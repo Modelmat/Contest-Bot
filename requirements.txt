@@ -12,3 +12,4 @@ aioftp==0.10.1
 xmljson==0.1.9
 git+git://github.com/Fogapod/aiogoogletrans
 aiofiles==0.3.2
+python-dotenv==0.8.2

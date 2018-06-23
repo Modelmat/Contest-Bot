@@ -1,15 +1,15 @@
 import json
 import re
-from os import environ, path
+from os import environ
 from random import sample
 
 import async_timeout
 import discord
-from discord.ext import commands
+from dotenv import load_dotenv
 
 import custom_classes as cc
 
-
+load_dotenv()
 # Add: https://developer.oxforddictionaries.com/documentation#!/Search/get_search_source_lang, and check for no definitions (key error)
 
 
@@ -20,16 +20,8 @@ class Dictionary:
         self.bot = bot
         self.dictionary_base_url = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/{}'
         self.image_base_url = 'https://duckduckgo.com/'
-        try:
-            app_id = environ["APP_ID"]
-            app_key = environ["APP_KEY"]
-        except KeyError:
-            file_path = path.join(
-                path.dirname(__file__), '../client.secret')
-            with open(file_path, encoding="utf-8") as file:
-                lines = [l.strip() for l in file]
-                app_id = lines[1]
-                app_key = lines[2]
+        app_id = environ["APP_ID"]
+        app_key = environ["APP_KEY"]
         self.headers = {
             "Accept": "application/json",
             "app_id": app_id,

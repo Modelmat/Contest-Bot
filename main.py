@@ -1,14 +1,15 @@
+import asyncio
+import traceback
+import warnings
 from datetime import datetime, timedelta
 from os import environ
-import traceback
-import asyncio
 from platform import python_version
-from pkg_resources import get_distribution
-import async_timeout
-import warnings
 
+import async_timeout
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+from pkg_resources import get_distribution
 
 import custom_classes as cc
 
@@ -37,22 +38,15 @@ def server_prefix(default_prefixes: list):
     return get_prefix
 
 
-try:
-    token = environ["AUTH_KEY"]
-    name = environ["BOT_NAME"]
-    prefixes = environ["BOT_PREFIX"].split(", ")
-    dbl_token = environ["DBL_TOKEN"]
-    github_auth = environ["GITHUB_AUTH"].split(":")
-    testing = False
-except KeyError:
-    with open("client.secret", encoding="utf-8") as file:
-        testing = True
-        lines = [l.strip() for l in file]
-        token = lines[0]
-        name = lines[3]
-        prefixes = lines[4].split(", ")
-        dbl_token = lines[5]
-        github_auth = lines[7].split(":")
+load_dotenv()
+
+
+token = environ["TOKEN"]
+name = environ["BOT_NAME"]
+prefixes = environ["BOT_PREFIXES"].split(", ")
+dbl_token = environ["DBL_TOKEN"]
+github_auth = environ["GITHUB_AUTH"].split(":")
+testing = bool(environ.get("TESTING", ""))
 
 description = f"""Kern is a discord bot by Modelmat#8218.
 
@@ -129,6 +123,7 @@ Python:     {python_version()}
 Discord:    {get_distribution('discord.py').version}
 Cur. Com:   {bot.latest_commit}
 Up to Date: {bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}
+Testing:    {testing}
 ---------------
 """)
 
