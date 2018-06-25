@@ -41,6 +41,16 @@ INDEXES = {
 }
 
 
+async def clean_content(ctx, content):
+    return await commands.clean_content(escape_markdown=True).convert(ctx, content)
+
+
+class FakeMessage:
+    def __init__(self, content):
+        self.content = content
+        self.embeds = []
+
+
 class Misc:
     """Miscellaneous functions"""
 
@@ -144,18 +154,15 @@ class Misc:
 
         await ctx.send(embed=em)
 
-    async def clean_content(self, ctx, content):
-        return await commands.clean_content(escape_markdown=True).convert(ctx, content)
-
     @cc.command()
     async def raw(self, ctx, *, message=None):
         """Displays the raw code of a message.
         The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
         if message:
             try:
-                message = (await ctx.get_message(int(message))).content
+                message = await ctx.get_message(int(message))
             except ValueError:
-                message = message
+                message = FakeMessage(message)
         else:
             async for msg in ctx.history(limit=100):
                 if msg.author != ctx.author:
@@ -163,13 +170,14 @@ class Misc:
                     break
 
         embed = None
-        content = await self.clean_content(ctx, message)
+        content = await clean_content(ctx, message.content)
 
         if message.embeds:
             embed = message.embeds[0]
-            embed.description = await self.clean_content(ctx, embed.description or "")
+            embed.description = await clean_content(ctx,
+                                                    embed.description or "")
             for index, field in enumerate(embed.fields):
-                value = await self.clean_content(ctx, field.value)
+                value = await clean_content(ctx, field.value)
                 embed.set_field_at(index, name=field.name, value=value)
 
         await ctx.send(content, embed=embed)
@@ -180,9 +188,6 @@ class Misc:
         if isinstance(error, discord.NotFound):
             await ctx.error("Incorrect message id provided",
                             "Message not found")
-        elif isinstance(error, ValueError):
-            await ctx.error("Message ID not an integer",
-                            "Incorrect argument type")
 
     @cc.command()
     async def ping(self, ctx):
