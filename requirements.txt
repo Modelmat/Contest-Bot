@@ -5,8 +5,6 @@ lxml==4.1.1
 psutil==5.4.3
 tabulate==0.8.2
 fuzzywuzzy==0.16.0
-bs4==0.0.1
-lxml==4.1.1
 matplotlib==2.1.2
 aioftp==0.10.1
 xmljson==0.1.9
