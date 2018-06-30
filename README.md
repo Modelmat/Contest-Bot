@@ -33,6 +33,6 @@ Kern Bot provides an assorted set of commands, ranging from Trivia to [Obama Tal
 If you wish to run your own instance of this bot, please follow the [INSTALLING](INSTALLING.md) file.
 
 ### Note About Invite Permissions
-Neither of these are necessary however for a better user experience they are recommended.
-- `Manage Messages` is required for the removal of other user's reactions when in the help command.
-- `Use External Emojis` is required for when emojis are used from the server in some commands (e.g. `hack`)
+Neither of these are necessary. However, for a better user experience, they are recommended.
+- `Manage Messages` is required for the removal of another user's reactions when in the help command.
+- `Use External Emojis` is required when emojis from the server are used in some commands (e.g. `hack`).
