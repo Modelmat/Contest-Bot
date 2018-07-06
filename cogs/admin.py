@@ -7,7 +7,7 @@ import custom_classes as cc
 
 
 async def message_purge_perm_check(ctx):
-    if ctx.bot.is_owner(ctx.author):
+    if await ctx.bot.is_owner(ctx.author):
         return True
     elif ctx.author.permissions_in(ctx.channel).manage_messages:
         return True
