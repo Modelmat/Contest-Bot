@@ -99,17 +99,21 @@ async def get_forecasts(client):
 #     return data
 
 if __name__ == "__main__":
-    import aioftp
-    import aiohttp
-    session = aiohttp.ClientSession()
-    loop = asyncio.get_event_loop()
-    client = aioftp.Client()
-    # loop.run_until_complete(client.connect("ftp.bom.gov.au", 21))
-    # loop.run_until_complete(client.login())
+    async def main():
+        import aioftp
+        import aiohttp
+        session = aiohttp.ClientSession()
+        client = aioftp.Client()
 
-    # loop.run_until_complete(download_ftp(client, "/anon/gen/fwo/IDA00009.gif"))
-    # loop.run_until_complete(get_forecast(client, "anon/gen/fwo/" + FORECAST_XML[0]))
-    # loop.run_until_complete(get_forecasts(client))
-    # print(loop.run_until_complete(get_trivia_categories(session)))
-    # print(loop.run_until_complete(get_demotivators(session)))
+        # await client.connect("ftp.bom.gov.au", 21)
+        # await client.login()
 
+        # await download_ftp(client, "/anon/gen/fwo/IDA00009.gif")
+        # await get_forecast(client, "anon/gen/fwo/" + FORECAST_XML[0])
+        # await get_forecasts(client)
+
+        # await get_trivia_categories(session))
+        # await get_demotivators(session))
+        await session.close()
+        client.close()
+    asyncio.get_event_loop().run_until_complete(main())
