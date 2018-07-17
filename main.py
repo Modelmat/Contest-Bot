@@ -13,10 +13,9 @@ from pkg_resources import get_distribution
 
 import custom_classes as cc
 
-warnings.simplefilter("ignore", UserWarning)
+warnings.filterwarnings("ignore", category=UserWarning, module="fuzzywuzzy")
 
 
-# update: pip install -U git+https://github.com/Modelmat/discord.py@rewrite#egg=discord.py[voice]
 def server_prefix(default_prefixes: list):
     async def get_prefix(bots: cc.KernBot, message: discord.Message):
         if not message.guild:
