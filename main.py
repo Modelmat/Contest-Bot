@@ -18,21 +18,21 @@ warnings.filterwarnings("ignore", category=UserWarning, module="fuzzywuzzy")
 
 def server_prefix(default_prefixes: list):
     async def get_prefix(bots: cc.KernBot, message: discord.Message):
-        if not message.guild:
-            return commands.when_mentioned_or(*default_prefixes)(bots, message)
-
-        if bots.prefixes_cache.get(message.guild.id) is None:
+        if message.guild and bots.prefixes_cache.get(message.guild.id) is None:
             guild_prefixes = await bots.database.get_prefixes(message)
             bots.prefixes_cache[message.guild.id] = list(set(guild_prefixes))
+        else:
+            guild_prefixes = []
 
-        guild_prefixes = []
-        for prefix in sorted([*default_prefixes, *bots.prefixes_cache[message.guild.id]], key=lambda x: len(x)):
-            guild_prefixes.append(prefix + " ")
-            guild_prefixes.append(prefix.upper() + "")
-            guild_prefixes.append(prefix)
-            guild_prefixes.append(prefix.upper())
+        prefixes = []
+        for prefix in sorted([*default_prefixes,
+                              *guild_prefixes], key=lambda x: len(x)):
+            prefixes.append(prefix + " ")
+            prefixes.append(prefix.upper() + "")
+            prefixes.append(prefix)
+            prefixes.append(prefix.upper())
 
-        return commands.when_mentioned_or(*guild_prefixes)(bots, message)
+        return commands.when_mentioned_or(*prefixes)(bots, message)
 
     return get_prefix
 
@@ -42,7 +42,7 @@ load_dotenv()
 
 token = environ["TOKEN"]
 name = environ["BOT_NAME"]
-prefixes = environ["BOT_PREFIXES"].split(", ")
+default_prefixes = environ["BOT_PREFIXES"].split(", ")
 dbl_token = environ["DBL_TOKEN"]
 github_auth = environ["GITHUB_AUTH"].split(":")
 testing = bool(environ.get("TESTING", ""))
@@ -57,7 +57,7 @@ It is in active development and as such any errors found can be reported to the 
 
 bot = cc.KernBot(
     github_auth,
-    command_prefix=server_prefix(prefixes),
+    command_prefix=server_prefix(default_prefixes),
     case_insensitive=True,
     description=description,
     activity=discord.Game(name="Start-up 101"),
