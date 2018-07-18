@@ -19,7 +19,10 @@ class KernGroup(commands.Group):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
-        return await super().can_run(ctx)
+        try:
+            return await super().can_run(ctx)
+        except commands.CommandError:
+            return False
 
     def command(self, *args, **kwargs):
         def decorator(func):
@@ -46,7 +49,10 @@ class KernCommand(commands.Command):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
-        return await super().can_run(ctx)
+        try:
+            return await super().can_run(ctx)
+        except commands.CommandError:
+            return False
 
     def error(self, coro):
         self.handled_errors = Ast(coro).errors
@@ -78,7 +84,8 @@ class KernContext(commands.Context):
 
     async def del_reaction(self, reaction):
         try:
-            await self.message.remove_reaction(reaction, self.guild.me)
+            me = self.guild.me if self.guild else self.bot.user
+            await self.message.remove_reaction(reaction, me)
         except discord.Forbidden:
             pass
 
