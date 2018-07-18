@@ -6,13 +6,8 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-async def message_purge_perm_check(ctx):
-    if await ctx.bot.is_owner(ctx.author):
-        return True
-    elif ctx.author.permissions_in(ctx.channel).manage_messages:
-        return True
-    await ctx.error("Manage messages is required to run `{}`".format(ctx.command), "Invalid Permissions")
-    return False
+async def manage_messages(ctx):
+    return ctx.author.permissions_in(ctx.channel).manage_messages
 
 
 class Admin:
@@ -21,7 +16,7 @@ class Admin:
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
-    @commands.check(message_purge_perm_check)
+    @commands.check(manage_messages)
     @cc.group(invoke_without_command=True)
     async def delete(self, ctx):
         """Deletes the last message sent by this bot"""
@@ -36,7 +31,7 @@ class Admin:
                 return
         await ctx.error("No messages were found.")
 
-    @commands.check(message_purge_perm_check)
+    @commands.check(manage_messages)
     @delete.command()
     async def clean(self, ctx, num_messages=200, other: bool = False):
         """Removes all messages for num_messages by this bot.
@@ -65,7 +60,7 @@ Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
                     "Invalid Permissions",
                     delete_after=10)
 
-    @commands.check(message_purge_perm_check)
+    @commands.check(manage_messages)
     @delete.command(name="id")
     async def delete_by_id(self, ctx, *message_ids: int):
         """Deletes message from list of ids/id"""
