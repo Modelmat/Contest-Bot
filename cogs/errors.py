@@ -34,10 +34,17 @@ class Errors:
             return
 
         elif isinstance(error, commands.CheckFailure):
-            if await self.bot.is_owner(ctx.author):
+            if isinstance(error, commands.NoPrivateMessage):
+                await ctx.error("This command cannot be run in DMs",
+                                "No DMs")
+
+            elif await self.bot.is_owner(ctx.author):
                 print(f"Owner reinvoked {ctx.command.qualified_name} "
                       f"due to a {error.__class__.__name__}: {error}")
                 await ctx.reinvoke()
+
+            elif isinstance(error, commands.MissingPermissions):
+                await ctx.error(f"{error}", "Missing Required Permissions")
 
         elif isinstance(error, commands.DisabledCommand):
             if await self.bot.is_owner(ctx.author):
