@@ -1,6 +1,5 @@
 import asyncio
 import json
-import traceback
 
 import discord
 from discord.ext import commands
@@ -8,20 +7,16 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-async def manage_server_check(ctx):
-    if commands.is_owner():
-        return True
-    elif commands.has_permissions(manage_server=True):
-        return True
-    await ctx.error("You do not have valid permissions to do this. (Manage Server Permission).", "Permissions Error")
-    return False
-
-
 class Contests:
     """Contest functions"""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
+
+    async def __local_check(self, ctx):
+        if ctx.guild is None:
+            raise commands.NoPrivateMessage()
+        return True
 
     async def __error(self, ctx, error):
         error = getattr(error, "original", error)
@@ -37,6 +32,7 @@ class Contests:
         embed.set_thumbnail(url=message_author.avatar_url)
         return embed
 
+    @commands.guild_only()
     @cc.command()
     async def submit(self, ctx, *, args):
         """Submits an item into a contest. Please note the spaces."""
@@ -70,6 +66,7 @@ class Contests:
         else:
             await ctx.error("Incorrect channel to submit in", delete_after=10)
 
+    @commands.guild_only()
     @cc.command(name="list", aliases=['list_submissions'])
     async def list_s(self, ctx):
         """Lists contest submissions for this server"""
@@ -87,6 +84,7 @@ class Contests:
         await ctx.neutral(compiled, f"Submissions leaderboard for {ctx.guild} [/{max_points}]")
         return [submission['submission_id'] for submission in submissions]
 
+    @commands.guild_only()
     @cc.command()
     async def vote(self, ctx, rating: int, submission_id: int):
         """Votes on a submission"""
@@ -99,20 +97,23 @@ class Contests:
     #     await ctx.error(error, "Error while voting: ")
     #     await ctx.error(error, "Error while voting:", channel=self.bot.logs)
 
+    @commands.guild_only()
     @cc.command()
     async def remove(self, ctx):
         """Removes your submission"""
         await self.bot.database.remove_contest_submission(ctx)
         await ctx.success(f"{ctx.author.mention} Your submission was successfully removed.")
 
-    @commands.check(manage_server_check)
+    @commands.guild_only()
+    @commands.has_permissions(manage_guild=True)
     @cc.command()
     async def clear(self, ctx, submission_id: int):
         """Allows for users with manage_server perms to remove submissions that are deemed invalid"""
         await self.bot.database.clear_contest_submission(ctx, submission_id)
         await ctx.success(f"Submission with id {submission_id} successfully deleted.")
 
-    @commands.check(manage_server_check)
+    @commands.guild_only()
+    @commands.has_permissions(manage_guild=True)
     @cc.command()
     async def purge(self, ctx):
         """Purges all submissions"""

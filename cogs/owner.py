@@ -42,10 +42,11 @@ class Owner:
         await ctx.success("", f"Shutting Down @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.close()
 
+    @commands.guild_only()
     @cc.command(hidden=True)
     async def leave(self, ctx):
         """Leaves this server"""
-        await ctx.success("Leaving `{}`".format(ctx.guild))
+        await ctx.success(f"Leaving `{ctx.guild.name}`")
         await ctx.guild.leave()
 
     @cc.command(hidden=True)

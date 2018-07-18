@@ -4,29 +4,20 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-async def manage_server_check(ctx):
-    if await ctx.bot.is_owner(ctx.author):
-        return True
-    elif commands.has_permissions(manage_server=True):
-        return True
-    await ctx.error(
-        "You do not have valid permissions to do this. (Manage Server Permission).",
-        "Permissions Error")
-    return False
-
-
 class Settings:
     """Sets and gets the settings for the bot"""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
+    @commands.guild_only()
     @cc.group()
     async def get(self, ctx):
         """Commands related to determining the value of settings."""
         pass
 
-    @commands.check(manage_server_check)
+    @commands.guild_only()
+    @commands.has_permissions(manage_guild=True)
     @cc.group(name="set")
     async def _set(self, ctx):
         """Commands related to the changing of settings."""

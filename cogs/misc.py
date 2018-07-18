@@ -59,6 +59,7 @@ class Misc:
         self.process = psutil.Process()
         self.bot.remove_command('help')
 
+    @commands.guild_only()
     @cc.command(aliases=["whowerefirst"])
     async def whowasfirst(self, ctx, number: int=1):
         """Provides the first x number of members in this guild
@@ -71,6 +72,7 @@ class Misc:
             oup += f"{mem.mention} was {i}{INDEXES.get(str(i), 'ᵗʰ')}\n"
         await ctx.neutral(oup, "First Member(s)", timestamp=ctx.guild.created_at, footer="Guild created at")
 
+    @commands.guild_only()
     @cc.command()
     async def whatwas(self, ctx, member: discord.Member=None):
         """Provides the index of a member in joining this guild"""
@@ -248,6 +250,7 @@ class Misc:
         else:
             await ctx.error(f"Hasher {hash_type} not found")
 
+    @commands.guild_only()
     @cc.command()
     async def tree(self, ctx):
         """Provides a directory tree like view of the server's channels"""
