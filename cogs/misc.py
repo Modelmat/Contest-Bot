@@ -229,7 +229,7 @@ class Misc:
     @cc.group(name="hash")
     async def _hash(self, ctx, hash_type, *, text):
         """Hashes a string of text
-        Hasers are: sha256, sha512, sha1, md5"""
+        Hashers available are: sha256, sha512, sha1, md5"""
         hash_types = ["sha256", "sha512", "sha1", "md5"]
         if hash_type in hash_types:
             hasher = eval(f"hashlib.{hash_type}")
