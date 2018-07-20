@@ -84,19 +84,6 @@ class Misc:
         await ctx.neutral(f"{member.mention} was {index}{end}")
 
     @cc.command()
-    async def please(self, ctx, action: commands.clean_content, item: commands.clean_content, *, person: commands.clean_content="you"):
-        """You can now make this bot do things!"""
-        if len(action) < 3:
-            return await ctx.error(f"{action} is not long enough.", "Invalid Input")
-        elif action[-2] in "aeiou" and action[-1] not in "aeiou" and action[-3] not in "aeiou":
-            action = action[:-1]
-        elif action[-2:] == "ie":
-            action = action[-2:] + "y"
-        elif action[-1] == "e":
-            action = action[:-1]
-        await ctx.send(f"I am {action}ing {item} {person}")
-
-    @cc.command()
     async def codestats(self, ctx):
         """Provides statistics on the bot's code"""
         cog_count = len(self.bot.cogs)
