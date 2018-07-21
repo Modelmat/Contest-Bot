@@ -68,9 +68,6 @@ def group(name=None, **attrs):
 
 
 class KernContext(commands.Context):
-    async def paginate(self, *args, **kwargs):
-        return Paginator(self, *args, **kwargs)
-
     def clean_prefix(self):
         user = self.bot.user
         prefix = self.prefix.replace(user.mention, '@' + user.name)
