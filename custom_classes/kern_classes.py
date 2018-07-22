@@ -19,8 +19,11 @@ class KernGroup(commands.Group):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
+        return await super().can_run(ctx)
+
+    async def safe_can_run(self, ctx):
         try:
-            return await super().can_run(ctx)
+            return await self.can_run(ctx)
         except commands.CommandError:
             return False
 
@@ -49,8 +52,11 @@ class KernCommand(commands.Command):
     async def can_run(self, ctx):
         if not self.enabled:
             return False
+        return await super().can_run(ctx)
+
+    async def safe_can_run(self, ctx):
         try:
-            return await super().can_run(ctx)
+            return await self.can_run(ctx)
         except commands.CommandError:
             return False
 

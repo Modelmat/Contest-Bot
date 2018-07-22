@@ -313,7 +313,7 @@ class Misc:
 
         else:
             cmd = self.bot.get_command(command)
-            if not cmd or not await cmd.can_run(ctx):
+            if not cmd or not await cmd.safe_can_run(ctx):
                 return await ctx.error(f"The command `{command}` does not exist.", "")
 
             def check(command_):

@@ -14,7 +14,7 @@ async def filter_commands(ctx, long_doc, check):
     cogs_dict = defaultdict(list)
 
     for command in set(ctx.bot.walk_commands()):
-        if not command.hidden and await command.can_run(ctx) and check(command):
+        if not command.hidden and await command.safe_can_run(ctx) and check(command):
             description = command.long_doc if long_doc else command.short_doc
             cogs_dict[command.cog_name or "No Category"].append({
                 "name": command.qualified_name,
