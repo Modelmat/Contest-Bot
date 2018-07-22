@@ -62,6 +62,9 @@ class Errors:
         elif isinstance(error, commands.BadArgument):
             await ctx.error(str(error), "Bad Argument")
 
+        elif isinstance(error, commands.TooManyArguments):
+            await ctx.error(str(error), "Too Many Arguments")
+
         elif isinstance(error, asyncio.TimeoutError):
             await ctx.error("The internet is gone?!?!?!?", "Timeout Error")
 
