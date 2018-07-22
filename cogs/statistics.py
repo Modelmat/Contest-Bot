@@ -128,7 +128,7 @@ Full name support is incoming.""",
             timestamp=False)
 
     @coin.command(name="day", aliases=["daily", "days"])
-    async def coin_day(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", days: cc.IntConv = 30):
+    async def coin_day(self, ctx, coin: cc.upper, currency: cc.upper = "USD", days: int = 30):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("day", coin, currency, days)
@@ -138,7 +138,7 @@ Full name support is incoming.""",
             await ctx.send(file=graph, embed=embed)
 
     @coin.command(name="hour", aliases=["hourly", "hours"])
-    async def coin_hour(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", hours: cc.IntConv = 6):
+    async def coin_hour(self, ctx, coin: cc.upper, currency: cc.upper = "USD", hours: int = 6):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("hour", coin, currency, hours)
@@ -147,7 +147,7 @@ Full name support is incoming.""",
             await ctx.send(file=graph, embed=embed)
 
     @coin.command(name="minute", aliases=["minutes"])
-    async def coin_minute(self, ctx, coin: cc.UpperConv, currency: cc.UpperConv = "USD", minutes: cc.IntConv = 60):
+    async def coin_minute(self, ctx, coin: cc.upper, currency: cc.upper = "USD", minutes: int = 60):
         """Creates a graph upon day information of a currencies."""
         async with ctx.typing():
             data = await self.get_data("minute", coin, currency, minutes)

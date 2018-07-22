@@ -124,7 +124,7 @@ class Internet:
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @cc.command(hidden=True)
-    async def hack(self, ctx, *, url: cc.Url):
+    async def hack(self, ctx, *, url: cc.url):
         """Starts a fake hacking instance on a specified URL."""
         loading, th, hu, te, on = self.bot.get_emojis(395834326450831370, 396890900783038499, 396890900158218242,
                                                       396890900753547266, 396890900426653697)

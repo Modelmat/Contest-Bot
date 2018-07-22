@@ -22,16 +22,12 @@ def replace_backticks(content, do_it):
     return content
 
 
-class Url(commands.Converter):
-    async def convert(self, ctx, argument):
-        url = str(argument)
-        if "://" not in url:
-            url = "https://" + url
-        if "." not in url:
-            url += ".com"  # A bad assumption
-        url = urlparse(url).geturl()
+def url(url):
+    url = url.lower()
+    if not url.startswith(("http://", "https://")) or "." not in url:
+        raise commands.BadArgument(f"URL `{url}` is invalid.")
 
-        return url
+    return url
 
 
 class CoinError(Exception):
@@ -52,11 +48,5 @@ class AlreadySubmitted(Exception):
     pass
 
 
-class UpperConv(commands.Converter):
-    async def convert(self, ctx, argument):
-        return argument.upper()
-
-
-class IntConv(commands.Converter):
-    async def convert(self, ctx, argument):
-        return int(argument)
+def upper(argument):
+    return argument.upper()
