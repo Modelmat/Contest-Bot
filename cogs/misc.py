@@ -317,7 +317,7 @@ class Misc:
                 return await ctx.error(f"The command `{command}` does not exist.", "")
 
             def check(command_):
-                if command_ in cmd.commands:
+                if command_ in getattr(cmd, "commands", []):
                     return True
                 return command_ == cmd
 
