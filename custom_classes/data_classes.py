@@ -22,12 +22,12 @@ def replace_backticks(content, do_it):
     return content
 
 
-def url(url):
-    url = url.lower()
-    if not url.startswith(("http://", "https://")) or "." not in url:
-        raise commands.BadArgument(f"URL `{url}` is invalid.")
+def url(url_):
+    url_ = url_.lower()
+    if not url_.startswith(("http://", "https://")) or "." not in url_:
+        raise commands.BadArgument(f"URL `{url_}` is invalid.")
 
-    return url
+    return url_
 
 
 class CoinError(Exception):
