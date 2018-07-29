@@ -81,6 +81,7 @@ class Errors:
             # add more detailed debug
             await ctx.error(f"**This error is now known about 👍**\n```{error}```", type(error).__qualname__)
 
+            traceback.print_exception(type(error), error, error.__traceback__)
             await self.bot.logs.send("""
 **Command:** {}
 **Error:** {}
@@ -94,7 +95,6 @@ class Errors:
                                                                      error,
                                                                      error.__traceback__)
                                           )))
-            traceback.print_exception(type(error), error, error.__traceback__)
 
             if self.bot.testing:
                 async with aiofiles.open("error.html", mode="w", encoding="utf-8") as f:
