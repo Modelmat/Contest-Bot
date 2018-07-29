@@ -1,63 +1,62 @@
-from datetime import datetime
 import asyncio
 import traceback
 from concurrent.futures import FIRST_COMPLETED
+from datetime import datetime
 from os import listdir
-from os.path import isfile, join
 from signal import SIGTERM
+
 import aioftp
 import aiohttp
 import async_timeout
-from collections import defaultdict
-
 import discord
-from discord.ext import commands
 
-from . import database as db
-from .documentation import CreateDocumentation
-from .data_classes import *
 import custom_classes as cc
+from .data_classes import *
+from .documentation import CreateDocumentation
 
 
 class KernBot(commands.Bot):
-    def __init__(self, github_auth, testing=False, debug=False, *args, **kwargs):
+    database = None
+    latest_commit = None
+    latest_message_time = None
+    owner = None
+    session = None
+
+    demotivators = {}
+    documentation = {}
+    forecast = {}
+    prefixes_cache = {}
+    submission_channel = {}
+    trivia_categories = {}
+    weather = {}
+
+    crypto = {"market_price": {}, "coins": []}
+
+    def __init__(self, github_auth, log_channel, testing=False, debug=False,
+                 *args, **kwargs):
         self.github_auth = aiohttp.BasicAuth(github_auth[0], github_auth[1])
         self.testing = testing
 
-        self.session = None
-        self.owner = None
-        self.latest_message_time = None
-        self.latest_commit = None
-        self.invite_url = None
-        self.documentation = {}
-        self.prefixes_cache = {}
-        self.contest_channels = defaultdict(list)
-        self.weather = {}
-        self.forecast = {}
-        self.demotivators = {}
-        self.trivia_categories = {}
-
         self.launch_time = datetime.utcnow()
-        self.crypto = {"market_price": {}, "coins": []}
         self.ftp_client = aioftp.Client()
 
         super().__init__(*args, **kwargs)
 
-        self.logs = self.get_channel(382780308610744331)
+        self.logs = self.get_channel(log_channel)
+        self.database = cc.Database(self)
 
-        self.exts = sorted(
-            [extension for extension in [f.replace('.py', '') for f in listdir("cogs") if isfile(join("cogs", f))]])
+        extensions = sorted(
+            [f"cogs.{ext}" for ext in listdir("cogs") if ".py" in ext]
+        )
 
         try:
             self.loop.add_signal_handler(SIGTERM, lambda: asyncio.ensure_future(self.close("SIGTERM Shutdown")))
         except NotImplementedError:
             pass
 
-        self.database = db.Database(self)
-
         self.loop.set_debug(debug)
 
-        self.load_extensions()
+        self.load_extensions(extensions)
 
     async def init(self):
         self.session = aiohttp.ClientSession()
@@ -78,8 +77,8 @@ class KernBot(commands.Bot):
         # self.weather = await cc.get_weather(self.ftp_client)
         self.documentation = await CreateDocumentation().generate_documentation()
 
-    def load_extensions(self):
-        for extension in self.exts:
+    def load_extensions(self, extensions):
+        for extension in extensions:
             try:
                 self.load_extension("cogs." + extension)
             except (discord.ClientException, ModuleNotFoundError, SyntaxError):

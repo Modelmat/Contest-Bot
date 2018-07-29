@@ -46,6 +46,7 @@ default_prefixes = environ["BOT_PREFIXES"].split(", ")
 dbl_token = environ["DBL_TOKEN"]
 github_auth = environ["GITHUB_AUTH"].split(":")
 testing = bool(environ.get("TESTING", ""))
+log_channel = int(environ["LOG_CHANNEL"])
 
 description = f"""Kern is a discord bot by Modelmat#8218.
 
@@ -57,6 +58,7 @@ It is in active development and as such any errors found can be reported to the 
 
 bot = cc.KernBot(
     github_auth,
+    log_channel,
     command_prefix=server_prefix(default_prefixes),
     case_insensitive=True,
     description=description,
