@@ -46,7 +46,7 @@ class KernBot(commands.Bot):
         self.database = cc.Database(self)
 
         extensions = sorted(
-            [f"cogs.{ext}" for ext in listdir("cogs") if ".py" in ext]
+            [f"cogs.{ext[:-3]}" for ext in listdir("cogs") if ".py" in ext]
         )
 
         try:
@@ -80,7 +80,7 @@ class KernBot(commands.Bot):
     def load_extensions(self, extensions):
         for extension in extensions:
             try:
-                self.load_extension("cogs." + extension)
+                self.load_extension(extension)
             except (discord.ClientException, ModuleNotFoundError, SyntaxError):
                 print(f'Failed to load extension {extension}.')
                 traceback.print_exc()
