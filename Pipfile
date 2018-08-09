@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiofiles = "==0.3.2"
+aioftp = "==0.11.0"
+asyncpg = "==0.17.0"
+"beautifulsoup4" = "==4.6.0"
+fuzzywuzzy = "==0.16.0"
+aiogoogletrans = {git = "git://github.com/Fogapod/aiogoogletrans"}
+"discord.py" = {ref = "rewrite", git = "git://github.com/rapptz/discord.py"}
+lxml = "==4.2.4"
+matplotlib = "==2.2.2"
+psutil = "==5.4.3"
+python-dotenv = "==0.9.1"
+tabulate = "==0.8.2"
+xmljson = "==0.1.9"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

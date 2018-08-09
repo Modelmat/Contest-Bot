@@ -3,16 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-
-
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
-# virtualenv
-.venv
-venv/
-ENV/
 
 # secret files
 .env
