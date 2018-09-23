@@ -35,7 +35,7 @@ class Internet:
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
-        self.translator = aiogoogletrans.Translator(session=bot.session)
+        self.translator = aiogoogletrans.Translator()
 
     async def get_youtube_videos(self, page_url, cutoff_length=80, result_length=5):
         results = OrderedDict()
