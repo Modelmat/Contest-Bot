@@ -11,7 +11,7 @@ aioftp = "==0.11.0"
 asyncpg = "==0.17.0"
 "beautifulsoup4" = "==4.6.0"
 fuzzywuzzy = "==0.16.0"
-aiogoogletrans = {git = "git://github.com/Fogapod/aiogoogletrans"}
+aiogoogletrans = {git = "git://github.com/chauffer/aiogoogletrans"}
 "discord.py" = {ref = "rewrite", git = "git://github.com/rapptz/discord.py"}
 lxml = "==4.2.4"
 matplotlib = "==2.2.2"
