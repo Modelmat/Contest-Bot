@@ -120,26 +120,36 @@ class Misc:
                                  names['last'].capitalize())
         location = data['location']
         login = data['login']
+        birth_date = datetime.strptime(data['dob']['date'],
+                                       "%Y-%m-%dT%H:%M:%SZ")
+        address = f"""\
+        **Street:** {location['street'].title()}
+        **City:** {location['city'].title()}
+        **State:** {location['state'].title()}
+        **Postcode:** {location['postcode']}
+        **Country:** {COUNTRY_CODES[data['nat']]}
+        """
+        login_information = f"""\
+        **Username:** {login['username']}
+        **Password:** {login['password']}
+        """
+        contact_details = f"""\
+        **Email:** {data['email'].replace('@example.com', '@gmail.com')}
+        **Phone:** {data['phone']}
+        **Mobile:** {data['cell']}
+        """
 
         em = discord.Embed(
             colour=discord.Colour.dark_purple(),
             title=name,
-            description="**Gender**: " + data['gender'].capitalize() +
-            "\n**Born**: " + data['dob'])
-        address = "**Street**: {}\n**City**: {}\n**State**: {}\n**Postcode**: {}\n**Country**: {}".format(
-            " ".join([w.capitalize() for w in location['street'].split(" ")]),
-            location['city'].capitalize(), location['state'].capitalize(),
-            location['postcode'], COUNTRY_CODES[data['nat']])
-        logins = "**Username**: {}\n**Password**: {}".format(
-            login['username'], login['password'])
-        contact_details = "**Email**: {}\n**Phone**: {}\n**Mobile**: {}".format(
-            data['email'].split("@")[0] + "@gmail.com", data['phone'],
-            data['cell'])
-        em.add_field(name="Address:", value=address, inline=False)
-        em.add_field(name="Login Details:", value=logins, inline=False)
-        em.add_field(
-            name="Contact Details", value=contact_details, inline=False)
-        em.set_thumbnail(url=data['picture']['large'])
+            description=f"**Gender**: {data['gender'].capitalize()}\n"
+                        f"**Born**: {birth_date}") \
+            .add_field(name="Address:", value=address, inline=False) \
+            .add_field(name="Login Details:", value=login_information,
+                       inline=False) \
+            .add_field(name="Contact Details:", value=contact_details,
+                       inline=False) \
+            .set_thumbnail(url=data['picture']['large'])
 
         await ctx.send(embed=em)
 
