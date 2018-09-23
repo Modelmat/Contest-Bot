@@ -17,3 +17,6 @@ workspace.xml
 
 # windows retarded files
 Thumbs.db
+
+# no pipfile.lock on git
+Pipfile.lock
