@@ -1,5 +1,3 @@
-import json
-import re
 from os import environ
 from random import sample
 
@@ -19,13 +17,10 @@ class Dictionary:
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
         self.dictionary_base_url = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/{}'
-        self.image_base_url = 'https://duckduckgo.com/'
-        app_id = environ["APP_ID"]
-        app_key = environ["APP_KEY"]
         self.headers = {
             "Accept": "application/json",
-            "app_id": app_id,
-            "app_key": app_key
+            "app_id": environ["APP_ID"],
+            "app_key": environ["APP_KEY"],
         }
 
     async def _result_parser(self, results: list):
@@ -51,25 +46,6 @@ class Dictionary:
                     return
                 r_json = await response.json()
                 return r_json['results']
-
-    async def _get_key(self, term):
-        parameters = {'q': term}
-        with async_timeout.timeout(10):
-            async with self.bot.session.post(
-                    self.image_base_url, data=parameters) as response:
-                text_response = await response.text()
-        return re.search(r'vqd=(\d+)\&', text_response, re.M | re.I)
-
-    async def _get_image(self, term):
-        search_obj = await self._get_key(term)
-        params = (('l', 'wt-wt'), ('o', 'json'), ('q', term),
-                  ('vqd', search_obj.group(1)), ('f', ',,,'), ('p', '2'))
-        with async_timeout.timeout(10):
-            async with self.bot.session.get(
-                    self.image_base_url + "i.js", params=params) as response:
-                json_response = json.loads(await response.text())
-                results = json_response['results']
-        return results[0]['image']
 
     async def _word_not_found(self, term):
         results = await self._get_dic_request(
@@ -236,7 +212,6 @@ class Dictionary:
                 url='https://en.oxforddictionaries.com/definition/{}'.format(
                     "_".join(term.split())))
 
-            embed.set_thumbnail(url=await self._get_image(term))
             embed.set_footer(
                 text="Results provided by the Oxford Dictionary",
                 icon_url="https://en.oxforddictionaries.com/apple-touch-icon-180x180.png"
