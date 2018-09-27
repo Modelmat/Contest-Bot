@@ -1,6 +1,6 @@
 <div align="center">
             
-<img src="https://image-via-api.herokuapp.com/?url=https://botsfordiscord.com/api/bots/380598116488970261&query=$.avatar&replace=size=128,size=256" height=200></img>
+<img src="https://images.discordapp.net/avatars/380598116488970261/437c3c4a8e698957def8dbaf94d186c8.png?size=256" height=200></img>
 <h1><a href="#"><img src="https://i.imgur.com/xtMdMJH.png"></img></a></h1>
   
 [![Library](https://img.shields.io/badge/Library-discord.py-brightgreen.svg?style=for-the-badge&colorB=ea6567)](https://github.com/Rapptz/discord.py)
