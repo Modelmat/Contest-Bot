@@ -26,32 +26,36 @@ class Admin:
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     @delete.command()
-    async def clean(self, ctx, num_messages=200, other: bool = False):
+    async def delete_clean(self, ctx, num_messages=200, other: bool = False):
         """Removes all messages for num_messages by this bot.
         Other specifies clearing everyone else's messages"""
 
         def is_me(m):
             return m.author == ctx.guild.me
 
-        if not other:
-            total_deleted = 0
-            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-                deleted = await ctx.channel.purge(limit=num_messages, check=is_me)
-                total_deleted += len(deleted)
-            deleted = await ctx.channel.purge(limit=num_messages, check=is_me, bulk=False)
-            total_deleted += len(deleted)
-            await ctx.success("`{}/{}`".format(total_deleted, num_messages), "Messages Cleaned")
+        if other:
+            deleted = await ctx.channel.purge(limit=num_messages)
 
         else:
-            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-                deleted = await ctx.channel.purge(limit=num_messages, check=is_me)
-                await ctx.success("`{}/{}`".format(len(deleted), num_messages), "Messages Cleaned", delete_after=10)
+            if ctx.channel.permissions_for(ctx.me).manage_messages:
+                deleted = await ctx.channel.purge(limit=num_messages,
+                                                  check=is_me)
             else:
-                await ctx.error(
-                    """🛑 This bot does not have the required permissions to delete messages.
-Instead, use: `{}delete clean <num_messages> True`""".format(ctx.prefix),
-                    "Invalid Permissions",
-                    delete_after=10)
+                deleted = await ctx.channel.purge(limit=num_messages,
+                                                  check=is_me,
+                                                  bulk=False)
+
+        await ctx.success(f"`{len(deleted)}/{num_messages}`",
+                          "Messages Cleaned", delete_after=10)
+
+    @delete_clean.error
+    async def delete_clean_error(self, ctx, error):
+        error = getattr(error, "original", error)
+
+        if isinstance(error, discord.Forbidden):
+            await ctx.error("\N{OCTAGONAL SIGN} Kern does not have the "
+                            "required permissions to clean messages. Please"
+                            'ensure Kern has the "Manage Messages" permission.')
 
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
