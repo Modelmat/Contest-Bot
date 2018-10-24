@@ -17,25 +17,27 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - cache-{{ checksum "Pipfile.lock" }}
+            - cache-{{ checksum "requirements.txt" }}
             - cache-
 
       - run:
           name: install dependencies
           command: |
-            pipenv install
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
 
       - save_cache:
           paths:
-            - ~/.local
-            - ~/.cache
-          key: cache-{{ checksum "Pipfile.lock" }}
+            - venv
+          key: cache-{{ checksum "requirements.txt" }}
 
       # run tests!
       - run:
           name: syntax tests
           command: |
-            pipenv run python -m compileall main.py cogs custom_classes -fq
+            . venv/bin/activate
+            python -m compileall main.py cogs custom_classes -fq
 
       - store_artifacts:
           path: test-reports
