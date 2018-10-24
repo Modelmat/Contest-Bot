@@ -159,6 +159,7 @@ Full name support is incoming.""",
     @coin_minute.error
     @coin_hour.error
     async def coin_error_handler(self, ctx, error):
+
         error = getattr(error, "original", error)
         if isinstance(error, cc.CoinError):
             if "toSymbol" in str(error):
@@ -173,9 +174,6 @@ Full name support is incoming.""",
                 await self.bot.logs.send(repr(error))
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.error(str(error), "Missing Argument")
-
-        else:
-            await ctx.error(error)
 
     # @cc.command(hidden=True)
     # async def auweather(self, ctx, *, location):
