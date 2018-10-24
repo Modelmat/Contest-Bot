@@ -1,0 +1,14 @@
+aiohttp>=3,<4
+aiofiles==0.4.0
+aioftp==0.11.0
+asyncpg==0.17.0
+beautifulsoup4==4.6.0
+fuzzywuzzy==0.17.0
+git+git://github.com/chauffer/aiogoogletrans
+git+git://github.com/Rapptz/discord.py@rewrite
+lxml==4.2.4
+matplotlib==2.2.2
+psutil==5.4.7
+python-dotenv==0.9.1
+tabulate==0.8.2
+xmljson==0.1.9
