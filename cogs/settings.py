@@ -23,33 +23,6 @@ class Settings:
         """Commands related to the changing of settings."""
         pass
 
-    @get.command(name="channels")
-    async def get_channels(self, ctx):
-        """Get the channels used for the contests"""
-        channels = await self.bot.database.get_contest_channels(ctx)
-        if None not in channels:
-            await ctx.send("​Channels for {}: <#{}> and <#{}>.".format(
-                ctx.guild.name, *channels))
-        else:
-            await ctx.error("Channels are not set up", "Configuration Error:")
-
-    @_set.command(name="channels")
-    async def set_channels(self, ctx, *channels: discord.TextChannel):
-        """Set the channels used for the contests"""
-        if len(channels) == 1:
-            channels *= 2
-        elif len(channels) > 2:
-            raise TypeError(
-                "set channels takes 2 positional arguments but {} were given".
-                format(len(channels)))
-        receive_channel_id, output_channel_id = [
-            channel.id for channel in channels
-        ]
-        await self.bot.database.set_contest_channels(ctx, receive_channel_id,
-                                                     output_channel_id)
-        await ctx.success("​Set channels to {} {}".format(
-            *[channel.mention for channel in channels]))
-
     @_set.command(name="prefix")
     async def set_prefix(self, ctx, *, prefix: str):
         """Set the bot's prefix for this server"""
@@ -64,7 +37,7 @@ class Settings:
         try:
             self.bot.prefixes_cache.get(ctx.guild.id, []).remove(prefix)
         except ValueError:
-            return await ctx.error(f"Prefix `{prefix}` is not in the list.",
+            return await ctx.error(f"Prefix `{prefix}` does not exist.",
                                    "")
 
         await self.bot.database.remove_prefix(ctx, prefix)
