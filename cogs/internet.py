@@ -6,6 +6,7 @@ from datetime import datetime
 from random import sample
 
 import aiogoogletrans
+import aiohttp
 import async_timeout
 import discord
 from bs4 import BeautifulSoup
@@ -182,6 +183,8 @@ class Internet:
             await ctx.error(error.text,
                             error.response.reason,
                             footer="Most likely you passed an emoji or special char. It doesn't like them.")
+        elif isinstance(error, aiohttp.ServerDisconnectedError):
+            await ctx.error("A connection error occurred. Please try again later.")
 
     @commands.cooldown(1, 5, commands.BucketType.channel)
     @cc.command(aliases=["translate_mixup", "googletrans"])
