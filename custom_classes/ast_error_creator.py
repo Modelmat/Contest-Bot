@@ -6,6 +6,7 @@ import inspect
 import discord
 from discord.ext import commands
 import custom_classes as cc
+import aiohttp
 import asyncio
 import json
 
