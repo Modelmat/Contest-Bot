@@ -5,7 +5,8 @@ asyncpg==0.17.0
 beautifulsoup4==4.6.0
 fuzzywuzzy==0.17.0
 git+git://github.com/chauffer/aiogoogletrans
-git+git://github.com/Rapptz/discord.py@rewrite
+# git+git://github.com/Rapptz/discord.py@rewrite
+git+git://github.com/Rapptz/discord.py@3f06f247c039a23948e7bb0014ea31db533b4ba2
 lxml==4.2.4
 matplotlib==2.2.2
 psutil==5.4.7
