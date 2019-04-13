@@ -5,12 +5,11 @@
   
 [![Library](https://img.shields.io/badge/Library-discord.py-brightgreen.svg?style=for-the-badge&colorB=ea6567)](https://github.com/Rapptz/discord.py)
 [![CircleCI](https://img.shields.io/circleci/project/github/Modelmat/Kern-Bot.svg?style=for-the-badge&colorB=ea6567&label=tests)](https://circleci.com/gh/Modelmat/Kern-Bot)
-![Status](https://img.shields.io/badge/dynamic/json.svg?label=Status&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261%2Fstatus&query=%24.status&style=for-the-badge&colorB=ea6567)
 
-![Guilds](https://img.shields.io/badge/dynamic/json.svg?label=Servers&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261&query=$.server_count&style=for-the-badge&colorB=ea6567&logo=discord)
-[![Owner](https://img.shields.io/badge/dynamic/json.svg?label=Owner&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fusers%2F310316666171162626&query=%24.username&style=for-the-badge&colorB=ea6567)](https://discordbots.org/user/310316666171162626)
-[![Upvotes](https://img.shields.io/badge/dynamic/json.svg?label=Upvotes&url=https%3A%2F%2Fdiscordbots.org%2Fapi%2Fbots%2F380598116488970261&query=$.points&style=for-the-badge&colorB=ea6567)](https://discordbots.org/bot/380598116488970261/vote)
-![Prefix](https://img.shields.io/badge/Prefix-k:-red.svg?style=for-the-badge&colorB=ea6567)
+![Guilds](https://img.shields.io/badge/dynamic/json.svg?label=Servers&url=https://botsfordiscord.com/api/bot/380598116488970261&query=$.server_count&style=for-the-badge&colorB=ea6567&logo=discord)
+[![Owner](https://img.shields.io/badge/dynamic/json.svg?label=Owner&url=https://botsfordiscord.com/api/user/310316666171162626&query=%24.tag&style=for-the-badge&colorB=ea6567)](https://discordbots.org/user/310316666171162626)
+[![Upvotes](https://img.shields.io/badge/dynamic/json.svg?label=Upvotes&url=https://botsfordiscord.com/api/bot/380598116488970261&query=$.votes&style=for-the-badge&colorB=ea6567)](https://botsfordiscord.com/bot/380598116488970261/vote)
+![Prefix](https://img.shields.io/badge/dynamic/json.svg?label=Prefix&url=https://botsfordiscord.com/api/bot/380598116488970261&query=$.prefix&style=for-the-badge&colorB=ea6567)
 
 [![Support-Server](https://discordapp.com/api/guilds/382780023926554625/widget.png?style=banner2)](https://discord.gg/nHmAkgg)
 
