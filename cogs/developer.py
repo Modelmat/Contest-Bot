@@ -8,7 +8,7 @@ from fuzzywuzzy import process
 import custom_classes as cc
 
 
-class Developer(commands.Cog):
+class Developer(cc.KernCog):
     """Commands related to discord.py library"""
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
@@ -16,7 +16,7 @@ class Developer(commands.Cog):
     async def cog_check(self, ctx):
         return "discord" in ctx.guild.name or await ctx.bot.is_owner(ctx.author)
 
-    @cc.command()
+    @commands.command()
     async def source(self, ctx, *, command: str = None):
         """Displays my full source code or for a specific command.
         To display the source code of a subcommand you can separate it by
@@ -55,7 +55,7 @@ class Developer(commands.Cog):
         else:
             return embed
 
-    @cc.command(aliases=["documentation", "rtfd"])
+    @commands.command(aliases=["documentation", "rtfd"])
     async def docs(self, ctx, obj):
         """Displays the documentation for a discord command.
         e.g `discord.User` is User, and `commands.Bot` is Bot

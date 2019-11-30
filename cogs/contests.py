@@ -7,7 +7,7 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class Contests(commands.Cog):
+class Contests(cc.KernCog):
     """Contest functions"""
 
     def __init__(self, bot: cc.KernBot):
@@ -33,7 +33,7 @@ class Contests(commands.Cog):
         return embed
 
     @commands.guild_only()
-    @cc.command()
+    @commands.command()
     async def submit(self, ctx, *, args):
         """Submits an item into a contest. Please note the spaces."""
         input_split = tuple(args.split(" | "))
@@ -67,7 +67,7 @@ class Contests(commands.Cog):
             await ctx.error("Incorrect channel to submit in", delete_after=10)
 
     @commands.guild_only()
-    @cc.command(name="list", aliases=['list_submissions'])
+    @commands.command(name="list", aliases=['list_submissions'])
     async def list_s(self, ctx):
         """Lists contest submissions for this server"""
         submissions = await self.bot.database.list_contest_submissions(ctx)
@@ -75,7 +75,7 @@ class Contests(commands.Cog):
             return await ctx.error(f"The server `{ctx.guild.name}` has no contest submissions.", "No submissions")
         compiled = str()
         for index, submission in enumerate(submissions, start=1):
-            embed = discord.Embed.from_data(json.loads(submission['embed']))
+            embed = discord.Embed.from_dict(json.loads(submission['embed']))
             s_id = submission['submission_id']
             author = ctx.guild.get_member(submission['owner_id'])
             rating = submission['rating'] or "NIL"
@@ -85,7 +85,7 @@ class Contests(commands.Cog):
         return [submission['submission_id'] for submission in submissions]
 
     @commands.guild_only()
-    @cc.command()
+    @commands.command()
     async def vote(self, ctx, rating: int, submission_id: int):
         """Votes on a submission"""
         await self.bot.database.add_submission_rating(ctx, rating, submission_id)
@@ -98,7 +98,7 @@ class Contests(commands.Cog):
     #     await ctx.error(error, "Error while voting:", channel=self.bot.logs)
 
     @commands.guild_only()
-    @cc.command()
+    @commands.command()
     async def remove(self, ctx):
         """Removes your submission"""
         await self.bot.database.remove_contest_submission(ctx)
@@ -106,7 +106,7 @@ class Contests(commands.Cog):
 
     @commands.guild_only()
     @commands.has_permissions(manage_guild=True)
-    @cc.command()
+    @commands.command()
     async def clear(self, ctx, submission_id: int):
         """Allows for users with manage_server perms to remove submissions that are deemed invalid"""
         await self.bot.database.clear_contest_submission(ctx, submission_id)
@@ -114,7 +114,7 @@ class Contests(commands.Cog):
 
     @commands.guild_only()
     @commands.has_permissions(manage_guild=True)
-    @cc.command()
+    @commands.command()
     async def purge(self, ctx):
         """Purges all submissions"""
         length = len(await self.bot.database.list_contest_submissions(ctx))

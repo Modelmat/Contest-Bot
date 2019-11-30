@@ -142,7 +142,7 @@ class Database:
     async def get_contest_submission(self, submission_id: int):
         async with self.pool.acquire() as con:
             embed = await con.fetchval("SELECT embed FROM submissions WHERE submission_id = $1", submission_id)
-        return discord.Embed.from_data(json.loads(embed))
+        return discord.Embed.from_dict(json.loads(embed))
 
     async def list_contest_submissions(self, ctx):
         async with self.pool.acquire() as con:

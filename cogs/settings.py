@@ -3,21 +3,21 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class Settings(commands.Cog):
+class Settings(cc.KernCog):
     """Sets and gets the settings for the bot"""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     @commands.guild_only()
-    @cc.group()
+    @commands.group()
     async def get(self, ctx):
         """Commands related to determining the value of settings."""
         pass
 
     @commands.guild_only()
     @commands.has_permissions(manage_guild=True)
-    @cc.group(name="set")
+    @commands.group(name="set")
     async def _set(self, ctx):
         """Commands related to the changing of settings."""
         pass

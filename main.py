@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from os import environ
 from platform import python_version
 
-import async_timeout
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -69,10 +68,6 @@ bot = cc.KernBot(
 @bot.event
 async def on_connect():
     await bot.update_dbots_server_count(dbl_token)
-    with async_timeout.timeout(20):
-        async with bot.session.get("https://api.github.com/repos/rapptz/discord.py/commits/rewrite") as r:
-            bot.latest_commit = "g" + (await r.json())['sha'][:7]
-    await bot.pull_remotes()
 
 
 @bot.event
@@ -116,15 +111,12 @@ async def on_ready():
     print(f"""
 Username:   {bot.user.name}
 ID:         {bot.user.id}
-Bot:        {bot.user.bot}
 Guilds:     {len(bot.guilds)}
 Members:    {sum(1 for _ in bot.get_all_members())}
 Channels:   {sum(1 for _ in bot.get_all_channels())}
 Python:     {python_version()}
-Discord:    {get_distribution('discord.py').version}
-Cur. Com:   {bot.latest_commit}
-Up to Date: {bot.latest_commit == get_distribution('discord.py').version.split("+")[1]}
-Testing:    {testing}
+discord.py: {get_distribution('discord.py').version}
+Test Bot:   {testing}
 ---------------
 """)
 

@@ -31,7 +31,7 @@ def gen_data():
     return table_data, table, open_ports, open_data
 
 
-class Internet(commands.Cog):
+class Internet(cc.KernCog):
     """Web functions (that make requests)"""
 
     def __init__(self, bot: cc.KernBot):
@@ -64,7 +64,7 @@ class Internet(commands.Cog):
 
         return vids[:result_length]
 
-    @cc.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def youtube(self, ctx, *, keyword: str):
         """Searches YouTube for a video"""
         url = f"https://www.youtube.com/results?search_query={keyword}&sp=EgIQAQ%253D%253D"
@@ -94,7 +94,7 @@ class Internet(commands.Cog):
         """Get a playlist's 1st 5 videos"""
         pass
 
-    @cc.command()
+    @commands.command()
     async def demotivate(self, ctx, *, search_term=""):
         """Provides an embed with a demotivating quote & poster.
         Without a search_term specified a random result is returned."""
@@ -124,7 +124,7 @@ class Internet(commands.Cog):
             await ctx.send(embed=e)
 
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def hack(self, ctx, *, url: cc.url):
         """Starts a fake hacking instance on a specified URL."""
         loading, th, hu, te, on = self.bot.get_emojis(395834326450831370, 396890900783038499, 396890900158218242,
@@ -164,7 +164,7 @@ class Internet(commands.Cog):
         return link
 
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @cc.command()
+    @commands.command()
     async def obama(self, ctx, *, text: str):
         """Makes obama speak."""
         if len(text) - len(ctx.prefix + "obama") > 280:
@@ -187,7 +187,7 @@ class Internet(commands.Cog):
             await ctx.error("A connection error occurred. Please try again later.")
 
     @commands.cooldown(1, 5, commands.BucketType.channel)
-    @cc.command(aliases=["translate_mixup", "googletrans"])
+    @commands.command(aliases=["translate_mixup", "googletrans"])
     async def translate(self, ctx, *, text):
         """Translates text to 10 random languages then back to English."""
         async with ctx.typing():

@@ -47,7 +47,7 @@ class FakeMessage:
         self.embeds = []
 
 
-class Misc(commands.Cog):
+class Misc(cc.KernCog):
     """Miscellaneous functions"""
 
     def __init__(self, bot: cc.KernBot):
@@ -56,7 +56,7 @@ class Misc(commands.Cog):
         self.bot.remove_command('help')
 
     @commands.guild_only()
-    @cc.command(aliases=["whowerefirst"])
+    @commands.command(aliases=["whowerefirst"])
     async def whowasfirst(self, ctx, number: int=1):
         """Provides the first x number of members in this guild
         Requires a maximum of ten members"""
@@ -69,7 +69,7 @@ class Misc(commands.Cog):
         await ctx.neutral(oup, "First Member(s)", timestamp=ctx.guild.created_at, footer="Guild created at")
 
     @commands.guild_only()
-    @cc.command()
+    @commands.command()
     async def whatwas(self, ctx, member: discord.Member=None):
         """Provides the index of a member in joining this guild"""
         if not member:
@@ -79,7 +79,7 @@ class Misc(commands.Cog):
         end = INDEXES.get(str(index)[-1], "ᵗʰ")
         await ctx.neutral(f"{member.mention} was {index}{end}")
 
-    @cc.command()
+    @commands.command()
     async def codestats(self, ctx):
         """Provides statistics on the bot's code"""
         cog_count = len(self.bot.cogs)
@@ -98,12 +98,12 @@ class Misc(commands.Cog):
 **Commands**: {commands_count}""", timestamp=False)
 
 
-    @cc.command()
+    @commands.command()
     async def emoji(self, ctx, *, emoji):
         """Converts a Discord unicode emoji to a standard uncode emoji, for copying"""
         await ctx.send(f"`{emoji}`")
 
-    @cc.command()
+    @commands.command()
     async def person(self, ctx):
         """Generates a random person"""
         with async_timeout.timeout(10):
@@ -149,7 +149,7 @@ class Misc(commands.Cog):
 
         await ctx.send(embed=em)
 
-    @cc.command()
+    @commands.command()
     async def raw(self, ctx, *, message=None):
         """Displays the raw code of a message.
         The message can be a message id, some text, or nothing (in which case it will be the most recent message not by you)."""
@@ -184,7 +184,7 @@ class Misc(commands.Cog):
             await ctx.error("Incorrect message id provided",
                             "Message not found")
 
-    @cc.command()
+    @commands.command()
     async def ping(self, ctx):
         """Returns time taken for a internet packet to go from this bot to discord"""
         await ctx.send("Pong. Time taken: `{:.0f}ms`".format(
@@ -207,7 +207,7 @@ class Misc(commands.Cog):
             output += "{} seconds".format(seconds)
         return output
 
-    @cc.command(aliases=['stats', 'about'])
+    @commands.command(aliases=['stats', 'about'])
     async def info(self, ctx):
         """Returns information about the bot."""
         embed = discord.Embed(description=self.bot.description, colour=0x00ff00)
@@ -232,7 +232,7 @@ class Misc(commands.Cog):
         embed.set_footer(text="Hover over emojis")
         await ctx.send(embed=embed)
 
-    @cc.group(name="hash")
+    @commands.group(name="hash")
     async def _hash(self, ctx, hash_type, *, text):
         """Hashes a string of text
         Hashers available are: sha256, sha512, sha1, md5"""
@@ -244,7 +244,7 @@ class Misc(commands.Cog):
             await ctx.error(f"Hasher {hash_type} not found")
 
     @commands.guild_only()
-    @cc.command()
+    @commands.command()
     async def tree(self, ctx):
         """Provides a directory tree like view of the server's channels"""
         tree_string = f"For user {ctx.author}\n{ctx.guild}\n"
@@ -265,17 +265,17 @@ class Misc(commands.Cog):
 
         await ctx.send(f"```fix\n{tree_string}```")
 
-    @cc.command()
+    @commands.command()
     async def invite(self, ctx):
         """Sends the bot's invite URL"""
         await ctx.send(f"<{self.bot.invite_url}>")
 
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def echo(self, ctx, *, text: commands.clean_content):
         """Echoes the text sent"""
         await ctx.send(text)
 
-    @cc.command()
+    @commands.command()
     async def snowflake(self, ctx, snowflake: int):
         """Converts snowflake id into creation date.
         Bot requires no knowledge of user/emoji/guild/channel.
@@ -290,7 +290,7 @@ class Misc(commands.Cog):
         else:
             await ctx.send(date.strftime("%d/%m/%Y %H:%M:%S"))
 
-    @cc.command(name="help")
+    @commands.command(name="help")
     async def _help(self, ctx, *, command: str = None):
         """Shows this message."""
         embed = discord.Embed(title="Help",
@@ -319,7 +319,7 @@ class Misc(commands.Cog):
 
         else:
             cmd = self.bot.get_command(command)
-            if not cmd or not await cmd.safe_can_run(ctx):
+            if not cmd or not await cc.safe_can_run(cmd, ctx):
                 return await ctx.error(f"The command `{command}` does not exist.", "")
 
             def check(command_):

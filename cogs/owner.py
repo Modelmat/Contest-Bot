@@ -18,7 +18,7 @@ ANNOUNCEMENT_FOOTER = "\n\n*This is an automated message sent by the bot's " \
                       "announcement to the rest of your server*"
 
 
-class Owner(commands.Cog):
+class Owner(cc.KernCog):
     """Owner only commands"""
 
     def __init__(self, bot: cc.KernBot):
@@ -29,27 +29,27 @@ class Owner(commands.Cog):
     async def cog_check(self, ctx):
         return await self.bot.is_owner(ctx.author)
 
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def restart(self, ctx):
         """Owner of this bot only command; Restart the bot"""
         await ctx.success("", f"Restarting @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.close("Restarting")
         execl(executable, 'python "' + "".join(argv) + '"')
 
-    @cc.command(hidden=True, aliases=["die"])
+    @commands.command(hidden=True, aliases=["die"])
     async def shutdown(self, ctx):
         """Owner of this bot only command; Shutdown the bot"""
         await ctx.success("", f"Shutting Down @ {datetime.utcnow().strftime('%H:%M:%S')}", rqst_by=False)
         await self.bot.close()
 
     @commands.guild_only()
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def leave(self, ctx):
         """Leaves this server"""
         await ctx.success(f"Leaving `{ctx.guild.name}`")
         await ctx.guild.leave()
 
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def announce(self, ctx, *, message):
         """Sends a message to all server owners"""
         for guild in self.bot.guilds:
@@ -63,7 +63,7 @@ class Owner(commands.Cog):
 
         await ctx.send("Success.")
 
-    @cc.command(hidden=True, name="eval", aliases=['exec'])
+    @commands.command(hidden=True, name="eval", aliases=['exec'])
     async def k_eval(self, ctx, *, body: str):
         """Evaluates code"""
 

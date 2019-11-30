@@ -13,7 +13,7 @@ import custom_classes as cc
 cgitb.enable(format="raw")
 
 
-class Errors(commands.Cog):
+class Errors(cc.KernCog):
     """Error Handling"""
 
     def __init__(self, bot: cc.KernBot):

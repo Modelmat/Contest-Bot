@@ -6,70 +6,22 @@ from discord.ext import commands
 from custom_classes import Ast
 
 
-class KernGroup(commands.Group):
-    def __init__(self, *args, **attrs):
-        self.handled_errors = []
-        super().__init__(*args, **attrs)
+class KernCog(commands.Cog, metaclass=commands.CogMeta):
+    def __new__(cls, *args, **kwargs):
+        self = super().__new__(cls, *args, **kwargs)
+        for command in self.walk_commands():
+            if hasattr(command, "on_error"):
+                command.handled_errors = Ast(command.on_error).errors
+            else:
+                command.handled_errors = []
 
-    @property
-    def long_doc(self):
-        return f"{self.help or ''}\n```{self.signature}```"
+        cog_error_handler = self._get_overridden_method(self.cog_command_error)
+        if cog_error_handler:
+            self.handled_errors = Ast(cog_error_handler)
+        else:
+            self.handled_errors = []
 
-    async def can_run(self, ctx):
-        if not self.enabled:
-            return False
-        return await super().can_run(ctx)
-
-    async def safe_can_run(self, ctx):
-        try:
-            return await self.can_run(ctx)
-        except commands.CommandError:
-            return False
-
-    def command(self, *args, **kwargs):
-        def decorator(func):
-            result = command(*args, **kwargs)(func)
-            self.add_command(result)
-            return result
-
-        return decorator
-
-    def error(self, coro):
-        self.handled_errors = Ast(coro).errors
-        return super().error(coro)
-
-
-class KernCommand(commands.Command):
-    def __init__(self, func, **kwargs):
-        self.handled_errors = []
-        super().__init__(func, **kwargs)
-
-    @property
-    def long_doc(self):
-        return f"{self.help or ''}\n```{self.signature}```"
-
-    async def can_run(self, ctx):
-        if not self.enabled:
-            return False
-        return await super().can_run(ctx)
-
-    async def safe_can_run(self, ctx):
-        try:
-            return await self.can_run(ctx)
-        except commands.CommandError:
-            return False
-
-    def error(self, coro):
-        self.handled_errors = Ast(coro).errors
-        return super().error(coro)
-
-
-def command(name=None, cls=KernCommand, **attrs):
-    return commands.command(name=name, cls=cls, **attrs)
-
-
-def group(name=None, **attrs):
-    return command(name=name, cls=KernGroup, **attrs)
+        return self
 
 
 class KernContext(commands.Context):

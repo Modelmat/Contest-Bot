@@ -18,7 +18,7 @@ COLOURS = {'easy': rgb(255, 211, 0), 'medium': rgb(232, 97, 0), 'hard': rgb(255,
 EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 
-class Games(commands.Cog):
+class Games(cc.KernCog):
     """Games"""
 
     def __init__(self, bot: cc.KernBot):
@@ -58,7 +58,7 @@ class Games(commands.Cog):
         return results
 
     @commands.cooldown(1, 30, commands.BucketType.channel)
-    @cc.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def trivia(self, ctx: cc.KernContext, *, category: str = None):
         """Provides a trivia functionality. 5 questions. Can pass a category"""
         results = await self.get_trivia_results(category)

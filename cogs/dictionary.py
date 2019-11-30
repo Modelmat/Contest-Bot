@@ -12,7 +12,7 @@ load_dotenv()
 # Add: https://developer.oxforddictionaries.com/documentation#!/Search/get_search_source_lang, and check for no definitions (key error)
 
 
-class Dictionary(commands.Cog):
+class Dictionary(cc.KernCog):
     """Provides dictionary functionality"""
 
     def __init__(self, bot: cc.KernBot):
@@ -67,9 +67,9 @@ class Dictionary(commands.Cog):
                 name="Did you mean?", value="\n".join(similar_words))
         return embed
 
-    @cc.command(aliases=['synonyms'])
+    @commands.command(aliases=['synonyms'])
     async def synonym(self, ctx, *, term):
-        """Return an embed of synonyms for the word passed.`"""
+        """Return an embed of synonyms for the word passed."""
         async with ctx.typing():
             data = await self._get_dic_request(
                 self.dictionary_base_url.format(term.lower()) + "/synonyms")
@@ -106,7 +106,7 @@ class Dictionary(commands.Cog):
 
             await ctx.send(embed=embed)
 
-    @cc.command(aliases=['antonyms'])
+    @commands.command(aliases=['antonyms'])
     async def antonym(self, ctx, *, term):
         """Return an embed of antonyms for the word passed."""
         async with ctx.typing():
@@ -145,7 +145,7 @@ class Dictionary(commands.Cog):
 
             await ctx.send(embed=embed)
 
-    @cc.command(aliases=['meaning'])
+    @commands.command(aliases=['meaning'])
     async def define(self, ctx, *, term):
         """Return an embed of definitions for the word passed. Includes image and more."""
         async with ctx.typing():

@@ -14,8 +14,9 @@ async def filter_commands(ctx, long_doc, check):
     cogs_dict = defaultdict(list)
 
     for command in set(ctx.bot.walk_commands()):
-        if not command.hidden and await command.safe_can_run(ctx) and check(command):
-            description = command.long_doc if long_doc else command.short_doc
+        if not command.hidden and await cc.safe_can_run(command, ctx) and check(command):
+            long_help = f"{command.help or ''}\n```{command.signature}```"
+            description = long_help if long_doc else command.short_doc
             cogs_dict[command.cog_name or "No Category"].append({
                 "name": command.qualified_name,
                 "value": description or "No description.",
@@ -46,7 +47,7 @@ class Paginator:
 
         for cog, commands in (await filter_commands(ctx, long_doc, check)).items():
             for index, chunk in enumerate(cc.chunks(commands, max_fields)):
-                embed = discord.Embed.from_data(base_embed_dict)
+                embed = discord.Embed.from_dict(base_embed_dict)
                 embed.title = f"{base_embed.title} - {cog} ({index + 1})"
 
                 for command in chunk:

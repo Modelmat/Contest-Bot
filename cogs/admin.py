@@ -6,14 +6,14 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class Admin(commands.Cog):
+class Admin(cc.KernCog):
     """Administration commands."""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
     @commands.has_permissions(manage_messages=True)
-    @cc.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True)
     async def delete(self, ctx):
         """Deletes the last message sent by this bot"""
         async for message in ctx.channel.history(limit=100):
@@ -77,7 +77,7 @@ class Admin(commands.Cog):
                     await ctx.message.delete()
 
     @commands.guild_only()
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def roles(self, ctx, *, member: discord.Member = None):
         """Shows the roles of the bot or member"""
         if member is None:
@@ -88,7 +88,7 @@ class Admin(commands.Cog):
             await ctx.success(f"```ini\n[{roles}]```", f"Roles for `{member.display_name}`:")
 
     @commands.guild_only()
-    @cc.group(aliases=["permissions"])
+    @commands.group(aliases=["permissions"])
     async def perms(self, ctx):
         """Permissions command group top (does nothing)"""
         pass

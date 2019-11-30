@@ -50,7 +50,7 @@ def get_delta(time_period, limit):
     return timedelta(minutes=10)
 
 
-class Statistics(commands.Cog):
+class Statistics(cc.KernCog):
     """Function related to statistics"""
 
     def __init__(self, bot: cc.KernBot):
@@ -102,7 +102,7 @@ class Statistics(commands.Cog):
         em.set_image(url=f"attachment://{graph_name}")
         return graph, em
 
-    @cc.group(aliases=["crypto"])
+    @commands.group(aliases=["crypto"])
     async def coin(self, ctx):
         """Provides information on cryptocurrencies
         This root command is not working."""
@@ -175,11 +175,11 @@ Full name support is incoming.""",
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.error(str(error), "Missing Argument")
 
-    # @cc.command(hidden=True)
+    # @commands.command(hidden=True)
     # async def auweather(self, ctx, *, location):
     #     await ctx.send(await self.bot.get_weather())
 
-    @cc.command(hidden=True)
+    @commands.command(hidden=True)
     async def auforecast(self, ctx, *, location):
         # add weekdays, then RADAR images, and current temp etc.
         try:

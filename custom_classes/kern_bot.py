@@ -1,5 +1,3 @@
-import asyncio
-import traceback
 from concurrent.futures import FIRST_COMPLETED
 from datetime import datetime
 from os import listdir
@@ -86,15 +84,6 @@ class KernBot(commands.Bot):
                 traceback.print_exc()
                 quit()
 
-    def add_cog(self, cog):
-        error_coro = getattr(cog, f"_{cog.__class__.__name__}__error", None)
-        if error_coro:
-            cog.handled_errors = cc.Ast(error_coro).errors
-        else:
-            cog.handled_errors = []
-
-        super().add_cog(cog)
-
     async def close(self, message="Shutting Down"):
         print(f"\n{message}\n")
         em = discord.Embed(title=f"{message} @ {datetime.utcnow().strftime('%H:%M:%S')}", colour=discord.Colour.red())
@@ -131,12 +120,5 @@ class KernBot(commands.Bot):
         try:
             with async_timeout.timeout(10):
                 await self.session.post(url, data=payload, headers=headers)
-        except asyncio.TimeoutError:
-            pass
-
-    async def pull_remotes(self):
-        try:
-            with async_timeout.timeout(20):
-                await self.session.get("https://api.backstroke.co/_88263c5ef4464e868bfd0323f9272d63")
         except asyncio.TimeoutError:
             pass
