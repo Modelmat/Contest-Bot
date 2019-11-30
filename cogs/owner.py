@@ -1,10 +1,10 @@
-from os import execl, system
-from sys import executable, argv
 import asyncio
 import io
 import textwrap
 from contextlib import redirect_stdout
 from datetime import datetime
+from os import execl
+from sys import executable, argv
 
 import discord
 from discord.ext import commands
@@ -18,7 +18,7 @@ ANNOUNCEMENT_FOOTER = "\n\n*This is an automated message sent by the bot's " \
                       "announcement to the rest of your server*"
 
 
-class Owner:
+class Owner(commands.Cog):
     """Owner only commands"""
 
     def __init__(self, bot: cc.KernBot):
@@ -26,7 +26,7 @@ class Owner:
         self.hidden = True
         self._last_result = None
 
-    async def __local_check(self, ctx):
+    async def cog_check(self, ctx):
         return await self.bot.is_owner(ctx.author)
 
     @cc.command(hidden=True)

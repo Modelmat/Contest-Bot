@@ -8,12 +8,12 @@ from fuzzywuzzy import process
 import custom_classes as cc
 
 
-class Developer:
+class Developer(commands.Cog):
     """Commands related to discord.py library"""
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
-    async def __local_check(self, ctx):
+    async def cog_check(self, ctx):
         return "discord" in ctx.guild.name or await ctx.bot.is_owner(ctx.author)
 
     @cc.command()

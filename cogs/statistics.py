@@ -1,7 +1,7 @@
 # pylint: disable-msg=C0413
 import io
-from inspect import Parameter
 from datetime import datetime, timedelta
+from inspect import Parameter
 
 import async_timeout
 import matplotlib
@@ -50,7 +50,7 @@ def get_delta(time_period, limit):
     return timedelta(minutes=10)
 
 
-class Statistics:
+class Statistics(commands.Cog):
     """Function related to statistics"""
 
     def __init__(self, bot: cc.KernBot):

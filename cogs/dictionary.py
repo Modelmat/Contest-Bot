@@ -3,6 +3,7 @@ from random import sample
 
 import async_timeout
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 import custom_classes as cc
@@ -11,7 +12,7 @@ load_dotenv()
 # Add: https://developer.oxforddictionaries.com/documentation#!/Search/get_search_source_lang, and check for no definitions (key error)
 
 
-class Dictionary:
+class Dictionary(commands.Cog):
     """Provides dictionary functionality"""
 
     def __init__(self, bot: cc.KernBot):

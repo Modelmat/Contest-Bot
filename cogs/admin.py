@@ -6,7 +6,7 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class Admin:
+class Admin(commands.Cog):
     """Administration commands."""
 
     def __init__(self, bot: cc.KernBot):

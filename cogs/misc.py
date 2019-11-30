@@ -1,17 +1,13 @@
-import aiofiles
-from datetime import datetime
-import inspect
-from collections import defaultdict
 import os
-import hashlib
+from datetime import datetime
 from platform import python_version
-from pkg_resources import get_distribution
+
+import aiofiles
 import async_timeout
-
-import psutil
-
 import discord
+import psutil
 from discord.ext import commands
+from pkg_resources import get_distribution
 
 import custom_classes as cc
 
@@ -51,7 +47,7 @@ class FakeMessage:
         self.embeds = []
 
 
-class Misc:
+class Misc(commands.Cog):
     """Miscellaneous functions"""
 
     def __init__(self, bot: cc.KernBot):

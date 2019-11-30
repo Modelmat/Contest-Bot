@@ -1,10 +1,9 @@
-import discord
 from discord.ext import commands
 
 import custom_classes as cc
 
 
-class Settings:
+class Settings(commands.Cog):
     """Sets and gets the settings for the bot"""
 
     def __init__(self, bot: cc.KernBot):

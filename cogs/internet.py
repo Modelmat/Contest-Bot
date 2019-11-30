@@ -31,7 +31,7 @@ def gen_data():
     return table_data, table, open_ports, open_data
 
 
-class Internet:
+class Internet(commands.Cog):
     """Web functions (that make requests)"""
 
     def __init__(self, bot: cc.KernBot):

@@ -18,7 +18,7 @@ COLOURS = {'easy': rgb(255, 211, 0), 'medium': rgb(232, 97, 0), 'hard': rgb(255,
 EMOJIS = {1: '1\u20e3', 2: '2\u20e3', 3: '3\u20e3', 4: '4\u20e3'}
 
 
-class Games:
+class Games(commands.Cog):
     """Games"""
 
     def __init__(self, bot: cc.KernBot):

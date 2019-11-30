@@ -7,18 +7,18 @@ from discord.ext import commands
 import custom_classes as cc
 
 
-class Contests:
+class Contests(commands.Cog):
     """Contest functions"""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
-    async def __local_check(self, ctx):
+    async def cog_check(self, ctx):
         if ctx.guild is None:
             raise commands.NoPrivateMessage()
         return True
 
-    async def __error(self, ctx, error):
+    async def cog_command_error(self, ctx, error):
         error = getattr(error, "original", error)
         if isinstance(error, (TypeError, ValueError, cc.AlreadySubmitted)):
             await ctx.error(error)

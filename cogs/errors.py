@@ -13,12 +13,13 @@ import custom_classes as cc
 cgitb.enable(format="raw")
 
 
-class Errors:
+class Errors(commands.Cog):
     """Error Handling"""
 
     def __init__(self, bot: cc.KernBot):
         self.bot = bot
 
+    @commands.Cog.listener()
     async def on_command_error(self, ctx: cc.KernContext, error):
         error = getattr(error, "original", error)
 
