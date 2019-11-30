@@ -4,13 +4,12 @@ import discord
 from discord.ext import commands
 
 from custom_classes import Ast
-from .paginator import Paginator
 
 
 class KernGroup(commands.Group):
-    def __init__(self, **attrs):
+    def __init__(self, *args, **attrs):
         self.handled_errors = []
-        super().__init__(**attrs)
+        super().__init__(*args, **attrs)
 
     @property
     def long_doc(self):
@@ -41,9 +40,9 @@ class KernGroup(commands.Group):
 
 
 class KernCommand(commands.Command):
-    def __init__(self, name, callback, **kwargs):
+    def __init__(self, func, **kwargs):
         self.handled_errors = []
-        super().__init__(name, callback, **kwargs)
+        super().__init__(func, **kwargs)
 
     @property
     def long_doc(self):
