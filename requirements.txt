@@ -8,7 +8,7 @@ git+git://github.com/chauffer/aiogoogletrans
 discord.py==1.2.5
 lxml==4.2.4
 matplotlib==2.2.2
-psutil==5.4.7
+psutil==5.6.6
 python-dotenv==0.9.1
 tabulate==0.8.2
 xmljson==0.1.9
